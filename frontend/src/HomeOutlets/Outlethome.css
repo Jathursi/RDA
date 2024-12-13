@@ -1,7 +1,7 @@
 .main{
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 70vh;
     width: 100%;
     margin-top: 70px;
     color: black;
@@ -14,7 +14,7 @@
 
 .table-home{
     width: 100%;
-    margin: 3% 8%;
+    margin: 3% 3%;
     border-collapse: collapse;
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
