@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
+import img from '../Assert/log.png'
 function DashTopnav() {
     const navigate = useNavigate()
   return (
@@ -9,6 +10,7 @@ function DashTopnav() {
         <div className="topbar-dash">
           <div className="topbar-dash-left">
             <div className='header'>
+              <img className='logo' src={img} alt='logo' />
                 <h1>RDA</h1>
             </div>
           </div>
