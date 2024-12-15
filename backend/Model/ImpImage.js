@@ -1,39 +1,53 @@
-import { Sequelize, DataTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize.js';
 
-const ImpImage = sequelize.define('ImpImage', {
+const Implement = sequelize.define('Implement', {
     id: {
         type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
-        autoIncrement: true
     },
-    customName: {
+    Start_Date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    Job_Assigned: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
-    fileType: {
+    Req_date: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
-    fileSize: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+    Req_off: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    fileData: {
-        type: DataTypes.BLOB('long'), // Store binary data
-        allowNull: false
+    Vaucher: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    Auth: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    supplier: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'regist',
-            key: 'id'
-        }
-    }
+            key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    },
 }, {
-    tableName: 'imp_images', // Ensure this matches the table name in your database
-    timestamps: false
+    tableName: 'implement',
+    timestamps: true,
 });
 
-export default ImpImage;
+export default Implement;

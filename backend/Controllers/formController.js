@@ -9,3 +9,4 @@ export const getRegist = async (req, res) => {
     }
 }
 
+

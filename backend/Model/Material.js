@@ -1,7 +1,5 @@
-// models/AdditionalData.js
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
-// import Implement from './Implement.js'; // Import the Implement model
 
 const Material = sequelize.define('Material', {
   id: {
@@ -25,12 +23,23 @@ const Material = sequelize.define('Material', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  implement_id: {
+  quasupplier_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'implement',
+      model: 'supplier',
       key: 'id'
-    }
+    },
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  },
+  quatationsupplier_id: {
+        type: DataTypes.INTEGER,
+        references: {
+        model: 'supplier',
+        key: 'id'
+        },
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   },
 }, {
   tableName: 'material',
@@ -38,6 +47,7 @@ const Material = sequelize.define('Material', {
 });
 
 // Define the relationship
-// Material.belongsTo(Implement, { foreignKey: 'implement_id' });
+// Material.belongsTo(sequelize.models.Implement, { foreignKey: 'implement_id' });
+// Material.belongsTo(sequelize.models.Supplier, { foreignKey: 'quasupplier_id' });
 
 export default Material;

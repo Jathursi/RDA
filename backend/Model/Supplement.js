@@ -9,7 +9,6 @@ import SupWel from './SupWel.js';
 import SupSun from './SupSun.js';
 import SupOther from './SupOther.js';
 
-
 const Supplement = sequelize.define('Supplement', {
     id: {
         type: DataTypes.INTEGER,
@@ -29,12 +28,14 @@ const Supplement = sequelize.define('Supplement', {
         allowNull: false
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'regist',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     },
 },
 {
@@ -65,6 +66,5 @@ SupSun.belongsTo(Supplement, { foreignKey: 'SupplierId' });
 
 Supplement.hasMany(SupOther, { foreignKey: 'SupplierId' });
 SupOther.belongsTo(Supplement, { foreignKey: 'SupplierId' });
-
 
 export default Supplement;

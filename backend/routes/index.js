@@ -17,6 +17,10 @@ import CompEmailRoute from './CompEmailRoute.js';
 import SearchRoutes from './SearchRoutes.js';
 import FeedBackRoute from './FeedBackRoute.js';
 import UserDetailsRoute from './UserDetailsRoute.js';
+// import TRcheckList from './TRcheckList.js';
+import trchecklist from '../Model/Trchecklist.js';
+import Supplier from '../Model/Supplier.js';
+import QutationImg from '../Model/QutationImg.js';
 
 const router = Router(); // Initialize the Router instance
 
@@ -38,5 +42,8 @@ router.use('/email', CompEmailRoute);
 router.use('/search', SearchRoutes);
 router.use('/feedback', FeedBackRoute);
 router.use('/userdet', UserDetailsRoute);
+router.use('/checklist', trchecklist);
+router.use('/supplier', Supplier);
+router.use('/qutation', QutationImg);
 
 export default router;

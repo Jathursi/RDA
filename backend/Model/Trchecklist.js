@@ -1,15 +1,11 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-const Resourse = sequelize.define('Resourse', {
+const Trchecklist = sequelize.define('Trchecklist', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    customName: {
-        type: DataTypes.STRING,
-        allowNull: false
     },
     fileType: {
         type: DataTypes.STRING,
@@ -32,11 +28,19 @@ const Resourse = sequelize.define('Resourse', {
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
+    },
+    regist_id: {
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
+        references: {
+            model: 'regist',
+            key: 'id'
+        },
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
     }
-},
-{
-    tableName: 'resourse',
+}, {
+    tableName: 'trchecklist', // Ensure this matches the table name in your database
     timestamps: false
 });
 
-export default Resourse;
+export default Trchecklist;

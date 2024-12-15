@@ -150,3 +150,81 @@ Responsive design for mobile devices
         padding: 0.6rem;
     }
 } */
+
+.feedTitles {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 2rem;
+    font-weight: bold;
+    align-items: center;
+    color: #333;
+    margin-bottom: 10%;
+}
+
+.feedbackContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    gap: 20px;
+    /* Space between each card */
+    box-sizing: border-box;
+}
+
+/* Individual feedback card styling */
+.feedbackCard {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 10px;
+    /* Optional max-width for readability */
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #0a0a0a;
+    /* Accent border on the left side */
+    box-sizing: border-box;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect for feedback cards */
+.feedbackCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Individual feedback details */
+.feedbackName,
+.feedbackEmail,
+.feedbackVehicleNum,
+.feedbackMessage {
+    font-size: 16px;
+    margin: 8px 0;
+    color: #333;
+}
+
+/* Accent colors for specific elements */
+.feedbackName {
+    font-weight: bold;
+    color: #0a0a0a;
+    /* Name in primary accent color */
+}
+
+.feedbackEmail,
+.feedbackVehicleNum {
+    color: #555;
+}
+
+.feedbackMessage {
+    color: #333;
+    line-height: 1.5;
+}
+
+.averageRating {
+    font-size: 18px;
+    color: #ffc107;
+    /* Golden color for the star */
+    margin-left: 10px;
+}

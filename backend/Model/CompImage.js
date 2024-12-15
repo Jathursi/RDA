@@ -1,35 +1,37 @@
-import { Sequelize, DataTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize.js';
 
 const CompImage = sequelize.define('CompImage', {
     id: {
         type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
-        autoIncrement: true
     },
     customName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     fileType: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     fileSize: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
     },
     fileData: {
-        type: DataTypes.BLOB('long'), // Store binary data
-        allowNull: false
+        type: DataTypes.BLOB('long'),
+        allowNull: false,
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'regist',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     }
 }, {
     tableName: 'comp_images', // Ensure this matches the table name in your database

@@ -1,4 +1,3 @@
-// models/Regist.js
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
 import OutReg from './OutReg.js';
@@ -11,11 +10,12 @@ import CompImage from './CompImage.js';
 import ImpImage from './ImpImage.js';
 import UsersInf from './UsersInf.js';
 import EmailComp from './EmailComp.js';
+import trchecklist from './Trchecklist.js';
+
 const Regist = sequelize.define('Regist', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         primaryKey: true,
-        autoIncrement: true,
     },
     Vehicle_num: {
         type: DataTypes.STRING,
@@ -68,7 +68,30 @@ const Regist = sequelize.define('Regist', {
 }, {
     tableName: 'regist',
     timestamps: true,
+    hooks: {
+        beforeCreate: async (regist, options) => {
+            const currentYear = new Date().getFullYear();
+            const lastRegist = await Regist.findOne({
+                where: sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), currentYear),
+                order: [['createdAt', 'DESC']]
+            });
+
+
+            let newId;
+            if (lastRegist) {
+                const lastId = lastRegist.id.split('/')[0];
+                const incrementedId = String(parseInt(lastId) + 1).padStart(3, '0');
+                newId = `${incrementedId}.R.${currentYear}`;
+            } else {
+                newId = `001.R.${currentYear}`;
+            }
+
+            regist.id = newId;
+        }
+    }
 });
+
+// Associations...
 
 Regist.hasMany(OutReg, { foreignKey: 'book_id' });
 OutReg.belongsTo(Regist, { foreignKey: 'book_id' });
@@ -99,5 +122,8 @@ UsersInf.belongsTo(Regist, { foreignKey: 'book_id' });
 
 Regist.hasMany(EmailComp, { foreignKey: 'book_id' });
 EmailComp.belongsTo(Regist, { foreignKey: 'book_id' });
+
+Regist.hasMany(trchecklist, { foreignKey: 'regist_id' });
+trchecklist.belongsTo(Regist, { foreignKey: 'regist_id' });
 
 export default Regist;

@@ -1,218 +1,110 @@
 import express from 'express';
+import multer from 'multer';
+import db from '../config/sequelize.js';
 import Implement from '../Model/Implement.js';
 import Labour from '../Model/Labour.js';
 import Material from '../Model/Material.js';
-import db from '../config/sequelize.js';
+import Supplier from '../Model/Supplier.js';
+import QutationImg from '../Model/QutationImg.js';
 
 const router = express.Router();
 
-router.post('/Iminsert/:book_id', async (req, res) => {
-  const { book_id } = req.params;
-  const { Start_Date, Job_Assigned, labourDetails, matcost, Req_date, Req_off, Vaucher, Auth, supplier } = req.body;
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+router.post('/Iminsert/:id', upload.array('images'), async (req, res) => {
+  const { id } = req.params;
+  const book_id = id;
+  const { Start_Date, Job_Assigned, labourDetails, Req_date, Req_off, Auth = 'DefaultAuthValue', suppliers } = req.body;
 
   try {
-    const existingImplement = await Implement.findOne({ where: { book_id } });
-
-    if (existingImplement) {
-      return res.status(400).json({ message: 'Entry already exists. Use the update route instead.' });
+    // Check if book_id exists in regist table
+    const bookExists = await db.query(
+      'SELECT * FROM regist WHERE id = ?',
+      { replacements: [book_id], type: db.QueryTypes.SELECT }
+    );
+    if (!bookExists.length) {
+      return res.status(400).json({ error: 'Invalid book_id: Does not exist in regist table' });
     }
 
+    // Check if implement entry already exists
+    const existingImplement = await Implement.findOne({ where: { book_id } });
+    if (existingImplement) {
+      return res.status(400).json({ error: 'Implement entry already exists for this book_id' });
+    }
+
+    // Create Implement entry
     const implement = await Implement.create({
       Start_Date,
       Job_Assigned,
       book_id,
       Req_date,
       Req_off,
-      Vaucher,
       Auth,
-      supplier,
     });
 
     const implementId = implement.id;
 
-    const labourPromises = labourDetails.map((labour) => {
-      const { Labour: labourName, Lab_cost, LabQ } = labour;
+    // Parse labourDetails and suppliers
+    const labourDetailsArray = Array.isArray(labourDetails) ? labourDetails : JSON.parse(labourDetails);
+    const suppliersArray = Array.isArray(suppliers) ? suppliers : JSON.parse(suppliers);
+
+    // Insert Labour details
+    const labourPromises = labourDetailsArray.map((labour) => {
+      const { Labour: labourName, Labour_cost, LabourQ, issued } = labour;
       return Labour.create({
         Labour: labourName,
-        Lab_cost,
-        LabQ,
-        implement_id: implementId,
-      });
-    });
-
-    const materialPromises = matcost.map((data) => {
-      const { Material: materialName, Mat_cost, MatQ, issued } = data;
-      return Material.create({
-        Material: materialName,
-        Mat_cost,
-        MatQ,
+        Labour_cost,
+        LabourQ,
         issued,
         implement_id: implementId,
       });
     });
 
-    await Promise.all([...labourPromises, ...materialPromises]);
+    // Insert Suppliers and Materials
+    const supplierPromises = suppliersArray.map(async (supplier) => {
+      const { supplier: supplierName, Quotation, materials } = supplier;
+      const newSupplier = await Supplier.create({
+        supplier: supplierName,
+        Quotation,
+        implement_id: implementId,
+      });
 
-    res.status(200).json({ message: 'Data inserted successfully' });
-  } catch (error) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ error: 'An error occurred while inserting data' });
-  }
-});
+      const supplierId = newSupplier.id;
 
-router.get('/Imview/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const implementRecords = await Implement.findAll({
-      where: { book_id: id },
-    });
-
-    if (implementRecords.length === 0) {
-      return res.status(404).json({ error: 'No records found' });
-    }
-
-    res.json(implementRecords);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching data' });
-  }
-});
-
-router.get('/ImviewMat/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const book_id = id;
-
-    if (!book_id) {
-      return res.status(400).json({ error: 'book_id is required' });
-    }
-
-    const sql = `
-      SELECT 
-          material.id,
-          material.Material,
-          material.Mat_cost,
-          material.MatQ,
-          material.issued
-        FROM Material
-        LEFT JOIN implement ON implement.id = material.implement_id
-        WHERE implement.book_id = ?
-        `;
-
-    const results = await db.query(sql, {
-      replacements: [book_id],
-      type: db.QueryTypes.SELECT
-    });
-
-    if (!results || results.length === 0) {
-      return res.status(404).json({ error: 'No records found' });
-    }
-
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching data' });
-  }
-});
-
-router.get('/ImviewLab/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const book_id = id;
-
-    if (!book_id) {
-      return res.status(400).json({ error: 'book_id is required' });
-    }
-
-    const sql = `
-      SELECT 
-          labour.id,
-          labour.Labour,
-          labour.Lab_cost,
-          labour.LabQ
-        FROM Labour
-        LEFT JOIN implement ON implement.id = labour.implement_id
-        WHERE implement.book_id = ?
-        `;
-
-    const results = await db.query(sql, {
-      replacements: [book_id],
-      type: db.QueryTypes.SELECT
-    });
-
-    if (!results || results.length === 0) {
-      return res.status(404).json({ error: 'No records found' });
-    }
-
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'An error occurred while fetching data' });
-  }
-});
-
-router.put('/Imput/:book_id', async (req, res) => {
-  const { book_id } = req.params;
-  const { Start_Date, Job_Assigned, labourDetails, matcost, Req_date, Req_off, Vaucher, Auth, supplier } = req.body;
-
-  try {
-    const implement = await Implement.update(
-      {
-        Start_Date,
-        Job_Assigned,
-        Req_date,
-        Req_off,
-        Vaucher,
-        Auth,
-        supplier
-      },
-      { where: { book_id } }
-    );
-
-    const existingImplement = await Implement.findOne({ where: { book_id } });
-    const implementId = existingImplement.id;
-
-    const labourPromises = labourDetails.map((labour) => {
-      const { id, Labour: labourName, Lab_cost, LabQ } = labour;
-      if (id) {
-        return Labour.update(
-          { Labour: labourName, Lab_cost, LabQ },
-          { where: { id } }
-        );
-      } else {
-        return Labour.create({
-          Labour: labourName,
-          Lab_cost,
-          LabQ,
-          implement_id: implementId
-        });
-      }
-    });
-
-    const materialPromises = matcost.map((material) => {
-      const { id, Material: materialName, Mat_cost, MatQ, issued } = material;
-      if (id) {
-        return Material.update(
-          { Material: materialName, Mat_cost, MatQ, issued },
-          { where: { id } }
-        );
-      } else {
+      const materialPromises = materials.map((material) => {
+        const { Material: materialName, Mat_cost, MatQ, issued } = material;
         return Material.create({
           Material: materialName,
           Mat_cost,
           MatQ,
           issued,
-          implement_id: implementId
+          implement_id: implementId,
+          quatationsupplier_id: supplierId,
         });
-      }
+      });
+
+      const imagePromises = req.files.map((file) => {
+        const fileType = file.mimetype; // Extract the MIME type of the file
+        const fileSize = file.size; // Extract the size of the file
+        const fileData = file.buffer; // Extract the file data as a buffer
+        return QutationImg.create({
+          fileType,
+          fileSize,
+          fileData,
+          quatationsupplier_id: supplierId,
+        });
+      });
+
+      await Promise.all([...materialPromises, ...imagePromises]);
     });
 
-    await Promise.all([...labourPromises, ...materialPromises]);
+    await Promise.all([...labourPromises, ...supplierPromises]);
 
-    res.status(200).json({ message: 'Data updated successfully' });
+    res.status(200).json({ message: 'Data inserted successfully' });
   } catch (error) {
-    console.error('Error updating data:', error);
-    res.status(500).json({ error: 'An error occurred while updating data' });
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'An error occurred while inserting data' });
   }
 });
 

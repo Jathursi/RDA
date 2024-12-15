@@ -22,6 +22,8 @@ import Comprint from './DashOutlets/Comprint'
 import Completion from './DashOutlets/Completion'
 import EstPrint from './DashOutlets/EstPrint'
 import Estemail from './DashOutlets/Estemail'
+import UserInfo from './DashOutlets/UserInfo'
+
 function App() {
   return (
     <div className='APP'>
@@ -29,8 +31,9 @@ function App() {
         <Routes>
           <Route path='/signup' element={<Signup />} />
           <Route path='/forgotpassword' element={<Forgotpassword />} />
-          <Route path='/' element={<Logins/>} />
-          <Route path='/dash' element={<Dash />}>
+          <Route path='/' element={<Logins />} />
+          <Route path='/dash/:id' element={<Dash />}>
+            <Route index element={<Navigate to='implement' />} />
             <Route path='image' element={<Image />} />
             <Route path='implement' element={<Implement />} />
             <Route path='other' element={<Other />} />
@@ -43,8 +46,9 @@ function App() {
             <Route path='completion' element={<Completion />} />
             <Route path='estprint' element={<EstPrint />} />
             <Route path='estemail' element={<Estemail />} />
+            <Route path='userinfo' element={<UserInfo />} />
           </Route>
-          <Route path='/home' element={<Navigate to={'main'} />}/>
+          <Route path='/home' element={<Navigate to={'main'} />} />
           <Route path='/home' element={<Home />}>
             <Route path='main' element={<Main />} />
             <Route path='feedback' element={<Feedback />} />

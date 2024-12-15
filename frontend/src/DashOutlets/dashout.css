@@ -1,0 +1,93 @@
+.formContainer-imp{
+    width: 80%;
+    padding-left: 5%;
+    /* padding-left: 10px; */
+    overflow-y: auto;
+    /* margin-bottom: 5%; */
+    padding-bottom: 10%;
+    padding-top: 10px;
+}
+.formGroup{
+    margin-bottom: 2%;
+}
+.formContainer-com{
+    width: 100%;
+    overflow-y: auto;
+}
+.form{
+    width: 70%;
+    /* margin-left: 10%; */
+    padding-bottom: 10%;
+}
+.dataGroup{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 10%;
+}
+.implementForm{
+    width: 80%;
+    margin-left: 10%;
+}
+.addMaterial{
+    display: flex;
+    /* justify-content: space-between; */
+    gap: 50px;
+}
+.addMaterial button{
+    display: flex;
+    align-items: center;
+    background-color: #6685f7;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    height: 30px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 25px;
+}
+.addMaterial button:hover{
+    background-color: #264ee2;
+    box-shadow: 1px 1px 5px #264ee2;
+}
+.supplierbtn{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    align-items: center;
+}
+.supplierbtn button{
+    display: flex;
+    align-items: center;
+    background-color: #6685f7;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    height: 30px;
+    cursor: pointer;
+    color: #fff;
+}
+.supplierbtn button:hover{
+    background-color: #264ee2;
+    box-shadow: 1px 1px 5px #264ee2;
+}
+.underline{
+    /* text-decoration: underline; */
+    /* color: #000; */
+    border: 1px solid #717070;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.resourcesList{
+    width: 70%;
+    margin-left: 10%;
+    padding-bottom: 10%;
+}
+.dateGroup{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.dateGroup .formGroup{
+    width: 30%;
+}

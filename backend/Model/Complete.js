@@ -1,8 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-// import sequelize from '../config/database';
 import sequelize from "../config/sequelize.js";
-// import sequelize from '../config/sequelize';
-// const Regist = require('./Regist'); // Adjust the path as necessary
 
 const Complete = sequelize.define('Complete', {
     id: {
@@ -31,11 +28,13 @@ const Complete = sequelize.define('Complete', {
         allowNull: false
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         references: {
             model: 'regist',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     }
 }, {
     tableName: 'complete',

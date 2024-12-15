@@ -73,7 +73,13 @@ const Sidenav = () => {
         <div className={`menu-item ${activeMenu === 'attachment' ? 'active' : ''}`} onClick={() => navigate('attachment')}>
           <div className="main-item">
             <CgAttachment />
-            <span className="text">Attachment</span>
+            <span className="text">Doccuments</span>
+          </div>
+        </div>
+        <div className={`menu-item ${activeMenu === 'userinfo' ? 'active' : ''}`} onClick={() => navigate('userinfo')}>
+          <div className="main-item">
+            {/* <CgAttachment /> */}
+            <span className="text">Progress</span>
           </div>
         </div>
         <div className={`menu-item ${activeMenu === 'outsource' ? 'active' : ''}`} onClick={() => navigate('outsource')}>

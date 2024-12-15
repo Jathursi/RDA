@@ -13,12 +13,14 @@ const EmailComp = sequelize.define('EmailComp', {
         allowNull: false
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'regist',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     }
 }, {
     tableName: 'emailcomp',

@@ -1,15 +1,11 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
 
-const InImage = sequelize.define('InImage', {
+const QutationImg = sequelize.define('QutationImg', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-    },
-    customName: {
-        type: DataTypes.STRING,
-        allowNull: false,
     },
     fileType: {
         type: DataTypes.STRING,
@@ -23,19 +19,17 @@ const InImage = sequelize.define('InImage', {
         type: DataTypes.BLOB('long'),
         allowNull: false,
     },
-    book_id: {
-        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
-        allowNull: false,
+    quatationsupplier_id: {
+        type: DataTypes.INTEGER,
         references: {
-            model: 'regist',
-            key: 'id'
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    }
-}, {
-    tableName: 'in_images', // Ensure this matches the table name in your database
+        model: 'supplier',
+        key: 'id'
+        }
+    },
+},
+{
+    tableName: 'qutationimg',
     timestamps: false
 });
 
-export default InImage;
+export default QutationImg;

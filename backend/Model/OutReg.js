@@ -1,28 +1,25 @@
-import { Sequelize, DataTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
-import Out from "./Out.js";
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize.js';
 
-const OutReg = sequelize.define("OutReg", {
+const OutReg = sequelize.define('OutReg', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
     },
     book_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
-            model: "regist",
-            key: "id",
+            model: 'regist',
+            key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     },
-},{
-    tableName: "outreg",
+}, {
+    tableName: 'outreg',
     timestamps: false,
-}
-);
-
-OutReg.hasMany(Out, { foreignKey: "Out_id" });
-Out.belongsTo(OutReg, { foreignKey: "Out_id" });
+});
 
 export default OutReg;
