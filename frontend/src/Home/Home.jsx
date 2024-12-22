@@ -1,8 +1,8 @@
-import React from 'react'
-import Topbar from './Topbar'
-import './Home.css'
-import { Outlet } from 'react-router-dom'
-import HomeSidenav from './HomeSidenav'
+import React from 'react';
+import Topbar from './Topbar';
+import './Home.css';
+import { Outlet } from 'react-router-dom';
+import HomeSidenav from './HomeSidenav';
 
 function Home() {
   return (
@@ -17,7 +17,7 @@ function Home() {
             <Outlet />
         </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

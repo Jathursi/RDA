@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import routes from './routes/index.js'; // Import routes
-import userRoutes from './routes/userRoutes.js'; // Import user routes
+// import userRoutes from './routes/userRoutes.js'; // Import user routes
 import sequelize from './config/sequelize.js';
 // import impRoute from './routes/impRoute.js';
 import dotenv from 'dotenv';
@@ -29,7 +29,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/api', routes); // Use the main routes
-app.use('/api/users', userRoutes); // Use the user routes
+// app.use('/api/users', userRoutes); // Use the user routes
 // app.use('/api', impRoute);
 
 sequelize.sync({ force: false })

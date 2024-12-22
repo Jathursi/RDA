@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
-import Estimate from "./Estimate.js";
+// import Estimate from "./Estimate.js";
 
     // { Material: '', Mat_cost: '', MatQ: '' }
 
@@ -17,17 +17,17 @@ const EstMat = sequelize.define('EstMat', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    EstimateId: {
+    EstID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'estimate',
+            model: 'estimates',
             key: 'id'
         }
     },
 },
 {
-    tableName: 'est_mat',
+    tableName: 'estmat',
     timestamps: false
 });
 

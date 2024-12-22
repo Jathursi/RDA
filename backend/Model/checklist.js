@@ -1,29 +1,37 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
 
-const EmailAuth = sequelize.define('EmailAuth', {
+const CheckList = sequelize.define('CheckList', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
     },
-    email: {
+    fileType: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+    },
+    fileSize: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    fileData: {
+        type: DataTypes.BLOB('long'),
+        allowNull: false,
     },
     book_id: {
         type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
-            model: 'regist',
+            model: 'logbook',
             key: 'id'
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     }
 }, {
-    tableName: 'emailauth',
+    tableName: 'checklist', // Ensure this matches the table name in your database
     timestamps: false
 });
 
-export default EmailAuth;
+export default CheckList;

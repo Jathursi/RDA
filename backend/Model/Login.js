@@ -1,4 +1,3 @@
-// models/Login.js
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
 import bcrypt from 'bcrypt';
@@ -25,6 +24,10 @@ const Login = sequelize.define('Login', {
   role: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  vehicleNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   approval: {
     type: DataTypes.STRING,

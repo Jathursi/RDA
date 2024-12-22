@@ -1,183 +1,153 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 function Estimation() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    Date: '',
-    Estimated: ''
+  const [values, setValues] = useState({ Date: '', Estimated: '' });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isInitialSubmission, setIsInitialSubmission] = useState(true);
+
+  // Dynamic details states
+  const [details, setDetails] = useState({
+    material: [{ Material: '', Mat_cost: '', MatQ: '' }],
+    labour: [{ Labour: '', Lab_cost: '', LabQ: '' }],
+    machining: [{ Machining: '', Mac_cost: '', MacQ: '' }],
+    welding: [{ Welding: '', Wel_cost: '', WelQ: '' }],
+    transport: [{ Transport: '', Trans_cost: '', TransQ: '' }],
+    sundries: [{ Sundries: '', Sun_cost: '', SunQ: '' }], // New Sundries state
   });
-  const [visibleSections, setVisibleSections] = useState(1);
-  const [isInitialSubmission, setIsInitialSubmission] = useState(true); // Track if it's the first submission
+
+  const [activeCategory, setActiveCategory] = useState(''); // Tracks which form to show
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValues({ ...values, [name]: value });
+    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const filterEmptyFields = (detailsArray) => {
-      return detailsArray.filter(item => Object.values(item).some(value => value !== ''));
-    };
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter(file => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/'));
+    if (validFiles.length !== files.length) alert('Some files are invalid (too large or not an image).');
+    setSelectedFiles(validFiles);
+  };
 
-    const filteredOtherDetails = filterEmptyFields(otherDetails);
-    const filteredStockDetails = filterEmptyFields(stockDetails);
-    const filteredMatDetails = filterEmptyFields(matDetails);
-    const filteredMacDetails = filterEmptyFields(macDetails);
-    const filteredWelDetails = filterEmptyFields(welDetails);
-    const filteredTransDetails = filterEmptyFields(transDetails);
-    const filteredSunDetails = filterEmptyFields(sunDetails);
-    const filteredLabDetails = filterEmptyFields(LabDetails);
+  const handleDetailsChange = (category, index, e) => {
+    const newDetails = [...details[category]];
+    newDetails[index][e.target.name] = e.target.value;
+    setDetails({ ...details, [category]: newDetails });
+  };
 
+  const handleAddDetail = (category, defaultValues) => {
+    setDetails({ ...details, [category]: [...details[category], defaultValues] });
+  };
+
+  // Main form submit
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const formData = new FormData();
+  //   formData.append('Date', values.Date);
+  //   formData.append('Estimated', values.Estimated);
+  //   selectedFiles.forEach(file => formData.append('images', file));
+
+  //   const token = localStorage.getItem('token');
+  //   const url = isInitialSubmission
+  //     ? `http://localhost:8081/api/est/Estinsert/${id}`
+  //     : `http://localhost:8081/api/est/Estupdate/${id}`;
+  //   const method = isInitialSubmission ? 'post' : 'put';
+
+  //   try {
+  //     await axios({ method, url, data: formData, headers: { Authorization: `Bearer ${token}` } });
+  //     setIsInitialSubmission(false);
+  //     navigate('/Home');
+  //   } catch (err) {
+  //     console.error('Error with main form:', err.response ? err.response.data : err.message);
+  //   }
+  // };
+
+  // Individual category submit
+  const handleCategorySubmit = async (category) => {
     const token = localStorage.getItem('token');
-
-    const url = isInitialSubmission
-      ? `http://localhost:8081/api/est/Estinsert/${id}`
-      : `http://localhost:8081/api/est/Estupdate/${id}`;
-
-    const method = isInitialSubmission ? 'post' : 'put';
-
     try {
-      await axios({
-        method,
-        url,
-        data: {
-          ...values,
-          otherDetails: filteredOtherDetails,
-          stockDetails: filteredStockDetails,
-          macDetails: filteredMacDetails,
-          matDetails: filteredMatDetails,
-          welDetails: filteredWelDetails,
-          sunDetails: filteredSunDetails,
-          LabDetails: filteredLabDetails,
-          transDetails: filteredTransDetails,
-          book_id: id
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      await axios.post(`http://localhost:8081/api/est/Other${category.charAt(0).toUpperCase() + category.slice(1)}/${id}`, details[category], {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(isInitialSubmission ? "Logbook entry added successfully" : "Logbook entry updated successfully");
-      setIsInitialSubmission(false); // After the first submission, switch to update mode
-      navigate('/Home');
+      alert(`${category} details saved successfully.`);
     } catch (err) {
-      if (err.response) {
-        console.error('Error with logbook entry:', err.response.status, err.response.data);
-      } else {
-        console.error('Error with logbook entry:', err.message);
-      }
+      console.error(`Error saving ${category} details:`, err.message);
     }
   };
 
-  const createDetailsHandler = (detailsState, setDetailsState, defaultValues) => {
-    const handleChange = (event, index) => {
-      const { name, value } = event.target;
-      const newData = [...detailsState];
-      if (!newData[index]) {
-        newData[index] = {};
-      }
-      newData[index][name] = value;
-      setDetailsState(newData);
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8081/api/est/Estview/${id}`);
+  //       if (response.data.length) {
+  //         setValues(response.data[0]);
+  //         setIsInitialSubmission(false);
+  //       }
 
-    const handleAdd = () => {
-      setDetailsState([...detailsState, defaultValues]);
-      setVisibleSections(visibleSections + 1);
-    };
-    return { handleChange, handleAdd };
-  };
+  //       const categories = ['material', 'labour', 'machining', 'welding', 'transport', 'sundries'];
+  //       for (const category of categories) {
+  //         const res = await axios.get(`http://localhost:8081/api/est/Other${category.charAt(0).toUpperCase() + category.slice(1)}/${id}`);
+  //         setDetails(prev => ({ ...prev, [category]: res.data }));
+  //       }
+  //     } catch (err) {
+  //       console.error('Error fetching data:', err.message);
+  //     }
+  //   };
 
-  // Details handlers
-  const [otherDetails, setOtherDetails] = useState([
-    { other: '', other_cost: '', otherQ: '' }
-  ]);
-  const otherHandler = createDetailsHandler(otherDetails, setOtherDetails, { other: '', other_cost: '', otherQ: '' });
+  //   fetchData();
+  // }, [id]);
 
-  const [stockDetails, setStockDetails] = useState([
-    { Stock: '', Stock_cost: '', StockQ: '' }
-  ]);
-  const stockHandler = createDetailsHandler(stockDetails, setStockDetails, { Stock: '', Stock_cost: '', StockQ: '' });
-
-  const [matDetails, setMatDetails] = useState([
-    { Material: '', Mat_cost: '', MatQ: '' }
-  ]);
-  const matHandler = createDetailsHandler(matDetails, setMatDetails, { Material: '', Mat_cost: '', MatQ: '' });
-
-  const [LabDetails, setLabDetails] = useState([
-    { Labour: '', Lab_cost: '', LabQ: '' }
-  ]);
-  const labHandler = createDetailsHandler(LabDetails, setLabDetails, { Labour: '', Lab_cost: '', LabQ: '' });
-
-  const [macDetails, setMacDetails] = useState([
-    { Machining: '', Mac_cost: '', MacQ: '' }
-  ]);
-  const macHandler = createDetailsHandler(macDetails, setMacDetails, { Machining: '', Mac_cost: '', MacQ: '' });
-
-  const [welDetails, setWelDetails] = useState([
-    { Welding: '', Wel_cost: '', WelQ: '' }
-  ]);
-  const welHandler = createDetailsHandler(welDetails, setWelDetails, { Welding: '', Wel_cost: '', WelQ: '' });
-
-  const [transDetails, setTransDetails] = useState([
-    { Transport: '', Trans_cost: '', TransQ: '' }
-  ]);
-  const transHandler = createDetailsHandler(transDetails, setTransDetails, { Transport: '', Trans_cost: '', TransQ: '' });
-
-  const [sunDetails, setSunDetails] = useState([
-    { Sundries: '', Sun_cost: '', SunQ: '' }
-  ]);
-  const sunHandler = createDetailsHandler(sunDetails, setSunDetails, { Sundries: '', Sun_cost: '', SunQ: '' });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8081/api/est/Estview/${id}`);
-        if (response.data && response.data.length > 0) {
-          setValues(response.data[0]);
-          setIsInitialSubmission(false); // Set to false if data exists
-        }
-
-        const otherResponse = await axios.get(`http://localhost:8081/api/est/Otherother/${id}`);
-        setOtherDetails(otherResponse.data);
-
-        const stockResponse = await axios.get(`http://localhost:8081/api/est/OtherStock/${id}`);
-        setStockDetails(stockResponse.data);
-
-        const macResponse = await axios.get(`http://localhost:8081/api/est/OtherMac/${id}`);
-        setMacDetails(macResponse.data);
-
-        const welResponse = await axios.get(`http://localhost:8081/api/est/OtherWel/${id}`);
-        setWelDetails(welResponse.data);
-
-        const transResponse = await axios.get(`http://localhost:8081/api/est/OtherTrans/${id}`);
-        setTransDetails(transResponse.data);
-
-        const sunResponse = await axios.get(`http://localhost:8081/api/est/OtherSun/${id}`);
-        setSunDetails(sunResponse.data);
-
-        const matResponse = await axios.get(`http://localhost:8081/api/est/EstviewMat/${id}`);
-        setMatDetails(matResponse.data);
-
-        const labResponse = await axios.get(`http://localhost:8081/api/est/EstviewLab/${id}`);
-        setLabDetails(labResponse.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  // Reusable dynamic form component
+  const DynamicForm = ({ category, defaultValues, label, hideExtras }) => (
+    <div>
+      <div className='form-Multi-btn'>
+        <h3>{label} Details</h3>
+        <button type='button' onClick={() => handleAddDetail(category, defaultValues)}>Add More</button>
+      </div>
+      {details[category].map((item, index) => (
+        <div key={index} className='dateGroup'>
+          {Object.keys(item).map((key) => (
+            <div className='formGroup' key={key}>
+              <label className='label'>{key} {index + 1}</label>
+              <input
+                className='input'
+                type='text'
+                name={key}
+                value={item[key]}
+                onChange={(e) => handleDetailsChange(category, index, e)}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+      {!hideExtras && (
+        <>
+          <div>
+            <h3>Supplier</h3>
+            <input type='text' className='input' placeholder='supplier name'/>
+          </div>
+          <div>
+            <h3>Quotation</h3>
+            <input type='text' className='input' placeholder='no.of Quotation'/>
+          </div>
+          <div>
+            <h3>Upload Quotation</h3>
+            <input type='file' />
+          </div>
+        </>
+      )}
+      <button type='button' onClick={() => handleCategorySubmit(category)}>Submit {label} Details</button>
+    </div>
+  );
 
   return (
     <div className='formContainer-com'>
-      
-      <form onSubmit={handleSubmit} className='form'>
-        <div className='formTitle'>
-          Estimation
-        </div>
+      <form className='form'>
+        <div className='formTitle'>Estimation</div>
         <div className='formGroup'>
           <label className='label'>Date:</label>
           <input className='input' type='date' name='Date' value={values.Date} onChange={handleChange} />
@@ -187,176 +157,31 @@ function Estimation() {
           <input className='input' type='text' name='Estimated' value={values.Estimated} onChange={handleChange} />
         </div>
         <div className='formGroup'>
-          <label className='label'>Image</label>
-            <input
-                type="file"
-                multiple
-            />
+          <label className='label'>Images:</label>
+          <input type='file' multiple onChange={handleFileChange} />
         </div>
-        {/* <div className='form-Multi-btn'>
-          <label>Other:</label>
-          <button type='button' onClick={otherHandler.handleAdd}>Add More</button>
-        </div>
-        {otherDetails.map((other, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Other {index + 1}</label>
-              <input className='input' type='text' name='other' value={other.other} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Other Cost</label>
-              <input className='input' type='text' name='other_cost' value={other.other_cost} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Other Quantity</label>
-              <input className='input' type='text' name='otherQ' value={other.otherQ} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Stock:</label>
-          <button type='button' onClick={stockHandler.handleAdd}>Add More</button>
-        </div>
-        {stockDetails.map((stock, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Stock {index + 1}</label>
-              <input className='input' type='text' name='Stock' value={stock.Stock} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Stock Cost</label>
-              <input className='input' type='text' name='Stock_cost' value={stock.Stock_cost} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Stock Quantity</label>
-              <input className='input' type='text' name='StockQ' value={stock.StockQ} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Material:</label>
-          <button type='button' onClick={matHandler.handleAdd}>Add More</button>
-        </div>
-        {matDetails.map((material, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Material {index + 1}</label>
-              <input className='input' type='text' name='Material' value={material.Material} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Material Cost</label>
-              <input className='input' type='text' name='Mat_cost' value={material.Mat_cost} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Material Quantity</label>
-              <input className='input' type='text' name='MatQ' value={material.MatQ} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Labour:</label>
-          <button type='button' onClick={labHandler.handleAdd}>Add More</button>
-        </div>
-        {LabDetails.map((labour, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Labour {index + 1}</label>
-              <input className='input' type='text' name='Labour' value={labour.Labour} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Labour Cost</label>
-              <input className='input' type='text' name='Lab_cost' value={labour.Lab_cost} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Labour Quantity</label>
-              <input className='input' type='text' name='LabQ' value={labour.LabQ} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Machining:</label>
-          <button type='button' onClick={macHandler.handleAdd}>Add More</button>
-        </div>
-        {macDetails.map((machining, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Machining {index + 1}</label>
-              <input className='input' type='text' name='Machining' value={machining.Machining} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Machining Cost</label>
-              <input className='input' type='text' name='Mac_cost' value={machining.Mac_cost} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label '>Machining Quantity</label>
-              <input className='input' type='text' name='MacQ' value={machining.MacQ} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Welding:</label>
-          <button type='button' onClick={welHandler.handleAdd}>Add More</button>
-        </div>
-        {welDetails.map((welding, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Welding {index + 1}</label>
-              <input className='input' type='text' name='Welding' value={welding.Welding} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Welding Cost</label>
-              <input className='input' type='text' name='Wel_cost' value={welding.Wel_cost} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Welding Quantity</label>
-              <input className='input' type='text' name='WelQ' value={welding.WelQ} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Transport:</label>
-          <button type='button' onClick={transHandler.handleAdd}>Add More</button>
-        </div>
-        {transDetails.map((trans, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Transport {index + 1}</label>
-              <input className='input' type='text' name='Transport' value={trans.Transport} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Transport Cost</label>
-              <input className='input' type='text' name='Trans_cost' value={trans.Trans_cost} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Transport Quantity</label>
-              <input className='input' type='text' name='TransQ' value={trans.TransQ} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Sundries:</label>
-          <button type='button' onClick={sunHandler.handleAdd}>Add More</button>
-        </div>
-        {sunDetails.map((sundries, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Sundries {index + 1}</label>
-              <input className='input' type='text' name='Sundries' value={sundries.Sundries} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Sundries Cost</label>
-              <input className='input' type='text' name='Sun_cost' value={sundries.Sun_cost} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Sundries Quantity</label>
-              <input className='input' type='text' name='SunQ' value={sundries.SunQ} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))} */}
-        <div className='form-Imp-btn'>
-          <button className='submitButton' type='submit'>Submit</button>
-        </div>
+        <button type='submit' className='submitBtn'>{isInitialSubmission ? 'Submit' : 'Update'}</button>
       </form>
+
+      <div className='form'>
+        <div className='form-Multi-btn'>
+          <h3>Select Category</h3>
+          {['material', 'labour', 'machining', 'welding', 'transport', 'sundries'].map((category) => (
+            <button key={category} type='button' onClick={() => setActiveCategory(category)}>
+              {category.charAt(0).toUpperCase() + category.slice(1)} Details
+            </button>
+          ))}
+        </div>
+
+        {activeCategory && (
+          <DynamicForm
+            category={activeCategory}
+            defaultValues={{ [`${activeCategory.charAt(0).toUpperCase()}${activeCategory.slice(1)}`]: '', cost: '', Q: '' }}
+            label={activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
+            hideExtras={activeCategory === 'sundries'} // Hide extras for Sundries
+          />
+        )}
+      </div>
     </div>
   );
 }

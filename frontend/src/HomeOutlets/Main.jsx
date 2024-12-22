@@ -10,7 +10,7 @@ function Main({ searchTerm }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8081/api/reg/Regist', { withCredentials: true })
+    axios.get('http://localhost:8081/api/logbook/logbook', { withCredentials: true })
       .then((response) => {
         setData(response.data);
       })

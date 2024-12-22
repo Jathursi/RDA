@@ -7,8 +7,6 @@ function Implement() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // const [data, setData] = useState(null);
-    // const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Start_Date: '',
         Job_Assigned: '',
@@ -81,6 +79,9 @@ function Implement() {
 
     const handleAddMoreMaterial = (supplierIndex) => {
         const updatedSuppliers = [...suppliers];
+        if (!updatedSuppliers[supplierIndex].materials) {
+            updatedSuppliers[supplierIndex].materials = [];
+        }
         updatedSuppliers[supplierIndex].materials.push({
             Material: '',
             Mat_cost: '',
@@ -114,11 +115,10 @@ function Implement() {
         formData.append('Req_off', values.Req_off);
         formData.append('Auth', values.Auth);
         formData.append('labourDetails', JSON.stringify(labourDetails));
-        formData.append('matcost', JSON.stringify(filteredSuppliers.map(supplier => supplier.materials)));
         formData.append('suppliers', JSON.stringify(filteredSuppliers));
 
         suppliers.forEach((supplier, index) => {
-            supplier.images.forEach((image, imgIndex) => {
+            (supplier.images || []).forEach((image, imgIndex) => {
                 formData.append(`images`, image);
             });
         });
@@ -145,6 +145,37 @@ function Implement() {
                 console.error('Error with logbook entry:', err.message);
             });
     };
+
+    useEffect(() => {
+        const fetchImplement = async () => {
+            const token = localStorage.getItem('token');
+            const url = `http://localhost:8081/api/imp/Imget/${id}`;
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            try {
+                const response = await axios.get(url, { headers });
+                const data = response.data;
+                setValues({
+                    Start_Date: data.Start_Date,
+                    Job_Assigned: data.Job_Assigned,
+                    Req_date: data.Req_date,
+                    Req_off: data.Req_off,
+                    Auth: data.Auth,
+                });
+                setSuppliers(data.Suppliers.map(supplier => ({
+                    ...supplier,
+                    materials: supplier.Materials || [], // Ensure materials are initialized
+                    images: supplier.Images || [] // Ensure images are initialized
+                })) || []); // Ensure suppliers is an array
+                setLabourDetails(data.Labours || []); // Ensure labourDetails is an array
+            } catch (error) {
+                console.error('Error fetching implement:', error.message);
+            }
+        };
+        fetchImplement();
+    }, [id]);
 
     return (
         <div className="formContainer-imp">
@@ -258,7 +289,7 @@ function Implement() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {supplier.materials.map((material, materialIndex) => (
+                                {Array.isArray(supplier.materials) && supplier.materials.map((material, materialIndex) => (
                                     <tr key={materialIndex}>
                                         <td>
                                             <input

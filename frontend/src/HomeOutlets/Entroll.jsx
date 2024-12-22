@@ -53,6 +53,7 @@ function Entroll({ searchTerm }) {
               <th>First Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Vehicle no.</th>
               <th>Approval</th>
               <th>Actions</th>
             </tr>
@@ -64,6 +65,7 @@ function Entroll({ searchTerm }) {
                 <td>{book.first_Name}</td>
                 <td>{book.email}</td>
                 <td>{book.role}</td>
+                <td>{book.vehicleNumber || 'NULL'}</td>
                 <td>{book.approval}</td>
                 <td className='btn-deny'>
                   {/* Check if the role is not 'Superadmin' before showing the action buttons */}

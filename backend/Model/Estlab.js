@@ -1,34 +1,33 @@
-import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/sequelize.js';
+import { Sequelize, DataTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 
-    // { Material: '', Mat_cost: '', MatQ: '' }
+    // { Labour: '', Lab_cost: '', LabQ: '' }
 
-const SupMat = sequelize.define('SupMat', {
-    Material: {
+const Estlab = sequelize.define('Estlab', {
+    Labour: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Mat_cost: {
+    Lab_cost: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    MatQ: {
+    LabQ: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    SupplierId: {
+    EstID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'supplement',
+            model: 'estimates',
             key: 'id'
         }
     }
-
 },
 {
-    tableName: 'sup_mat',
+    tableName: 'estlab',
     timestamps: false
 });
 
-export default SupMat;
+export default Estlab;

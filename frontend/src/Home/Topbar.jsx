@@ -1,11 +1,9 @@
 import React from 'react';
-import './Home.css'; // Assuming your CSS is in Home.css
-import { useNavigate } from 'react-router-dom';
-import img from '../Assert/log.png';
+import './Home.css'; 
+import img from '../Assets/log.png';
 import { IoSearch } from "react-icons/io5";
 
 const Topbar = () => {
-    const navigate = useNavigate();
     return (
         <div className="top-home-wrapper">
             <div className="wrapper-home">
@@ -17,7 +15,7 @@ const Topbar = () => {
                         </div>
                     </div>
                     <div className='topbar-home-right'>
-                        <input type="text" placeholder='search..' className="search" />
+                        <input type="text" placeholder='Search...' className="search" />
                         <IoSearch className="search-icon" />
                     </div>
                 </div>

@@ -1,15 +1,11 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
 
-const InImage = sequelize.define('InImage', {
+const CrossCheck = sequelize.define('CrossCheck', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-    },
-    customName: {
-        type: DataTypes.STRING,
-        allowNull: false,
     },
     fileType: {
         type: DataTypes.STRING,
@@ -27,15 +23,15 @@ const InImage = sequelize.define('InImage', {
         type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
-            model: 'regist',
+            model: 'logbook',
             key: 'id'
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     }
 }, {
-    tableName: 'in_images', // Ensure this matches the table name in your database
+    tableName: 'crosscheck', // Ensure this matches the table name in your database
     timestamps: false
 });
 
-export default InImage;
+export default CrossCheck;

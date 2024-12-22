@@ -28,24 +28,6 @@ const Sidenav = () => {
   return (
     <div className="">
       <div className={`sidebar ${sidebarActive ? 'active' : ''}`}>
-        <div className={`menu-item ${activeMenu === 'Implement' ? 'active' : ''}`} onClick={() => handleMenuClick('Implement')}>
-          <div className="main-item">
-            <IoIosArrowForward />
-            <span className="text">Implement</span>
-          </div>
-            {activeMenu === 'Implement' && (
-            <div className="sub-menu">
-                <div className="sub-item" onClick={()=> navigate('implement')}>
-                    <RiMoneyDollarCircleFill />
-                    <span className="text">Implement</span>
-                </div>
-                <div className="sub-item" onClick={() => navigate('other')}>
-                    <MdAttachMoney />
-                    <span className="text">Other cost</span>
-                </div>
-            </div>
-            )}
-        </div>
         <div className={`menu-item ${activeMenu === 'Estimation' ? 'active' : ''}`} onClick={() => handleMenuClick('Estimation')}>
           <div className="main-item">
             <IoIosArrowForward />
@@ -60,6 +42,32 @@ const Sidenav = () => {
                 <div className="sub-item" onClick={() => navigate('supliment')}>
                     <RiMoneyDollarCircleFill />
                     <span className="text">Suppliment</span>
+                </div>
+                <div className="sub-item" onClick={() => navigate('estprint')}>
+                    <IoPrint />
+                    <span className="text">Print Estimate</span>
+                </div>
+                <div className="sub-item" onClick={()=>navigate('estemail')}>
+                    <MdEmail />
+                    <span className="text">Estimation</span>
+                </div>
+            </div>
+            )}
+        </div>
+        <div className={`menu-item ${activeMenu === 'Implement' ? 'active' : ''}`} onClick={() => handleMenuClick('Implement')}>
+          <div className="main-item">
+            <IoIosArrowForward />
+            <span className="text">Implement</span>
+          </div>
+            {activeMenu === 'Implement' && (
+            <div className="sub-menu">
+                <div className="sub-item" onClick={()=> navigate('implement')}>
+                    <RiMoneyDollarCircleFill />
+                    <span className="text">Implement</span>
+                </div>
+                <div className="sub-item" onClick={() => navigate('other')}>
+                    <MdAttachMoney />
+                    <span className="text">Other cost</span>
                 </div>
             </div>
             )}
@@ -96,39 +104,15 @@ const Sidenav = () => {
         </div>
         <div className={`menu-item ${activeMenu === 'Print' ? 'active' : ''}`} onClick={() => handleMenuClick('Print')}>
           <div className="main-item">
-            <IoIosArrowForward />
-            <span className="text">Print</span>
+            <IoPrintOutline />
+            <span className="text">Job Card</span>
           </div>
-            {activeMenu === 'Print' && (
-            <div className="sub-menu">
-                <div className="sub-item" onClick={() => navigate('estprint')}>
-                    <IoPrint />
-                    <span className="text">Estimation</span>
-                </div>
-                <div className="sub-item" onClick={()=>navigate('comprint')}>
-                    <IoPrintOutline />
-                    <span className="text">Job Card</span>
-                </div>
-            </div>
-            )}
         </div>
         <div className={`menu-item ${activeMenu === 'email' ? 'active' : ''}`} onClick={() => handleMenuClick('email')}>
           <div className="main-item">
-            <IoIosArrowForward />
-            <span className="text">Email</span>
+            <MdAttachEmail />
+            <span className="text">Final Email</span>
           </div>
-            {activeMenu === 'email' && (
-            <div className="sub-menu">
-                <div className="sub-item" onClick={()=>navigate('estemail')}>
-                    <MdEmail />
-                    <span className="text">Estimation</span>
-                </div>
-                <div className="sub-item" onClick={()=>navigate('compemail')}>
-                    <MdAttachEmail />
-                    <span className="text">Completion</span>
-                </div>
-            </div>
-            )}
         </div>
       </div>
     </div>

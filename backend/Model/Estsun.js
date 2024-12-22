@@ -3,7 +3,7 @@ import sequelize from "../config/sequelize.js";
 
     // { Sundries: '', Sun_cost: '', SunQ: '' }
 
-const EstSun = sequelize.define('EstSun', {
+const Estsun = sequelize.define('Estsun', {
     Sundries: {
         type: DataTypes.STRING,
         allowNull: false
@@ -16,18 +16,18 @@ const EstSun = sequelize.define('EstSun', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    EstimateId: {
+    EstID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'estimate',
+            model: 'estimates',
             key: 'id'
         }
     }
 },
 {
-    tableName: 'est_sun',
+    tableName: 'estsun',
     timestamps: false
 });
 
-export default EstSun;
+export default Estsun;

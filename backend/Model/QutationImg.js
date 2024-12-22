@@ -7,6 +7,10 @@ const QutationImg = sequelize.define('QutationImg', {
         autoIncrement: true,
         primaryKey: true,
     },
+    customname: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     fileType: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -19,16 +23,18 @@ const QutationImg = sequelize.define('QutationImg', {
         type: DataTypes.BLOB('long'),
         allowNull: false,
     },
-    quatationsupplier_id: {
-        type: DataTypes.INTEGER,
+    estID: {
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
+        allowNull: false,
         references: {
-        model: 'supplier',
-        key: 'id'
-        }
-    },
-},
-{
-    tableName: 'qutationimg',
+            model: 'estimates',
+            key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    }
+}, {
+    tableName: 'qutationimg', // Ensure this matches the table name in your database
     timestamps: false
 });
 

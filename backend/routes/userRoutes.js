@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import Login from '../Model/Login.js';
-import Regist from '../Model/Regist.js';
+// import Regist from '../Model/Regist.js';
 import verifyToken from '../middlewares/verifyToken.js'
 import nodemailer from 'nodemailer';
 import { getUserById } from '../Controllers/userController.js';
@@ -127,7 +127,7 @@ router.put('/update-approval/:id', async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-    const { first_Name, email, password, role } = req.body;
+    const { first_Name, email, password, role, vehicleNumber } = req.body;
 
     try {
         // Check if the email already exists
@@ -142,9 +142,9 @@ router.post('/signup', async (req, res) => {
         // Prepare email options
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: req.body.email,
+            to: email, // Ensure the recipient's email is correctly set
             subject: 'Verification Email from RDA',
-            text: `Hi ${first_Name}, signup successful! You may now log in.`,
+            text: `Hi ${first_Name}, signup successful! You may log in after Approval. Thank you!`,
         };
 
         // Attempt to send email and handle errors directly
@@ -164,6 +164,7 @@ router.post('/signup', async (req, res) => {
                 email,
                 password: hashedPassword,
                 role,
+                vehicleNumber: role === 'user' ? vehicleNumber : null,
             });
 
             // Respond with a success message
@@ -178,7 +179,6 @@ router.post('/signup', async (req, res) => {
         res.status(500).json({ error: 'Error during signup process. Please try again.' });
     }
 });
-
 
 
 
@@ -201,31 +201,7 @@ router.get('/me', verifyToken, async (req, res) => {
 });
 //get all the regist datas from regist table getRegist
 
-router.post('/Logbook', verifyToken, async (req, res) => {
-  const { Vehicle_num, Year, Vehicle_type, Fault, Inspected, Meter, Location, Reference, Response, CrossCheck } = req.body;
-  const userID = req.user.id; 
-  console.log('User ID:', userID); 
-  try {
-    const logbookEntry = await Regist.create({
-      Vehicle_num,
-      Year,
-      Vehicle_type,
-      Fault,
-      Inspected,
-      Meter,
-      Location,
-      Reference,
-      Response,
-      CrossCheck,
-      userID,
-    });
 
-    res.status(201).json({ message: 'Logbook entry created successfully', logbookEntry });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while creating the logbook entry' });
-  }
-});
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -271,22 +247,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/log/:id', verifyToken, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const user = await Login.findByPk(id, {
-      attributes: { exclude: ['password'] }
-    });
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 
 router.put('/logup/:id', verifyToken, async (req, res) => {

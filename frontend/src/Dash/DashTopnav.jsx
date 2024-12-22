@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
-import img from '../Assert/log.png'
+import img from '../Assets/log.png'
 function DashTopnav() {
     const navigate = useNavigate()
   return (

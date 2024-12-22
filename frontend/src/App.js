@@ -33,7 +33,7 @@ function App() {
           <Route path='/forgotpassword' element={<Forgotpassword />} />
           <Route path='/' element={<Logins />} />
           <Route path='/dash/:id' element={<Dash />}>
-            <Route index element={<Navigate to='implement' />} />
+            <Route index element={<Navigate to='estimation' />} />
             <Route path='image' element={<Image />} />
             <Route path='implement' element={<Implement />} />
             <Route path='other' element={<Other />} />
