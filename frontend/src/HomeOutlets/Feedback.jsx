@@ -23,43 +23,62 @@ function Feedback() {
     }, []);
 
     return (
-        <div className='formContainer-feed'>
-            <div className='overall-feed'>
-                <div className='feedTitles'>
+        <div className="container-fluid d-flex flex-column">
+            {/* Title Section */}
+            <div className="overall-feed text-center my-4">
+                <h2 className="feedTitles">
                     Feedbacks
                     {feedbacks.length > 0 && (
-                        <span className='averageRating'> (Overall Rating: {averageRating} ★)</span>
+                        <span className="averageRating"> (Overall Rating: {averageRating} ★)</span>
                     )}
-                </div>
+                </h2>
             </div>
-            {feedbacks.length === 0 ? (
-                <div className='noFeedback'>No feedback found</div>
-            ) : (
-                feedbacks.map(feedback => (
-                    <div key={feedback.id} className='feedbackCard'>
-                        <div className='getrate'>
-                            <div className='rateName'>
-                                <div className='feedbackName'>Name: {feedback.name}</div>
-                            </div>
-                            <div className='rateName'>
-                                <div className='ratingStars'>
+
+            {/* Feedback Cards Section */}
+            <div className="d-flex flex-column align-items-center gap-3" style={{ width: '100%' }}>
+                {feedbacks.length === 0 ? (
+                    <div className="noFeedback">No feedback found</div>
+                ) : (
+                    feedbacks.map(feedback => (
+                        <div 
+                            key={feedback.id} 
+                            className="feedbackCard p-4 bg-light shadow-sm rounded"
+                            style={{
+                                width: '80%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '10px',
+                                border: '1px solid #ddd',
+                            }}
+                        >
+                            <div className="getrate d-flex justify-content-between align-items-center">
+                                <div className="rateName">
+                                    <strong>Name:</strong> {feedback.name}
+                                </div>
+                                <div className="ratingStars">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <span
                                             key={star}
                                             className={`star ${star <= feedback.rating ? 'selected' : ''}`}
+                                            style={{
+                                                color: star <= feedback.rating ? 'gold' : '#ccc',
+                                                fontSize: '1.2rem',
+                                            }}
                                         >
                                             ★
                                         </span>
                                     ))}
                                 </div>
                             </div>
+                            <div className="feedbackEmail"><strong>Email:</strong> {feedback.email}</div>
+                            <div className="feedbackVehicleNum">
+                                <strong>Vehicle Number:</strong> {feedback.vehicle_num}
+                            </div>
+                            <div className="feedbackMessage"><strong>Message:</strong> {feedback.message}</div>
                         </div>
-                        <div className='feedbackEmail'>Email: {feedback.email}</div>
-                        <div className='feedbackVehicleNum'>Vehicle Number: {feedback.vehicle_num}</div>
-                        <div className='feedbackMessage'>Message: {feedback.message}</div>
-                    </div>
-                ))
-            )}
+                    ))
+                )}
+            </div>
         </div>
     );
 }

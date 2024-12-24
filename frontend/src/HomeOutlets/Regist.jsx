@@ -81,64 +81,86 @@ function Regist() {
     };
 
     return (
-        <div className='formContainer'>
-            <div className='formTitle'>Register the vehicle</div>
-            <form className='form' onSubmit={handleSubmit}>
-                <div className='formGroup'>
-                    <label className='label'>Vehicle Number</label>
+        <div className='template d-flex align-items-center 100-w  sm:w-100 '>
+            <div className='w-100 p-2 mx-1 sm:px-5 mx-5'>
+            <form className='' onSubmit={handleSubmit}>
+                <h2 className='formTitle pb-2 sm:pb-5'>Register the vehicle</h2>
+                <div className='mb-3 row'>
+                    <label htmlFor='Vehicle_num' className="col-sm-2 col-form-label">Vehicle Number</label>
+                    <div className="col-sm-10">
+                        <input
+                            type='text'
+                            name='Vehicle_num'
+                            value={values.Vehicle_num}
+                            className='form-control'
+                            placeholder='Enter Vehicle Number'
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+                <div className='mb-2 row'>
+                    <label htmlFor='Vehicle_type' className="col-sm-2 col-form-label">Vehicle Type</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
-                        name='Vehicle_num'
-                        value={values.Vehicle_num}
-                        className='input'
+                        name='Vehicle_type'
+                        value={values.Vehicle_type}
+                        className='form-control'
+                        placeholder='Enter Vehicle Type'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Manufacture year</label>
+                <div className='mb-3 row'>
+                    <label htmlFor='Year' className="col-sm-2 col-form-label">Manufacture year</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='Year'
                         value={values.Year}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter Manufacture Year'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='form-Reg-rad'>
-                    <div className='form-radio'>
-                        <label className='label'>TR / Check List</label>
-                        <div className='form-Reg-radio'>
-                            <div className='radio'>
-                                <input
-                                    type='radio'
-                                    name='Response'
-                                    value='Yes'
-                                    checked={values.Response === 'Yes'}
-                                    onChange={handleRadioChange}
-                                    required
-                                />
-                                <label>Yes</label>
-                            </div>
-                            <div className='radio'>
-                                <input
-                                    type='radio'
-                                    name='Response'
-                                    value='No'
-                                    checked={values.Response === 'No'}
-                                    onChange={handleRadioChange}
-                                    required
-                                />
-                                <label>No</label>
-                            </div>
+                <div className='mb-3 row'>
+                    <label htmlFor='Response' className="col-sm-2 col-form-label">TR/CheckList</label>
+                    <div className="col-sm-10 d-flex align-items-center">
+                        <div className="form-check form-check-inline ">
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1"
+                            checked={values.Response === 'Yes'}
+                            onChange={handleRadioChange}
+                            value="Yes"/>
+                            <label className="form-check-label" for="inlineCheckbox1">Yes</label>
+                        </div>
+                        <div className="form-check form-check-inline ">
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox2"
+                            checked={values.Response === 'No'}
+                            onChange={handleRadioChange}
+                            value="No"/>
+                            <label className="form-check-label" for="inlineCheckbox2">No</label>
                         </div>
                     </div>
+                    
+                    {/* <div className='row g-0'>
+                        <input
+                            type='radio'
+                            name='Response'
+                            value='No'
+                            checked={values.Response === 'No'}
+                            onChange={handleRadioChange}
+                            required
+                        />
+                        <label>No</label>
+                    </div> */}
                     {/* choose files or camera to capture */}
-                    <div className='form-Reg-file'>
+                    {/* <div className='form-Reg-file'>
                         <label className='label'>Image of CheckList</label>
                         <div className='fileInputWrapper'>
-                            {/* Dropdown or buttons for selection */}
                             <select
                                 onChange={(e) => {
                                     const captureMode = e.target.value;
@@ -154,7 +176,6 @@ function Regist() {
                                 <option value="capture">Capture Image</option>
                             </select>
 
-                            {/* Hidden file input */}
                             <input
                                 type="file"
                                 id="checklistImage"
@@ -163,117 +184,111 @@ function Regist() {
                                 onChange={handleFileChange}
                             />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Reference No</label>
+                <div className='mb-3 row'>
+                        <label htmlFor='checklistImage' className="col-sm-2 col-form-label">CrossCheck Image</label>
+                        <div className="col-sm-10">
+                            <input className="form-control" type="file" id="crosscheckImage"  onClick={handleFileChange} multiple/>
+                        </div>
+                </div>
+                <div className='mb-2 row'>
+                    <label htmlFor='Reference' className="col-sm-2 col-form-label">Reference</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='Reference'
                         value={values.Reference}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter Reference'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Vehicle Type</label>
-                    <input
-                        type='text'
-                        name='Vehicle_type'
-                        value={values.Vehicle_type}
-                        className='input'
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className='formGroup'>
-                    <label className='label'>Initial Fault</label>
+                
+                <div className='mb-3 row'>
+                    <label htmlFor='Fault' className="col-sm-2 col-form-label">Fault</label>
+                    <div className="col-sm-10">
                     <textarea
                         type='text'
                         name='Fault'
                         value={values.Fault}
-                        className='textarea'
+                        rows="5"
+                        className='form-control'
+                        placeholder='Enter Fault'
                         onChange={handleChange}
-                        rows={5}
                         required
                     ></textarea>
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Inspected By</label>
+                <div className='mb-3 row'>
+                    <label htmlFor='Inspected' className="col-sm-2 col-form-label">Inspected By</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='Inspected'
                         value={values.Inspected}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter Inspected By'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Meter Reading</label>
+                <div className='mb-3 row'>
+                    <label htmlFor='Meter' className="col-sm-2 col-form-label">Meter Reading</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='Meter'
                         value={values.Meter}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter Meter Reading'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>District (Vehicle From)</label>
+                <div className='mb-3 row'>
+                    <label htmlFor='Location' className="col-sm-2 col-form-label">Location</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='Location'
                         value={values.Location}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter Location'
                         onChange={handleChange}
                         required
                     />
+                    </div>
                 </div>
-                <div className='formGroup'>
-                    <label className='label'>Logbook CrossChecked By</label>
+                <div className='mb-3 row'>
+                    <label htmlFor='CrossCheckby' className="col-sm-2 col-form-label">CrossCheck By</label>
+                    <div className="col-sm-10">
                     <input
                         type='text'
                         name='CrossCheckby'
                         value={values.CrossCheckby}
-                        className='input'
+                        className='form-control'
+                        placeholder='Enter CrossCheck By'
                         onChange={handleChange}
                         required
                     />
-                </div>
-                <div className='form-Reg-filelogbook'>
-                    <label className='label'>Image of CrossCheck</label>
-                    <div className='fileInputWrapper'>
-                        {/* Dropdown or buttons for selection */}
-                        <select
-                            onChange={(e) => {
-                                const captureMode = e.target.value;
-                                if (captureMode) {
-                                    document.getElementById("crosscheckImage").setAttribute("capture", captureMode === "capture" ? "environment" : "");
-                                    document.getElementById("crosscheckImage").click();
-                                }
-                            }}
-                            className="fileModeSelect"
-                        >
-                            <option value="">Upload Image/file</option>
-                            <option value="choose">Choose File</option>
-                            <option value="capture">Capture Image</option>
-                        </select>
-
-                        {/* Hidden file input */}
-                        <input
-                            type="file"
-                            id="crosscheckImage"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                        />
                     </div>
                 </div>
-                <button className='submitButton' type='submit'>Submit</button>
+                <div className='mb-3 row'>
+                    <label htmlFor='CrossCheckImage' className="col-sm-2 col-form-label">CrossCheck Image</label>
+                    <div className="col-sm-10">
+                        <input class="form-control" type="file" id="crosscheckImage"  onClick={handleFileChange} multiple/>
+                    </div>
+                </div>
+                <div className='d-grid mt-4'>
+                    <button className='btn btn-primary' type='submit'>Submit</button>
+                </div>
             </form>
+            </div>
         </div>
     );
 }

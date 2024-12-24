@@ -1,4 +1,4 @@
-.sidebar {
+/* .sidebar {
     position: fixed;
     width: 180px;
     height: 100vh;
@@ -39,12 +39,10 @@
 .menu-item .sub-menu {
     max-height: 0;
     overflow: hidden;
-    /* border-left: 1px solid #f6f6f6; */
     transition: max-height 0.3s ease;
 }
 
 .menu-item .sub-menu div {
-    /* padding: 10px 8px; */
     font-size: 14px;
 }
 .sub-menu{
@@ -58,7 +56,6 @@
 }
 .menu-item.active .sub-menu {
     max-height: 300px;
-    /* Set this value based on your submenu's content height */
 }
 .menu-item .sub-menu {
     margin-left: 20px;
@@ -308,4 +305,4 @@
 
 .menu>li.active .sub-menu {
     display: block;
-}  */
+}  */ 

@@ -4,6 +4,11 @@ import sequelize from "../config/sequelize.js";
     // { Labour: '', Lab_cost: '', LabQ: '' }
 
 const Estlab = sequelize.define('Estlab', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     Labour: {
         type: DataTypes.STRING,
         allowNull: false
@@ -16,13 +21,15 @@ const Estlab = sequelize.define('Estlab', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    EstID: {
+    supID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'estimates',
+            model: 'supplier',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     }
 },
 {

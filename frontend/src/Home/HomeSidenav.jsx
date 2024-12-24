@@ -7,55 +7,56 @@ import { CgProfile } from "react-icons/cg";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
+import img from '../Assets/log.png';
+// import '../App.css';
+import '../App.css';
 
 function HomeSidenav() {
     const navigate = useNavigate();
     return (
-        <div className='sidebar-home-wrap'>
-            <div className='sidebar-home'>
-                <div className='menu-item' onClick={() => navigate('/home')}>
-                    <div className='main-item'>
-                        <IoHome />
-                        <span className='text'>Home</span>
-                    </div>
-                </div>
-                <div className='menu-item' onClick={() => navigate('feedback')}>
-                    <div className='main-item'>
-                        <MdFeedback />
-                        <span className='text'>Feedback</span>
-                    </div>
-                </div>
-                <div className='menu-item' onClick={() => navigate('regist')}>
-                    <div className='main-item'>
-                        <PiTrademarkRegistered />
-                        <span className='text'>Register</span>
-                    </div>
-                </div>
-                <div className='menu-item' onClick={() => navigate('entroll')}>
-                    <div className='main-item'>
-                        <FaPenNib />
-                        <span className='text'>Enroll</span>
-                    </div>
-                </div>
-                <div className='menu-item'>
-                    <div className='main-item'>
-                        <CgProfile />
-                        <span className='text'>Profile</span>
-                    </div>
-                </div>
+        <div className='sticky-top  p-2 bg-light'>
+            <div className='m-2'>
+                <span className='brand-name fs-4'>RDA</span>
             </div>
-            <div className='side'>
-                <div className='menu-item'>
-                    <div className='main-item'>
-                        <IoSettingsOutline />
-                        <span className='text'>Settings</span>
-                    </div>
+            <hr className='bg-white' />
+            <div className='list-group list-group-flush'>
+                <div 
+                    className='list-group-item bg-light py-2'
+                    style={{whiteSpace: 'nowrap'}} 
+                    onClick={() => navigate('/home')}
+                >
+                    <IoHome className='fs-5 me-3' />
+                    <span className='fs-5 d-none d-sm-inline'>Home</span>
                 </div>
-                <div className='menu-item'>
-                    <div className='main-item'>
-                        <CiLogout />
-                        <span className='text'>Log Out</span>
-                    </div>
+                <div 
+                    className='list-group-item bg-light py-2' 
+                    onClick={() => navigate('regist')}
+                    style={{whiteSpace: 'nowrap'}} 
+                >
+                    <PiTrademarkRegistered className='fs-5 me-3' />
+                    <span className='fs-5 d-none d-sm-inline'>Register</span>
+                </div>
+                <div 
+                    className='list-group-item bg-light py-2' 
+                    onClick={() => navigate('entroll')}
+                    style={{whiteSpace: 'nowrap'}} 
+                >
+                    <FaPenNib className='fs-5 me-3' />
+                    <span className='fs-5 d-none d-sm-inline'>Enroll</span>
+                </div>
+                <div
+                    className='list-group-item bg-light py-2' 
+                    onClick={() => navigate('feedback')}
+                    style={{whiteSpace: 'nowrap'}} 
+                >
+                    <MdFeedback className='fs-5 me-3' />
+                    <span className='fs-5 d-none d-sm-inline'>Feedback</span>
+                </div>
+                <div className='list-group-item bg-light py-2'
+                    style={{whiteSpace: 'nowrap'}} 
+                >
+                    <CgProfile className='fs-5 me-3' />
+                    <span className='fs-5 d-none d-sm-inline'>Profile</span>
                 </div>
             </div>
         </div>

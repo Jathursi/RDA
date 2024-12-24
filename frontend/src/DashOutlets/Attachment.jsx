@@ -65,61 +65,124 @@ const handleDelete = async (id) => {
 
 
   return (
-    <div className='formContainer-com'>
-      <h2 className='formTitle'>Attachments</h2>
-      <form onSubmit={handleSubmit} className='form'>
-        <div className='formGroup'>
-          <label className='label'>Custom Name:</label>
-          <input
-            className='input'
-            type="text"
-            value={customName}
-            onChange={handleNameChange}
-          />
-        </div>
-        <div className='formGroup'>
-          <label className='label'>File:</label>
-          <input
-            className='input'
-            type="file"
-            onChange={handleFileChange}
-          />
-        </div>
-        <div className='form-Imp-btn'>
-          <button className='submitButton' type="submit">Upload</button>
-        </div>
-      </form>
-      <div className='resourcesList'>
-        {resources.map(resource => (
-          <div key={resource.id} className='resourceItem'>
-            <h3>{resource.customName}</h3>
-            {resource.fileType.startsWith('image/') ? (
-              <img
-                src={`data:${resource.fileType};base64,${resource.fileData}`}
-                alt={resource.customName}
-                className='resourceImage'
+    <div className="template d-flex align-items-center 100-w sm:w-100">
+      <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+        <form onSubmit={handleSubmit}>
+          <h2 className="formTitle pb-2 sm:pb-5">Attachments</h2>
+          <div className="mb-3 row">
+            <label className="col-sm-2 col-form-label">Custom Name:</label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                value={customName}
+                onChange={handleNameChange}
               />
-            ) : resource.fileType === 'application/pdf' ? (
-              <iframe
-                src={`data:${resource.fileType};base64,${resource.fileData}`}
-                title={resource.customName}
-                className='resourcePdf'
-                width="100%"
-                height="500px"
-              />
-            ) : (
-              <p>Unsupported file type</p>
-            )}
-            <button
-              className='deleteButton'
-              onClick={() => handleDelete(resource.id)}
-            >
-              Delete
-            </button>
+            </div>
           </div>
-        ))}
+          <div className="mb-3 row">
+            <label className="col-sm-2 col-form-label">File:</label>
+            <div className="col-sm-10">
+              <input
+                type="file"
+                className="form-control"
+                onChange={handleFileChange}
+              />
+            </div>
+          </div>
+          <div className="d-grid ">
+              <button type="submit" className="btn btn-primary">
+                Upload
+              </button>
+          </div>
+        </form>
+        <div className="resourcesList">
+          {resources.map((resource) => (
+            <div key={resource.id} className="resourceItem">
+              <h3>{resource.customName}</h3>
+              {resource.fileType.startsWith('image/') ? (
+                <img
+                  src={`data:${resource.fileType};base64,${resource.fileData}`}
+                  alt={resource.customName}
+                  className="resourceImage"
+                />
+              ) : resource.fileType === 'application/pdf' ? (
+                <iframe
+                  src={`data:${resource.fileType};base64,${resource.fileData}`}
+                  title={resource.customName}
+                  className="resourcePdf"
+                  width="100%"
+                  height="500px"
+                />
+              ) : (
+                <p>Unsupported file type</p>
+              )}
+              <button
+                className="deleteButton"
+                onClick={() => handleDelete(resource.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+    // <div className='formContainer-com'>
+    //   <h2 className='formTitle'>Attachments</h2>
+    //   <form onSubmit={handleSubmit} className='form'>
+    //     <div className='formGroup'>
+    //       <label className='label'>Custom Name:</label>
+    //       <input
+    //         className='input'
+    //         type="text"
+    //         value={customName}
+    //         onChange={handleNameChange}
+    //       />
+    //     </div>
+    //     <div className='formGroup'>
+    //       <label className='label'>File:</label>
+    //       <input
+    //         className='input'
+    //         type="file"
+    //         onChange={handleFileChange}
+    //       />
+    //     </div>
+    //     <div className='form-Imp-btn'>
+    //       <button className='submitButton' type="submit">Upload</button>
+    //     </div>
+    //   </form>
+    //   <div className='resourcesList'>
+    //     {resources.map(resource => (
+    //       <div key={resource.id} className='resourceItem'>
+    //         <h3>{resource.customName}</h3>
+    //         {resource.fileType.startsWith('image/') ? (
+    //           <img
+    //             src={`data:${resource.fileType};base64,${resource.fileData}`}
+    //             alt={resource.customName}
+    //             className='resourceImage'
+    //           />
+    //         ) : resource.fileType === 'application/pdf' ? (
+    //           <iframe
+    //             src={`data:${resource.fileType};base64,${resource.fileData}`}
+    //             title={resource.customName}
+    //             className='resourcePdf'
+    //             width="100%"
+    //             height="500px"
+    //           />
+    //         ) : (
+    //           <p>Unsupported file type</p>
+    //         )}
+    //         <button
+    //           className='deleteButton'
+    //           onClick={() => handleDelete(resource.id)}
+    //         >
+    //           Delete
+    //         </button>
+    //       </div>
+    //     ))}
+    //   </div>
+    // </div>
   );
 };
 

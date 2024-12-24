@@ -14,92 +14,32 @@ function Implement() {
         Req_off: '',
         Auth: '',
     });
-    const [suppliers, setSuppliers] = useState([
-        {
-            supplier: '',
-            Quotation: '',
-            images: [],
-            materials: [{ Material: '', Mat_cost: '', MatQ: '', issued: '' }],
-        },
-    ]);
-    const [labourDetails, setLabourDetails] = useState([{ Labour: '', Lab_cost: '', LabQ: '' }]);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
+    const [implementMatData, setImplementMatData] = useState([]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setValues((prevState) => ({
-            ...prevState,
+        setValues((prevValues) => ({
+            ...prevValues,
             [name]: value,
         }));
     };
 
-    const handleSupplierChange = (index, event) => {
-        const { name, value } = event.target;
-        const updatedSuppliers = [...suppliers];
-        updatedSuppliers[index][name] = value;
-        setSuppliers(updatedSuppliers);
-    };
-
-    const handleLabourInputChange = (index, event) => {
-        const { name, value } = event.target;
-        const updatedLabourDetails = [...labourDetails];
-        updatedLabourDetails[index][name] = value;
-        setLabourDetails(updatedLabourDetails);
-    };
-
-    const handleMaterialChange = (supplierIndex, materialIndex, event) => {
-        const { name, value } = event.target;
-        const updatedSuppliers = [...suppliers];
-        updatedSuppliers[supplierIndex].materials[materialIndex][name] = value;
-        setSuppliers(updatedSuppliers);
-    };
-
-    const handleImageChange = (supplierIndex, event) => {
-        const files = Array.from(event.target.files);
-        const updatedSuppliers = [...suppliers];
-        updatedSuppliers[supplierIndex].images = files;
-        setSuppliers(updatedSuppliers);
-    };
-
-    const handleAddMoreSupplier = () => {
-        setSuppliers([
-            ...suppliers,
-            {
-                supplier: '',
-                Quotation: '',
-                images: [],
-                materials: [{ Material: '', Mat_cost: '', MatQ: '', issued: '' }],
-            },
-        ]);
-    };
-
-    const handleAddMoreLabour = () => {
-        setLabourDetails([...labourDetails, { Labour: '', Lab_cost: '', LabQ: '' }]);
-    };
-
-    const handleAddMoreMaterial = (supplierIndex) => {
-        const updatedSuppliers = [...suppliers];
-        if (!updatedSuppliers[supplierIndex].materials) {
-            updatedSuppliers[supplierIndex].materials = [];
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const validFiles = files.filter(
+            (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+        );
+        if (validFiles.length !== files.length) {
+            alert('Some files are invalid (too large or not an image).');
         }
-        updatedSuppliers[supplierIndex].materials.push({
-            Material: '',
-            Mat_cost: '',
-            MatQ: '',
-            issued: '',
-        });
-        setSuppliers(updatedSuppliers);
+        setSelectedFiles(validFiles);
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        
-        const filteredSuppliers = suppliers.map((supplier) => ({
-            ...supplier,
-            materials: supplier.materials.filter((material) =>
-                Object.values(material).some((value) => value !== '')
-            ),
-        }));
 
         const token = localStorage.getItem('token');
         const url = isInitialSubmission
@@ -114,13 +54,8 @@ function Implement() {
         formData.append('Req_date', values.Req_date);
         formData.append('Req_off', values.Req_off);
         formData.append('Auth', values.Auth);
-        formData.append('labourDetails', JSON.stringify(labourDetails));
-        formData.append('suppliers', JSON.stringify(filteredSuppliers));
-
-        suppliers.forEach((supplier, index) => {
-            (supplier.images || []).forEach((image, imgIndex) => {
-                formData.append(`images`, image);
-            });
+        selectedFiles.forEach((file) => {
+            formData.append('images', file);
         });
 
         axios({
@@ -139,11 +74,39 @@ function Implement() {
                         : 'Logbook entry updated successfully'
                 );
                 setIsInitialSubmission(false);
+                fetchImplementMatData(); // Fetch the updated implementmat data
                 navigate('/Home');
             })
             .catch((err) => {
                 console.error('Error with logbook entry:', err.message);
             });
+    };
+
+    const fetchImplementMatData = async () => {
+        const token = localStorage.getItem('token');
+        const url = `http://localhost:8081/api/imp/implementmat/${id}`;
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            const data = response.data;
+
+            // Group data by supplier
+            const groupedData = data.reduce((acc, item) => {
+                const { supplier } = item;
+                if (!acc[supplier]) {
+                    acc[supplier] = [];
+                }
+                acc[supplier].push(item);
+                return acc;
+            }, {});
+
+            setImplementMatData(groupedData);
+        } catch (error) {
+            console.error('Error fetching implementmat data:', error.message);
+        }
     };
 
     useEffect(() => {
@@ -156,229 +119,136 @@ function Implement() {
 
             try {
                 const response = await axios.get(url, { headers });
-                const data = response.data;
+
+                 const { Start_Date,Job_Assigned, Req_date ,Req_off,Auth} = response.data;
+                
+                const formattedDate = Start_Date.split('T')[0];
+                const formattedDatereq = Req_date.split('T')[0];
+
                 setValues({
-                    Start_Date: data.Start_Date,
-                    Job_Assigned: data.Job_Assigned,
-                    Req_date: data.Req_date,
-                    Req_off: data.Req_off,
-                    Auth: data.Auth,
+                    Start_Date:formattedDate,
+                    Job_Assigned,
+                    Req_date: formattedDatereq,
+                    Req_off,
+                    Auth,
                 });
-                setSuppliers(data.Suppliers.map(supplier => ({
-                    ...supplier,
-                    materials: supplier.Materials || [], // Ensure materials are initialized
-                    images: supplier.Images || [] // Ensure images are initialized
-                })) || []); // Ensure suppliers is an array
-                setLabourDetails(data.Labours || []); // Ensure labourDetails is an array
+                setIsInitialSubmission(false);
             } catch (error) {
                 console.error('Error fetching implement:', error.message);
             }
         };
+
         fetchImplement();
+        fetchImplementMatData(); // Fetch the implementmat data on component mount
     }, [id]);
 
     return (
-        <div className="formContainer-imp">
-            <form onSubmit={handleSubmit} className="implementForm">
-                <div className="formTitle">Implement</div>
-
-                {/* General Fields */}
-                <div className="formGroup">
-                    <label className="label">Start Date:</label>
-                    <input
-                        className="input"
-                        type="date"
-                        name="Start_Date"
-                        value={values.Start_Date}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="formGroup">
-                    <label className="label">Job Assigned:</label>
-                    <input
-                        className="input"
-                        type="text"
-                        name="Job_Assigned"
-                        value={values.Job_Assigned}
-                        onChange={handleChange}
-                    />
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th className='addMaterial'>
-                              <button type='button' onClick={handleAddMoreLabour}>+</button>
-                               Labour
-                            </th>
-                            <th>Labour Cost</th>
-                            <th>Labour Quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {labourDetails.map((labour, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <input type='text' className='input' name='Labour' value={labour.Labour} onChange={e => handleLabourInputChange(index, e)} />
-                                </td>
-                                <td>
-                                    <input type='text' className='input' name='Lab_cost' value={labour.Lab_cost} onChange={e => handleLabourInputChange(index, e)} />
-                                </td>
-                                <td>
-                                    <input type='text' className='input' name='LabQ' value={labour.LabQ} onChange={e => handleLabourInputChange(index, e)} />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div className='supplierbtn'>
-                  <h2>Materials with suppliers</h2>
-                  <button
-                      type="button"
-                      onClick={handleAddMoreSupplier}
-                      className="addSupplierButton"
-                  >
-                      Add More Suppliers
-                  </button>
-                </div>
-                {suppliers.map((supplier, supplierIndex) => (
-                    <div key={supplierIndex} className="supplierSection">
-                        <div className="formGroup">
-                            <label className="label">Supplier:</label>
+        <div className="template d-flex align-items-center 100-w sm:w-100">
+            <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+                <form onSubmit={handleSubmit}>
+                    <h3>Implement</h3>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Start Date:</label>
+                        <div className='col-sm-10'>
                             <input
-                                className="input"
-                                type="text"
-                                name="supplier"
-                                value={supplier.supplier}
-                                onChange={(e) => handleSupplierChange(supplierIndex, e)}
+                                type='date'
+                                className='form-control'
+                                name='Start_Date'
+                                value={values.Start_Date}
+                                onChange={handleChange}
                             />
                         </div>
-                        <div className="formGroup">
-                            <label className="label">Quotation:</label>
-                            <input
-                                className="input"
-                                type="text"
-                                name="Quotation"
-                                value={supplier.Quotation}
-                                onChange={(e) => handleSupplierChange(supplierIndex, e)}
-                            />
-                        </div>
-                        <div className="formGroup">
-                            <label className="label">Quotation Images:</label>
-                            <input
-                                type="file"
-                                multiple
-                                onChange={(e) => handleImageChange(supplierIndex, e)}
-                            />
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th className='addMaterial'>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleAddMoreMaterial(supplierIndex)}
-                                        className="addMaterialButton"
-                                    >
-                                        +
-                                    </button>
-                                    Material
-                                    </th>
-                                    <th>Material Cost</th>
-                                    <th>Material Quantity</th>
-                                    <th>No. of Materials Issued</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Array.isArray(supplier.materials) && supplier.materials.map((material, materialIndex) => (
-                                    <tr key={materialIndex}>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                className="input"
-                                                name="Material"
-                                                value={material.Material}
-                                                onChange={(e) =>
-                                                    handleMaterialChange(supplierIndex, materialIndex, e)
-                                                }
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                className="input"
-                                                name="Mat_cost"
-                                                value={material.Mat_cost}
-                                                onChange={(e) =>
-                                                    handleMaterialChange(supplierIndex, materialIndex, e)
-                                                }
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                className="input"
-                                                name="MatQ"
-                                                value={material.MatQ}
-                                                onChange={(e) =>
-                                                    handleMaterialChange(supplierIndex, materialIndex, e)
-                                                }
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                className="input"
-                                                name="issued"
-                                                value={material.issued}
-                                                onChange={(e) =>
-                                                    handleMaterialChange(supplierIndex, materialIndex, e)
-                                                }
-                                            />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        <div className='underline'></div>
                     </div>
-                ))}
-                <div className="formGroup">
-                    <label className="label">Required Date:</label>
-                    <input
-                        className="input"
-                        type="date"
-                        name="Req_date"
-                        value={values.Req_date}
-                        onChange={handleChange}
-                    />
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Job Assigned:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Job_Assigned'
+                                value={values.Job_Assigned}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Required Date:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='date'
+                                className='form-control'
+                                name='Req_date'
+                                value={values.Req_date}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Required Officer:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Req_off'
+                                value={values.Req_off}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Authorized:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Auth'
+                                value={values.Auth}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Images:</label>
+                        <div className='col-sm-10'>
+                            <input className='form-control' type='file' multiple onChange={handleFileChange} />
+                        </div>
+                    </div>
+                    <div className='d-grid'>
+                        <button type='submit' className='btn btn-primary'>
+                            {isInitialSubmission ? 'Submit' : 'Update'}
+                        </button>
+                    </div>
+                </form>
+                <div className='mt-4'>
+                    <h3>Implement Material</h3>
+                    <table className='table table-bordered mb-4'>
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Material</th>
+                                <th>Quantity</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.entries(implementMatData).map(([supplier, items], index) => (
+                                items.map((item, idx) => (
+                                    <tr key={`${supplier}-${idx}`}>
+                                        {idx === 0 && (
+                                            <td rowSpan={items.length} style={{ textAlign: 'center' }}>
+                                                {supplier}
+                                            </td>
+                                        )}
+                                        <td>{item.item}</td>
+                                        <td>{item.quantity}</td>
+                                        <td>{item.cost}</td>
+                                    </tr>
+                                ))
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-                <div className="formGroup">
-                    <label className="label">Required Officer:</label>
-                    <input
-                        className="input"
-                        type="text"
-                        name="Req_off"
-                        value={values.Req_off}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="formGroup">
-                    <label className="label">Authorized By:</label>
-                    <input
-                        className="input"
-                        type="text"
-                        name="Auth"
-                        value={values.Auth}
-                        onChange={handleChange}
-                    />
-                </div>
-                
-                <div className="form-Imp-btn">
-                    <button className="submitButton" type="submit">
-                        Submit
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     );
 }

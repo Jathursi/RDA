@@ -20,7 +20,7 @@ const EstImage = sequelize.define('EstImage', {
         allowNull: false,
     },
     EstID: {
-        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
+        type: DataTypes.INTEGER, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'estimates',

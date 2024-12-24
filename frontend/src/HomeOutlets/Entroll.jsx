@@ -44,10 +44,10 @@ function Entroll({ searchTerm }) {
   );
 
   return (
-    <div className='main'>
-      <div className='home-table'>
-          <table className='table-home'>
-            <thead className='table-head'>
+    <div >
+      {/* <div className='home-table'> */}
+          <table className='table caption-top'>
+            <thead>
               <tr>
               <th>ID</th>
               <th>First Name</th>
@@ -58,7 +58,7 @@ function Entroll({ searchTerm }) {
               <th>Actions</th>
             </tr>
             </thead>
-            <tbody className='table-body'>
+            <tbody >
               {filteredData.map((book) => (
               <tr key={book.id} onClick={() => navigate(`/useredit/${book.id}`)}>
                 <td>{book.id}</td>
@@ -89,7 +89,7 @@ function Entroll({ searchTerm }) {
             </tbody>
             
           </table>
-        </div>
+        {/* </div> */}
     </div>
   )
 }

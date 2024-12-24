@@ -1,324 +1,768 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FaEdit } from 'react-icons/fa';
+import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import SupNav from '../SupCat/SupNav';
 
-function Suppliment() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [values, setValues] = useState({
-    No: '',
-    Date: '',
-    Estimated: ''
-  });
-  const [visibleSections, setVisibleSections] = useState(1);
-  const [isInitialSubmission, setIsInitialSubmission] = useState(true); // Track if it's the first submission
+function Supliment() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [isInitialSubmission, setIsInitialSubmission] = useState(true);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValues({ ...values, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  const filterEmptyFields = (detailsArray) => {
-    return detailsArray.filter(item => Object.values(item).some(value => value !== ''));
-  };
-
-  const filteredOtherDetails = filterEmptyFields(otherDetails);
-  const filteredStockDetails = filterEmptyFields(stockDetails);
-  const filteredMatDetails = filterEmptyFields(matDetails);
-  const filteredMacDetails = filterEmptyFields(macDetails);
-  const filteredWelDetails = filterEmptyFields(welDetails);
-  const filteredTransDetails = filterEmptyFields(transDetails);
-  const filteredSunDetails = filterEmptyFields(sunDetails);
-  const filteredLabDetails = filterEmptyFields(LabDetails);
-
-  const token = localStorage.getItem('token');
-
-  try {
-    await axios({
-      method: 'post',
-      url: `http://localhost:8081/api/sup/Supinsert/${id}`,
-      data: {
-        ...values,
-        otherDetails: filteredOtherDetails,
-        stockDetails: filteredStockDetails,
-        macDetails: filteredMacDetails,
-        matDetails: filteredMatDetails,
-        welDetails: filteredWelDetails,
-        sunDetails: filteredSunDetails,
-        LabDetails: filteredLabDetails,
-        transDetails: filteredTransDetails,
-        book_id: id
-      },
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    console.log(isInitialSubmission ? "Logbook entry added successfully" : "Logbook entry updated successfully");
-    setIsInitialSubmission(false); // After the first submission, switch to update mode
-    navigate('/Home');
-  } catch (err) {
-    if (err.response) {
-      console.error('Error with logbook entry:', err.response.status, err.response.data);
-      if (err.response.status === 400 && err.response.data.message === 'Entry already exists. Use the update route instead.') {
-        setIsInitialSubmission(false); // Switch to update mode if entry already exists
-      } else {
-        alert(`Error: ${err.response.data.message}`);
-      }
-    } else {
-      console.error('Error with logbook entry:', err.message);
-    }
-  }
-};
-
-  const createDetailsHandler = (detailsState, setDetailsState, defaultValues) => {
-    const handleChange = (event, index) => {
-      const { name, value } = event.target;
-      const newData = [...detailsState];
-      if (!newData[index]) {
-        newData[index] = {};
-      }
-      newData[index][name] = value;
-      setDetailsState(newData);
+    const handleChange = (e) => {
+        setValues({ ...values, [e.target.name]: e.target.value });
     };
 
-    const handleAdd = () => {
-      setDetailsState([...detailsState, defaultValues]);
-      setVisibleSections(visibleSections + 1);
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const validFiles = files.filter(
+            (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+        );
+        if (validFiles.length !== files.length) {
+            alert('Some files are invalid (too large or not an image).');
+        }
+        setSelectedFiles(validFiles);
     };
-    return { handleChange, handleAdd };
-  };
 
-  // Details handlers
-  const [otherDetails, setOtherDetails] = useState([
-    { other: '', other_cost: '', otherQ: '' }
-  ]);
-  const otherHandler = createDetailsHandler(otherDetails, setOtherDetails, { other: '', other_cost: '', otherQ: '' });
+    useEffect(() => {
+        const fetchEstimate = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No token found');
+                }
 
-  const [stockDetails, setStockDetails] = useState([
-    { Stock: '', Stock_cost: '', StockQ: '' }
-  ]);
-  const stockHandler = createDetailsHandler(stockDetails, setStockDetails, { Stock: '', Stock_cost: '', StockQ: '' });
+                const response = await axios.get(`http://localhost:8081/api/sup/Supselect/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-  const [matDetails, setMatDetails] = useState([
-    { Material: '', Mat_cost: '', MatQ: '' }
-  ]);
-  const matHandler = createDetailsHandler(matDetails, setMatDetails, { Material: '', Mat_cost: '', MatQ: '' });
+                if (response.status !== 200) {
+                    throw new Error(`Error fetching estimate: ${response.statusText}`);
+                }
 
-  const [LabDetails, setLabDetails] = useState([
-    { Labour: '', Lab_cost: '', LabQ: '' }
-  ]);
-  const labHandler = createDetailsHandler(LabDetails, setLabDetails, { Labour: '', Lab_cost: '', LabQ: '' });
+                const {No, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
+                const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
+                setValues({ supplimentID: id, No, Date : formattedDate, Estimated });
+                setIsInitialSubmission(false); // Switch to update mode
+            } catch (error) {
+                console.error('Error fetching estimate:', error);
+                alert(error.message);
+            }
+        };
 
-  const [macDetails, setMacDetails] = useState([
-    { Machining: '', Mac_cost: '', MacQ: '' }
-  ]);
-  const macHandler = createDetailsHandler(macDetails, setMacDetails, { Machining: '', Mac_cost: '', MacQ: '' });
+        fetchEstimate();
+    }, [id]);
 
-  const [welDetails, setWelDetails] = useState([
-    { Welding: '', Wel_cost: '', WelQ: '' }
-  ]);
-  const welHandler = createDetailsHandler(welDetails, setWelDetails, { Welding: '', Wel_cost: '', WelQ: '' });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
 
-  const [transDetails, setTransDetails] = useState([
-    { Transport: '', Trans_cost: '', TransQ: '' }
-  ]);
-  const transHandler = createDetailsHandler(transDetails, setTransDetails, { Transport: '', Trans_cost: '', TransQ: '' });
+        Object.keys(values).forEach((key) => {
+            formData.append(key, values[key]);
+        });
+        selectedFiles.forEach((file) => formData.append('images', file));
 
-  const [sunDetails, setSunDetails] = useState([
-    { Sundries: '', Sun_cost: '', SunQ: '' }
-  ]);
-  const sunHandler = createDetailsHandler(sunDetails, setSunDetails, { Sundries: '', Sun_cost: '', SunQ: '' });
+        const token = localStorage.getItem('token');
+        const url = isInitialSubmission
+            ? `http://localhost:8081/api/sup/Supinsert/${id}`
+            : `http://localhost:8081/api/sup/Supupdate/${id}`;
+        const method = isInitialSubmission ? 'post' : 'put';
 
+        try {
+            await axios({
+                method,
+                url,
+                data: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            alert(
+                isInitialSubmission
+                    ? 'Estimate created successfully'
+                    : 'Estimate updated successfully'
+            );
+            navigate('/home');
+        } catch (err) {
+            console.error('Error submitting estimation:', err.response?.data || err.message);
+            alert(err.response?.data?.error || err.message);
+        }
+    };
 
-
-  return (
-    <div className='formContainer-imp'>
-      <form onSubmit={handleSubmit} className='form'>
-      <div className='formTitle'>
-        Suppliment
-        {/* <Link to={`/dashes/${id}/supedit`}><FaEdit/></Link> */}
-      </div>
-        <div className='formGroup'>
-          <label className='label'>No:</label>
-          <input className='input' type='text' name='No' value={values.No} onChange={handleChange} />
+    return (
+        <div className="template d-flex align-items-center 100-w  sm:w-100 ">
+        <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+            <h3>Suppliment</h3>
+            <form className='mt-4'  onSubmit={handleSubmit}>
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">Estimate No:</label>
+                    <div className="col-sm-10">
+                        <input
+                            className="form-control"
+                            type="text"
+                            name="No"
+                            value={values.No}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">Date:</label>
+                    <div className="col-sm-10">
+                        <input
+                            className="form-control"
+                            type="date"
+                            name="Date"
+                            value={values.Date}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">Estimated by:</label>
+                    <div className="col-sm-10">
+                        <input
+                            className="form-control"
+                            type="text"
+                            name="Estimated"
+                            value={values.Estimated}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">Condition of vehicle:</label>
+                    <div className="col-sm-10">
+                        <input type="file" multiple onChange={handleFileChange} />
+                    </div>
+                </div>
+                <div className='d-grid'>
+                    <button className='btn btn-primary' type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
+                </div>
+            </form>
+            <SupNav />
+            {/* {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
+            {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
+            {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
+            {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
+            {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
+            {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />} */}
         </div>
-        <div className='formGroup'>
-          <label className='label'>Date:</label>
-          <input className='input' type='date' name='Date' value={values.Date} onChange={handleChange} />
         </div>
-        <div className='formGroup'>
-          <label className='label'>Estimated:</label>
-          <input className='input' type='text' name='Estimated' value={values.Estimated} onChange={handleChange} />
-        </div>
-        {/* <div className='form-Multi-btn'>
-          <label>Other:</label>
-          <button type='button' onClick={otherHandler.handleAdd}>Add More</button>
-        </div>
-        {otherDetails.map((other, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Other {index + 1}</label>
-              <input className='input' type='text' name='other' value={other.other} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Other Cost</label>
-              <input className='input' type='text' name='other_cost' value={other.other_cost} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Other Quantity</label>
-              <input className='input' type='text' name='otherQ' value={other.otherQ} onChange={e => otherHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Stock:</label>
-          <button type='button' onClick={stockHandler.handleAdd}>Add More</button>
-        </div>
-        {stockDetails.map((stock, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Stock {index + 1}</label>
-              <input className='input' type='text' name='Stock' value={stock.Stock} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Stock Cost</label>
-              <input className='input' type='text' name='Stock_cost' value={stock.Stock_cost} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Stock Quantity</label>
-              <input className='input' type='text' name='StockQ' value={stock.StockQ} onChange={e => stockHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))} */}
-        <div className='form-Multi-btn'>
-          <label>Material:</label>
-          <button type='button' onClick={matHandler.handleAdd}>Add More</button>
-        </div>
-        {matDetails.map((material, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Material {index + 1}</label>
-              <input className='input' type='text' name='Material' value={material.Material} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Material Cost</label>
-              <input className='input' type='text' name='Mat_cost' value={material.Mat_cost} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Material Quantity</label>
-              <input className='input' type='text' name='MatQ' value={material.MatQ} onChange={e => matHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Labour:</label>
-          <button type='button' onClick={labHandler.handleAdd}>Add More</button>
-        </div>
-        {LabDetails.map((labour, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Labour {index + 1}</label>
-              <input className='input' type='text' name='Labour' value={labour.Labour} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Labour Cost</label>
-              <input className='input' type='text' name='Lab_cost' value={labour.Lab_cost} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Labour Quantity</label>
-              <input className='input' type='text' name='LabQ' value={labour.LabQ} onChange={e => labHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Machining:</label>
-          <button type='button' onClick={macHandler.handleAdd}>Add More</button>
-        </div>
-        {macDetails.map((machining, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Machining {index + 1}</label>
-              <input className='input' type='text' name='Machining' value={machining.Machining} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Machining Cost</label>
-              <input className='input' type='text' name='Mac_cost' value={machining.Mac_cost} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label '>Machining Quantity</label>
-              <input className='input' type='text' name='MacQ' value={machining.MacQ} onChange={e => macHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Welding:</label>
-          <button type='button' onClick={welHandler.handleAdd}>Add More</button>
-        </div>
-        {welDetails.map((welding, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Welding {index + 1}</label>
-              <input className='input' type='text' name='Welding' value={welding.Welding} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Welding Cost</label>
-              <input className='input' type='text' name='Wel_cost' value={welding.Wel_cost} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Welding Quantity</label>
-              <input className='input' type='text' name='WelQ' value={welding.WelQ} onChange={e => welHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Transport:</label>
-          <button type='button' onClick={transHandler.handleAdd}>Add More</button>
-        </div>
-        {transDetails.map((trans, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Transport {index + 1}</label>
-              <input className='input' type='text' name='Transport' value={trans.Transport} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Transport Cost</label>
-              <input className='input' type='text' name='Trans_cost' value={trans.Trans_cost} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Transport Quantity</label>
-              <input className='input' type='text' name='TransQ' value={trans.TransQ} onChange={e => transHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Multi-btn'>
-          <label>Sundries:</label>
-          <button type='button' onClick={sunHandler.handleAdd}>Add More</button>
-        </div>
-        {sunDetails.map((sundries, index) => (
-          <div key={index} className='dateGroup'>
-            <div className='formGroup'>
-              <label className='label'>Sundries {index + 1}</label>
-              <input className='input' type='text' name='Sundries' value={sundries.Sundries} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Sundries Cost</label>
-              <input className='input' type='text' name='Sun_cost' value={sundries.Sun_cost} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-            <div className='formGroup'>
-              <label className='label'>Sundries Quantity</label>
-              <input className='input' type='text' name='SunQ' value={sundries.SunQ} onChange={e => sunHandler.handleChange(e, index)} />
-            </div>
-          </div>
-        ))}
-        <div className='form-Imp-btn'>
-          <button className='submitButton' type='submit'>Submit</button>
-        </div>
-      </form>
-    </div>
-  );
+    );
 }
 
-export default Suppliment;
+export default Supliment;
+
+// import axios from 'axios';
+// import { useParams, useNavigate } from 'react-router-dom';
+// import React, { useState, useEffect } from 'react';
+// import SupMac from '../SupCat/SupMac';
+// import SupLab from '../SupCat/SupLab';
+// import SupTrans from '../SupCat/SupTrans';
+// import SupWel from '../SupCat/SupWel';
+// import SupSun from '../SupCat/SupSun';
+// import SupMat from '../SupCat/SupMat';
+
+// function Supliment() {
+//     const { id } = useParams();
+//     const navigate = useNavigate();
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [selectedFiles, setSelectedFiles] = useState([]);
+//     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
+//     const [supplimentList, setSupplimentList] = useState([]);
+
+//     const handleChange = (e) => {
+//         setValues({ ...values, [e.target.name]: e.target.value });
+//     };
+
+//     const handleFileChange = (e) => {
+//         const files = Array.from(e.target.files);
+//         const validFiles = files.filter(
+//             (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+//         );
+//         if (validFiles.length !== files.length) {
+//             alert('Some files are invalid (too large or not an image).');
+//         }
+//         setSelectedFiles(validFiles);
+//     };
+
+//     useEffect(() => {
+//         const fetchEstimate = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/Supselect/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching estimate: ${response.statusText}`);
+//                 }
+
+//                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
+//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setIsInitialSubmission(false); // Switch to update mode
+//             } catch (error) {
+//                 console.error('Error fetching estimate:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         const fetchSupplimentList = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/fetchAllCategories/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching suppliment list: ${response.statusText}`);
+//                 }
+
+//                 setSupplimentList(response.data);
+//             } catch (error) {
+//                 console.error('Error fetching suppliment list:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         fetchEstimate();
+//         fetchSupplimentList();
+//     }, [id]);
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         const formData = new FormData();
+
+//         Object.keys(values).forEach((key) => {
+//             formData.append(key, values[key]);
+//         });
+//         selectedFiles.forEach((file) => formData.append('images', file));
+
+//         const token = localStorage.getItem('token');
+//         const url = isInitialSubmission
+//             ? `http://localhost:8081/api/sup/Supinsert/${id}`
+//             : `http://localhost:8081/api/sup/Supupdate/${id}`;
+//         const method = isInitialSubmission ? 'post' : 'put';
+
+//         try {
+//             await axios({
+//                 method,
+//                 url,
+//                 data: formData,
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     'Content-Type': 'multipart/form-data',
+//                 },
+//             });
+//             alert(
+//                 isInitialSubmission
+//                     ? 'Estimate created successfully'
+//                     : 'Estimate updated successfully'
+//             );
+//             navigate('/home');
+//         } catch (err) {
+//             console.error('Error submitting estimation:', err.response?.data || err.message);
+//             alert(err.response?.data?.error || err.message);
+//         }
+//     };
+
+//     const handleAddNewSuppliment = () => {
+//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setSelectedFiles([]);
+//         setIsInitialSubmission(true);
+//     };
+
+//     const handleViewSuppliment = (supplimentID) => {
+//         navigate(`/suppliment/${supplimentID}`);
+//     };
+
+//     return (
+//         <div className="formContainer-imp">
+//             <form className="form" onSubmit={handleSubmit}>
+//                 <div className="formTitle">Suppliment Estimation</div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimate No:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="No"
+//                         value={values.No}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Date:</label>
+//                     <input
+//                         className="input"
+//                         type="date"
+//                         name="Date"
+//                         value={values.Date}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimated by:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="Estimated"
+//                         value={values.Estimated}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Quotation Images:</label>
+//                     <input type="file" multiple onChange={handleFileChange} />
+//                 </div>
+//                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
+//             </form>
+//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             <div className="navigationButtons">
+//                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
+//                 {supplimentList.map((suppliment) => (
+//                     <button key={suppliment.id} onClick={() => handleViewSuppliment(suppliment.id)}>
+//                         View Suppliment {suppliment.No}
+//                     </button>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default Supliment;
+
+
+// import axios from 'axios';
+// import { useParams, useNavigate } from 'react-router-dom';
+// import React, { useState, useEffect } from 'react';
+// import SupMac from '../SupCat/SupMac';
+// import SupLab from '../SupCat/SupLab';
+// import SupTrans from '../SupCat/SupTrans';
+// import SupWel from '../SupCat/SupWel';
+// import SupSun from '../SupCat/SupSun';
+// import SupMat from '../SupCat/SupMat';
+
+// function Supliment() {
+//     const { id } = useParams();
+//     const navigate = useNavigate();
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [selectedFiles, setSelectedFiles] = useState([]);
+//     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
+//     const [supplimentList, setSupplimentList] = useState([]);
+
+//     const handleChange = (e) => {
+//         setValues({ ...values, [e.target.name]: e.target.value });
+//     };
+
+//     const handleFileChange = (e) => {
+//         const files = Array.from(e.target.files);
+//         const validFiles = files.filter(
+//             (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+//         );
+//         if (validFiles.length !== files.length) {
+//             alert('Some files are invalid (too large or not an image).');
+//         }
+//         setSelectedFiles(validFiles);
+//     };
+
+//     useEffect(() => {
+//         const fetchEstimate = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/Supselect/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching estimate: ${response.statusText}`);
+//                 }
+
+//                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
+//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setIsInitialSubmission(false); // Switch to update mode
+//             } catch (error) {
+//                 console.error('Error fetching estimate:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         const fetchSupplimentList = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/fetchAllCategories/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching suppliment list: ${response.statusText}`);
+//                 }
+
+//                 setSupplimentList(response.data);
+//             } catch (error) {
+//                 console.error('Error fetching suppliment list:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         fetchEstimate();
+//         fetchSupplimentList();
+//     }, [id]);
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         const formData = new FormData();
+
+//         Object.keys(values).forEach((key) => {
+//             formData.append(key, values[key]);
+//         });
+//         selectedFiles.forEach((file) => formData.append('images', file));
+
+//         const token = localStorage.getItem('token');
+//         const url = isInitialSubmission
+//             ? `http://localhost:8081/api/sup/Supinsert/${id}`
+//             : `http://localhost:8081/api/sup/Supupdate/${id}`;
+//         const method = isInitialSubmission ? 'post' : 'put';
+
+//         try {
+//             await axios({
+//                 method,
+//                 url,
+//                 data: formData,
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     'Content-Type': 'multipart/form-data',
+//                 },
+//             });
+//             alert(
+//                 isInitialSubmission
+//                     ? 'Estimate created successfully'
+//                     : 'Estimate updated successfully'
+//             );
+//             navigate('/home');
+//         } catch (err) {
+//             console.error('Error submitting estimation:', err.response?.data || err.message);
+//             alert(err.response?.data?.error || err.message);
+//         }
+//     };
+
+//     const handleAddNewSuppliment = () => {
+//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setSelectedFiles([]);
+//         setIsInitialSubmission(true);
+//     };
+
+//     const handleViewSuppliment = (supplimentID) => {
+//         navigate(`/suppliment/${supplimentID}`);
+//     };
+
+//     const handlePreviousSuppliment = () => {
+//         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
+//         if (currentIndex > 0) {
+//             const previousSupplimentID = supplimentList[currentIndex - 1].id;
+//             navigate(`/suppliment/${previousSupplimentID}`);
+//         }
+//     };
+
+//     const handleNextSuppliment = () => {
+//         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
+//         if (currentIndex < supplimentList.length - 1) {
+//             const nextSupplimentID = supplimentList[currentIndex + 1].id;
+//             navigate(`/suppliment/${nextSupplimentID}`);
+//         }
+//     };
+
+//     return (
+//         <div className="formContainer-imp">
+//             <form className="form" onSubmit={handleSubmit}>
+//                 <div className="formTitle">Suppliment Estimation</div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimate No:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="No"
+//                         value={values.No}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Date:</label>
+//                     <input
+//                         className="input"
+//                         type="date"
+//                         name="Date"
+//                         value={values.Date}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimated by:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="Estimated"
+//                         value={values.Estimated}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Quotation Images:</label>
+//                     <input type="file" multiple onChange={handleFileChange} />
+//                 </div>
+//                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
+//             </form>
+//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             <div className="navigationButtons">
+//                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
+//                 <button onClick={handlePreviousSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === 0}>Previous</button>
+//                 <button onClick={handleNextSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === supplimentList.length - 1}>Next</button>
+//                 {supplimentList.map((suppliment) => (
+//                     <button key={suppliment.id} onClick={() => handleViewSuppliment(suppliment.id)}>
+//                         View Suppliment {suppliment.No}
+//                     </button>
+//                 ))}
+//             </div>
+            
+//         </div>
+//     );
+// }
+
+// export default Supliment;
+
+// import axios from 'axios';
+// import { useParams, useNavigate } from 'react-router-dom';
+// import React, { useState, useEffect } from 'react';
+// import SupMac from '../SupCat/SupMac';
+// import SupLab from '../SupCat/SupLab';
+// import SupTrans from '../SupCat/SupTrans';
+// import SupWel from '../SupCat/SupWel';
+// import SupSun from '../SupCat/SupSun';
+// import SupMat from '../SupCat/SupMat';
+
+// function Supliment() {
+//     const { id } = useParams();
+//     const navigate = useNavigate();
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [selectedFiles, setSelectedFiles] = useState([]);
+//     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
+//     const [supplimentList, setSupplimentList] = useState([]);
+
+//     const handleChange = (e) => {
+//         setValues({ ...values, [e.target.name]: e.target.value });
+//     };
+
+//     const handleFileChange = (e) => {
+//         const files = Array.from(e.target.files);
+//         const validFiles = files.filter(
+//             (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+//         );
+//         if (validFiles.length !== files.length) {
+//             alert('Some files are invalid (too large or not an image).');
+//         }
+//         setSelectedFiles(validFiles);
+//     };
+
+//     useEffect(() => {
+//         const fetchEstimate = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/Supselect/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching estimate: ${response.statusText}`);
+//                 }
+
+//                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
+//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setIsInitialSubmission(false); // Switch to update mode
+//             } catch (error) {
+//                 console.error('Error fetching estimate:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         const fetchSupplimentList = async () => {
+//             try {
+//                 const token = localStorage.getItem('token');
+//                 if (!token) {
+//                     throw new Error('No token found');
+//                 }
+
+//                 const response = await axios.get(`http://localhost:8081/api/sup/fetchAllCategories/${id}`, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                 });
+
+//                 if (response.status !== 200) {
+//                     throw new Error(`Error fetching suppliment list: ${response.statusText}`);
+//                 }
+
+//                 setSupplimentList(response.data);
+//             } catch (error) {
+//                 console.error('Error fetching suppliment list:', error);
+//                 alert(error.message);
+//             }
+//         };
+
+//         fetchEstimate();
+//         fetchSupplimentList();
+//     }, [id]);
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         const formData = new FormData();
+
+//         Object.keys(values).forEach((key) => {
+//             formData.append(key, values[key]);
+//         });
+//         selectedFiles.forEach((file) => formData.append('images', file));
+
+//         const token = localStorage.getItem('token');
+//         const url = isInitialSubmission
+//             ? `http://localhost:8081/api/sup/Supinsert/${id}`
+//             : `http://localhost:8081/api/sup/Supupdate/${id}`;
+//         const method = isInitialSubmission ? 'post' : 'put';
+
+//         try {
+//             await axios({
+//                 method,
+//                 url,
+//                 data: formData,
+//                 headers: {
+//                     Authorization: `Bearer ${token}`,
+//                     'Content-Type': 'multipart/form-data',
+//                 },
+//             });
+//             alert(
+//                 isInitialSubmission
+//                     ? 'Estimate created successfully'
+//                     : 'Estimate updated successfully'
+//             );
+//             navigate('/home');
+//         } catch (err) {
+//             console.error('Error submitting estimation:', err.response?.data || err.message);
+//             alert(err.response?.data?.error || err.message);
+//         }
+//     };
+
+//     const handleAddNewSuppliment = () => {
+//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setSelectedFiles([]);
+//         setIsInitialSubmission(true);
+//     };
+
+//     const handleViewSuppliment = (supplimentID) => {
+//         navigate(`/suppliment/${supplimentID}`);
+//     };
+
+//     const handlePreviousSuppliment = () => {
+//         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
+//         if (currentIndex > 0) {
+//             const previousSupplimentID = supplimentList[currentIndex - 1].id;
+//             navigate(`/suppliment/${previousSupplimentID}`);
+//         }
+//     };
+
+//     const handleNextSuppliment = () => {
+//         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
+//         if (currentIndex < supplimentList.length - 1) {
+//             const nextSupplimentID = supplimentList[currentIndex + 1].id;
+//             navigate(`/suppliment/${nextSupplimentID}`);
+//         }
+//     };
+
+//     return (
+//         <div className="formContainer-imp">
+//             <form className="form" onSubmit={handleSubmit}>
+//                 <div className="formTitle">Suppliment Estimation</div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimate No:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="No"
+//                         value={values.No}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Date:</label>
+//                     <input
+//                         className="input"
+//                         type="date"
+//                         name="Date"
+//                         value={values.Date}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Estimated by:</label>
+//                     <input
+//                         className="input"
+//                         type="text"
+//                         name="Estimated"
+//                         value={values.Estimated}
+//                         onChange={handleChange}
+//                     />
+//                 </div>
+//                 <div className="formGroup">
+//                     <label className="label">Quotation Images:</label>
+//                     <input type="file" multiple onChange={handleFileChange} />
+//                 </div>
+//                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
+//             </form>
+//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
+//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             <div className="navigationButtons">
+//                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
+//                 <button onClick={handlePreviousSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === 0}>Previous</button>
+//                 <button onClick={handleNextSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === supplimentList.length - 1}>Next</button>
+//                 {supplimentList.map((suppliment) => (
+//                     <button key={suppliment.id} onClick={() => handleViewSuppliment(suppliment.id)}>
+//                         View Suppliment {suppliment.No}
+//                     </button>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default Supliment;

@@ -1,9 +1,7 @@
-.formContainer-imp{
+/* .formContainer-imp{
     width: 80%;
     padding-left: 5%;
-    /* padding-left: 10px; */
     overflow-y: auto;
-    /* margin-bottom: 5%; */
     padding-bottom: 10%;
     padding-top: 10px;
 }
@@ -16,7 +14,6 @@
 }
 .form{
     width: 70%;
-    /* margin-left: 10%; */
     padding-bottom: 10%;
 }
 .dataGroup{
@@ -31,7 +28,6 @@
 }
 .addMaterial{
     display: flex;
-    /* justify-content: space-between; */
     gap: 50px;
 }
 .addMaterial button{
@@ -72,8 +68,6 @@
     box-shadow: 1px 1px 5px #264ee2;
 }
 .underline{
-    /* text-decoration: underline; */
-    /* color: #000; */
     border: 1px solid #717070;
     margin-top: 10px;
     margin-bottom: 20px;
@@ -90,4 +84,4 @@
 }
 .dateGroup .formGroup{
     width: 30%;
-}
+} */

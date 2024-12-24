@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 function Completion() {
     const navigate = useNavigate();
     const { id } = useParams();
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false); // Track if data already exists
     const [values, setValues] = useState({
         ID: id,
@@ -54,37 +55,142 @@ function Completion() {
                 console.error(`Error ${isUpdate ? 'updating' : 'adding'} completion details:`, err);
             });
     };
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const validFiles = files.filter(
+            (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+        );
+        if (validFiles.length !== files.length) {
+            alert('Some files are invalid (too large or not an image).');
+        }
+        setSelectedFiles(validFiles);
+    }
 
     return (
-        <div className='formContainer-com'>
-            {/* <div className='formTitle'>Completion</div> */}
-            <form onSubmit={handleUpdate} className='form'>
-                <div className='formTitle'>Completion</div>
-                <div className='formGroup'>
-                    <label className='label'>Supervised:</label>
-                    <input className='input' type='text' name='supervised' value={values.supervised} onChange={(e) => setValues({ ...values, supervised: e.target.value })} />
-                </div>
-                <div className='formGroup'>
-                    <label className='label'>Initiated:</label>
-                    <input className='input' type='text' name='initiated' value={values.initiated} onChange={(e) => setValues({ ...values, initiated: e.target.value })} />
-                </div>
-                <div className='formGroup'>
-                    <label className='label'>Closed:</label>
-                    <input className='input' type='text' name='closed' value={values.closed} onChange={(e) => setValues({ ...values, closed: e.target.value })} />
-                </div>
-                <div className='formGroup'>
-                    <label className='label'>Approved:</label>
-                    <input className='input' type='text' name='approved' value={values.approved} onChange={(e) => setValues({ ...values, approved: e.target.value })} />
-                </div>
-                <div className='formGroup'>
-                    <label className='label'>Aditional Fault:</label>
-                    <input className='textarea' type='text' name='aditional_fault' value={values.aditional_fault} onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })} />
-                </div>
-                <div className='form-Imp-btn'>
-                    <button type='submit'>{isUpdate ? 'Update' : 'Add'}</button>
-                </div>
-            </form>
+        <div className="template d-flex align-items-center 100-w sm:w-100">
+            <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+                <form onSubmit={handleUpdate}>
+                    <h3>Completion</h3>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Supervised by:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='supervised'
+                                value={values.supervised}
+                                onChange={(e) => setValues({ ...values, supervised: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Initiated by:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='initiated'
+                                value={values.initiated}
+                                onChange={(e) => setValues({ ...values, initiated: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Closed by:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='closed'
+                                value={values.closed}
+                                onChange={(e) => setValues({ ...values, closed: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Approved by:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='approved'
+                                value={values.approved}
+                                onChange={(e) => setValues({ ...values, approved: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Voucher:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='aditional_fault'
+                                value={values.aditional_fault}
+                                onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Aditional Fault:</label>
+                        <div className='col-sm-10'>
+                            <textarea
+                                type='text'
+                                rows={4}
+                                className='form-control'
+                                name='aditional_fault'
+                                value={values.aditional_fault}
+                                onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })}
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Image</label>
+                        <div className="col-sm-10">
+                            <input className="form-control" type="file" multiple onChange={handleFileChange} />
+                        </div>
+                    </div>
+                    <div className='d-grid'>
+                        <button type='submit' className='btn btn-primary'>
+                            {isUpdate ? 'Update' : 'Submit'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
+        // <div className='formContainer-com'>
+        //     {/* <div className='formTitle'>Completion</div> */}
+        //     <form onSubmit={handleUpdate} className='form'>
+        //         <div className='formTitle'>Completion</div>
+        //         <div className='formGroup'>
+        //             <label className='label'>Supervised by:</label>
+        //             <input className='input' type='text' name='supervised' value={values.supervised} onChange={(e) => setValues({ ...values, supervised: e.target.value })} />
+        //         </div>
+        //         <div className='formGroup'>
+        //             <label className='label'>Initiated by:</label>
+        //             <input className='input' type='text' name='initiated' value={values.initiated} onChange={(e) => setValues({ ...values, initiated: e.target.value })} />
+        //         </div>
+        //         <div className='formGroup'>
+        //             <label className='label'>Closed by:</label>
+        //             <input className='input' type='text' name='closed' value={values.closed} onChange={(e) => setValues({ ...values, closed: e.target.value })} />
+        //         </div>
+        //         <div className='formGroup'>
+        //             <label className='label'>Approved by:</label>
+        //             <input className='input' type='text' name='approved' value={values.approved} onChange={(e) => setValues({ ...values, approved: e.target.value })} />
+        //         </div>
+        //         <div className='formGroup'> 
+        //             <label className='label'>Voucher:</label>
+        //             <input className='text' type='text' name='aditional_fault' value={values.aditional_fault} onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })} />
+        //         </div>
+        //         <div className='formGroup'>
+        //             <label className='label'>Aditional Fault:</label>
+        //             <input className='textarea' type='text' name='aditional_fault' value={values.aditional_fault} onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })} />
+        //         </div>
+        //         <div className='form-Imp-btn'>
+        //             <button type='submit'>{isUpdate ? 'Update' : 'Add'}</button>
+        //         </div>
+        //     </form>
+        // </div>
     )
 }
 

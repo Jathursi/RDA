@@ -4,7 +4,7 @@ import Logbook from './Logbook.js';
 
 const Estimate = sequelize.define('Estimate', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
@@ -17,12 +17,14 @@ const Estimate = sequelize.define('Estimate', {
         allowNull: false,
     },
     LogbookID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
             model: Logbook,
             key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     },
 }, {
     tableName: 'estimates',

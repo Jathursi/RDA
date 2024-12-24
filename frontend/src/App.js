@@ -17,12 +17,15 @@ import Estimation from './DashOutlets/Estimation'
 import Supliment from './DashOutlets/Supliment'
 import Attachment from './DashOutlets/Attachment'
 import Outsource from './DashOutlets/Outsource'
-import CompEmail from './DashOutlets/CompEmail'
 import Comprint from './DashOutlets/Comprint'
 import Completion from './DashOutlets/Completion'
 import EstPrint from './DashOutlets/EstPrint'
 import Estemail from './DashOutlets/Estemail'
 import UserInfo from './DashOutlets/UserInfo'
+import CompEmail from './DashOutlets/CompEmail'
+// import Comprint from './DashOutlets/Comprint'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 function App() {
   return (
@@ -47,6 +50,8 @@ function App() {
             <Route path='estprint' element={<EstPrint />} />
             <Route path='estemail' element={<Estemail />} />
             <Route path='userinfo' element={<UserInfo />} />
+            <Route path='compemail' element={<CompEmail />} />
+            <Route path='comprint' element={<Comprint />} />
           </Route>
           <Route path='/home' element={<Navigate to={'main'} />} />
           <Route path='/home' element={<Home />}>

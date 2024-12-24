@@ -1,9 +1,12 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-    // { Machining: '', Mac_cost: '', MacQ: '' }
-
 const Estmac = sequelize.define('Estmac', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     Machining: {
         type: DataTypes.STRING,
         allowNull: false
@@ -16,13 +19,15 @@ const Estmac = sequelize.define('Estmac', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    EstID: {
+    supID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'estimates',
+            model: 'supplier',
             key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     }
 },
 {
