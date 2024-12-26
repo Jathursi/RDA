@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Outlethome.css';
 import { Link } from 'react-router-dom';
 
 function Main({ searchTerm }) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
@@ -33,7 +33,7 @@ function Main({ searchTerm }) {
   );
 
   return (
-    <div className='mx-2 '>
+    <div className='mx-2'>
       <table className="table caption-top">
         {/* <caption>Log book</caption> */}
         <thead>
@@ -69,7 +69,9 @@ function Main({ searchTerm }) {
                     </Link>
                   </div>
                   <div className='col-sm-2'>
-                    <button className='btn btn-primary' onClick={() => navigate('details')}>details</button>
+                    <Link to={`/home/details/${book.id}`}>
+                    <button className='btn btn-primary' >details</button>
+                    </Link>
                   </div>
                 </td>
               </tr>

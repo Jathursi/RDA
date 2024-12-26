@@ -6,6 +6,7 @@ function EstLab({ values: initialValues }) {
     const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Suppliers: '',
+        QuotationNo:'',
         Quotationimg: [],
     });
 
@@ -44,6 +45,7 @@ function EstLab({ values: initialValues }) {
         console.log(EstID); // Log EstID to ensure it is correct
         const formData = new FormData();
         formData.append('Suppliers', values.Suppliers);
+        formData.append('QuotationNo', values.QuotationNo);
         formData.append('details', JSON.stringify(labDetails));
 
         // Append images
@@ -52,7 +54,7 @@ function EstLab({ values: initialValues }) {
         });
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/est/submitCategory/labour/${EstID}`, formData, {
+            await axios.post(`http://localhost:8081/api/est/submitCategory/labour/${EstID}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -76,6 +78,18 @@ function EstLab({ values: initialValues }) {
                             name='Suppliers'
                             value={values.Suppliers}
                             onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
+                        />
+                    </div>
+                </div>
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">Quotation Number:</label>
+                    <div className="col-sm-10">
+                        <input
+                            type='text'
+                            className='form-control'
+                            name='QuotationNo'
+                            value={values.QuotationNo}
+                            onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
                         />
                     </div>
                 </div>

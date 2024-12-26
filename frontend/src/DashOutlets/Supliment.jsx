@@ -6,7 +6,7 @@ import SupNav from '../SupCat/SupNav';
 function Supliment() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+    const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supID: '' });
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
 
@@ -43,7 +43,7 @@ function Supliment() {
 
                 const {No, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
                 const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
-                setValues({ supplimentID: id, No, Date : formattedDate, Estimated });
+                setValues({ supID: id, No, Date : formattedDate, Estimated });
                 setIsInitialSubmission(false); // Switch to update mode
             } catch (error) {
                 console.error('Error fetching estimate:', error);
@@ -142,13 +142,13 @@ function Supliment() {
                     <button className='btn btn-primary' type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
                 </div>
             </form>
-            <SupNav />
-            {/* {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
-            {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
-            {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
-            {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
-            {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
-            {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />} */}
+            {values.supID && <SupNav values={{supID: values.supID}}/>}
+            {/* {values.supID && <SupMat values={{ supID: values.supID }} />}
+            {values.supID && <SupMac values={{ supID: values.supID }} />}
+            {values.supID && <SupTrans values={{ supID: values.supID }} />}
+            {values.supID && <SupWel values={{ supID: values.supID }} />}
+            {values.supID && <SupSun values={{ supID: values.supID }} />}
+            {values.supID && <SupLab values={{ supID: values.supID }} />} */}
         </div>
         </div>
     );
@@ -169,7 +169,7 @@ export default Supliment;
 // function Supliment() {
 //     const { id } = useParams();
 //     const navigate = useNavigate();
-//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supID: '' });
 //     const [selectedFiles, setSelectedFiles] = useState([]);
 //     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
 //     const [supplimentList, setSupplimentList] = useState([]);
@@ -206,7 +206,7 @@ export default Supliment;
 //                 }
 
 //                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
-//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setValues({ supID: id, Date, Estimated, No });
 //                 setIsInitialSubmission(false); // Switch to update mode
 //             } catch (error) {
 //                 console.error('Error fetching estimate:', error);
@@ -278,13 +278,13 @@ export default Supliment;
 //     };
 
 //     const handleAddNewSuppliment = () => {
-//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setValues({ No: '', Date: '', Estimated: '', supID: '' });
 //         setSelectedFiles([]);
 //         setIsInitialSubmission(true);
 //     };
 
-//     const handleViewSuppliment = (supplimentID) => {
-//         navigate(`/suppliment/${supplimentID}`);
+//     const handleViewSuppliment = (supID) => {
+//         navigate(`/suppliment/${supID}`);
 //     };
 
 //     return (
@@ -327,12 +327,12 @@ export default Supliment;
 //                 </div>
 //                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
 //             </form>
-//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             {values.supID && <SupMat values={{ supID: values.supID }} />}
+//             {values.supID && <SupMac values={{ supID: values.supID }} />}
+//             {values.supID && <SupTrans values={{ supID: values.supID }} />}
+//             {values.supID && <SupWel values={{ supID: values.supID }} />}
+//             {values.supID && <SupSun values={{ supID: values.supID }} />}
+//             {values.supID && <SupLab values={{ supID: values.supID }} />}
 //             <div className="navigationButtons">
 //                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
 //                 {supplimentList.map((suppliment) => (
@@ -361,7 +361,7 @@ export default Supliment;
 // function Supliment() {
 //     const { id } = useParams();
 //     const navigate = useNavigate();
-//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supID: '' });
 //     const [selectedFiles, setSelectedFiles] = useState([]);
 //     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
 //     const [supplimentList, setSupplimentList] = useState([]);
@@ -398,7 +398,7 @@ export default Supliment;
 //                 }
 
 //                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
-//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setValues({ supID: id, Date, Estimated, No });
 //                 setIsInitialSubmission(false); // Switch to update mode
 //             } catch (error) {
 //                 console.error('Error fetching estimate:', error);
@@ -470,28 +470,28 @@ export default Supliment;
 //     };
 
 //     const handleAddNewSuppliment = () => {
-//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setValues({ No: '', Date: '', Estimated: '', supID: '' });
 //         setSelectedFiles([]);
 //         setIsInitialSubmission(true);
 //     };
 
-//     const handleViewSuppliment = (supplimentID) => {
-//         navigate(`/suppliment/${supplimentID}`);
+//     const handleViewSuppliment = (supID) => {
+//         navigate(`/suppliment/${supID}`);
 //     };
 
 //     const handlePreviousSuppliment = () => {
 //         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
 //         if (currentIndex > 0) {
-//             const previousSupplimentID = supplimentList[currentIndex - 1].id;
-//             navigate(`/suppliment/${previousSupplimentID}`);
+//             const previoussupID = supplimentList[currentIndex - 1].id;
+//             navigate(`/suppliment/${previoussupID}`);
 //         }
 //     };
 
 //     const handleNextSuppliment = () => {
 //         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
 //         if (currentIndex < supplimentList.length - 1) {
-//             const nextSupplimentID = supplimentList[currentIndex + 1].id;
-//             navigate(`/suppliment/${nextSupplimentID}`);
+//             const nextsupID = supplimentList[currentIndex + 1].id;
+//             navigate(`/suppliment/${nextsupID}`);
 //         }
 //     };
 
@@ -535,12 +535,12 @@ export default Supliment;
 //                 </div>
 //                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
 //             </form>
-//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             {values.supID && <SupMat values={{ supID: values.supID }} />}
+//             {values.supID && <SupMac values={{ supID: values.supID }} />}
+//             {values.supID && <SupTrans values={{ supID: values.supID }} />}
+//             {values.supID && <SupWel values={{ supID: values.supID }} />}
+//             {values.supID && <SupSun values={{ supID: values.supID }} />}
+//             {values.supID && <SupLab values={{ supID: values.supID }} />}
 //             <div className="navigationButtons">
 //                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
 //                 <button onClick={handlePreviousSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === 0}>Previous</button>
@@ -571,7 +571,7 @@ export default Supliment;
 // function Supliment() {
 //     const { id } = useParams();
 //     const navigate = useNavigate();
-//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//     const [values, setValues] = useState({ No: '', Date: '', Estimated: '', supID: '' });
 //     const [selectedFiles, setSelectedFiles] = useState([]);
 //     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
 //     const [supplimentList, setSupplimentList] = useState([]);
@@ -608,7 +608,7 @@ export default Supliment;
 //                 }
 
 //                 const { Date, Estimated, No } = response.data.suppliment; // Ensure this matches the response structure
-//                 setValues({ supplimentID: id, Date, Estimated, No });
+//                 setValues({ supID: id, Date, Estimated, No });
 //                 setIsInitialSubmission(false); // Switch to update mode
 //             } catch (error) {
 //                 console.error('Error fetching estimate:', error);
@@ -680,28 +680,28 @@ export default Supliment;
 //     };
 
 //     const handleAddNewSuppliment = () => {
-//         setValues({ No: '', Date: '', Estimated: '', supplimentID: '' });
+//         setValues({ No: '', Date: '', Estimated: '', supID: '' });
 //         setSelectedFiles([]);
 //         setIsInitialSubmission(true);
 //     };
 
-//     const handleViewSuppliment = (supplimentID) => {
-//         navigate(`/suppliment/${supplimentID}`);
+//     const handleViewSuppliment = (supID) => {
+//         navigate(`/suppliment/${supID}`);
 //     };
 
 //     const handlePreviousSuppliment = () => {
 //         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
 //         if (currentIndex > 0) {
-//             const previousSupplimentID = supplimentList[currentIndex - 1].id;
-//             navigate(`/suppliment/${previousSupplimentID}`);
+//             const previoussupID = supplimentList[currentIndex - 1].id;
+//             navigate(`/suppliment/${previoussupID}`);
 //         }
 //     };
 
 //     const handleNextSuppliment = () => {
 //         const currentIndex = supplimentList.findIndex(suppliment => suppliment.id === parseInt(id));
 //         if (currentIndex < supplimentList.length - 1) {
-//             const nextSupplimentID = supplimentList[currentIndex + 1].id;
-//             navigate(`/suppliment/${nextSupplimentID}`);
+//             const nextsupID = supplimentList[currentIndex + 1].id;
+//             navigate(`/suppliment/${nextsupID}`);
 //         }
 //     };
 
@@ -745,12 +745,12 @@ export default Supliment;
 //                 </div>
 //                 <button type="submit">{isInitialSubmission ? 'Submit' : 'Update'}</button>
 //             </form>
-//             {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
-//             {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+//             {values.supID && <SupMat values={{ supID: values.supID }} />}
+//             {values.supID && <SupMac values={{ supID: values.supID }} />}
+//             {values.supID && <SupTrans values={{ supID: values.supID }} />}
+//             {values.supID && <SupWel values={{ supID: values.supID }} />}
+//             {values.supID && <SupSun values={{ supID: values.supID }} />}
+//             {values.supID && <SupLab values={{ supID: values.supID }} />}
 //             <div className="navigationButtons">
 //                 <button onClick={handleAddNewSuppliment}>Add New Suppliment</button>
 //                 <button onClick={handlePreviousSuppliment} disabled={supplimentList.findIndex(suppliment => suppliment.id === parseInt(id)) === 0}>Previous</button>

@@ -32,7 +32,7 @@ function Estimation() {
                 throw new Error('No token found');
             }
 
-            const response = await axios.get(`http://localhost:8081/api/est/Estselect/${id}`, {
+            const response = await axios.get(`http://localhost:8081/api/est/est/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -125,7 +125,7 @@ function Estimation() {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">Quotation Images:</label>
+                        <label className="col-sm-2 col-form-label">Vehicle condition Images:</label>
                         <div className="col-sm-10">
                             <input className="form-control" type="file" multiple onChange={handleFileChange} />
                         </div>

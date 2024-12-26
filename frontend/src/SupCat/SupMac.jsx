@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function SupMac({ values: initialValues }) {
-    const { supplimentID } = initialValues;
+    const { supID } = initialValues;
     const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Suppliers: '',
+        QuotationNo: '',
         Quotationimg: [],
     });
 
@@ -41,9 +42,10 @@ function SupMac({ values: initialValues }) {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(supplimentID); // Log EstID to ensure it is correct
+        console.log(supID); // Log supID to ensure it is correct
         const formData = new FormData();
         formData.append('Suppliers', values.Suppliers);
+        formData.append('QuotationNo', values.QuotationNo);
         formData.append('details', JSON.stringify(macDetails));
 
         // Append images
@@ -52,7 +54,7 @@ function SupMac({ values: initialValues }) {
         });
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/sup/submitCategory/machining/${supplimentID}`, formData, {
+            const response = await axios.post(`http://localhost:8081/api/sup/submitCategory/machining/${supID}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -65,62 +67,89 @@ function SupMac({ values: initialValues }) {
     };
 
     return (
-        <div className='formContainer-imp'>
-            <h1>Machining Details</h1>
-            <form className='form' onSubmit={handleSubmit}>
-                <div className='form-group'>
-                    <label>Supplier</label>
+        <form className='mt-4' onSubmit={handleSubmit}>
+            <h3>Machining Details</h3>
+            <div className='row mb-3'>
+                <label className='col-sm-2 col-form-label'>Suppliers:</label>
+                <div className='col-sm-10'>
                     <input
                         type='text'
+                        className='form-control'
                         name='Suppliers'
                         value={values.Suppliers}
                         onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
-                        placeholder='Suppliers'
                     />
                 </div>
-                
-                {/* File Input for Quotation Images */}
-                <div className='form-group'>
-                    <label>Quotation Images</label>
+            </div>
+            <div className='row mb-3'>
+                <label className='col-sm-2 col-form-label'>Quotation Number:</label>
+                <div className='col-sm-10'>
+                    <input
+                        type='text'
+                        className='form-control'
+                        name='QuotationNo'
+                        value={values.QuotationNo}
+                        onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
+                    />
+                </div>
+            </div>
+            <div className='row mb-3'>
+                <label className='col-sm-2 col-form-label'>Quotation Images:</label>
+                <div className='col-sm-10'>
                     <input
                         type='file'
                         name='Quotationimg'
+                        className='form-control'
                         multiple
                         onChange={handleFileChange}
                     />
                 </div>
-
-                {/* Machining Details Input */}
-                {macDetails.map((mac, index) => (
-                    <div key={index}>
-                        <input
-                            type='text'
-                            name='Machining'
-                            value={mac.Machining}
-                            onChange={(e) => macHandler.handleChange(e, index)}
-                            placeholder='Machining'
-                        />
-                        <input
-                            type='number'
-                            name='Mac_cost'
-                            value={mac.Mac_cost}
-                            onChange={(e) => macHandler.handleChange(e, index)}
-                            placeholder='Machining Cost'
-                        />
-                        <input
-                            type='number'
-                            name='MacQ'
-                            value={mac.MacQ}
-                            onChange={(e) => macHandler.handleChange(e, index)}
-                            placeholder='Machining Quantity'
-                        />
+            </div>
+            {macDetails.map((mac, index) => (
+                <div key={index}>
+                    <div className='row mb-3'>
+                        <label className='col-sm-2 col-form-label'>Machining:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Machining'
+                                value={mac.Machining}
+                                onChange={(e) => macHandler.handleChange(e, index)}
+                            />
+                        </div>
                     </div>
-                ))}
-                <button type="button" onClick={macHandler.handleAdd}>Add Machining</button>
-
-                <button type='submit'>Submit Estimation</button>
-            </form>
-        </div>
+                    <div className='row mb-3'>
+                        <label className='col-sm-2 col-form-label'>Machining Cost:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='number'
+                                className='form-control'
+                                name='Mac_cost'
+                                value={mac.Mac_cost}
+                                onChange={(e) => macHandler.handleChange(e, index)}
+                            />
+                        </div>
+                    </div>
+                    <div className='row mb-3'>
+                        <label className='col-sm-2 col-form-label'>Machining Quantity:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='number'
+                                className='form-control'
+                                name='MacQ'
+                                value={mac.MacQ}
+                                onChange={(e) => macHandler.handleChange(e, index)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ))}
+            <div className='d-grid gap-3'>
+                <button type="button" className="btn btn-secondary" onClick={macHandler.handleAdd}>Add Machining</button>
+                <button type='submit' className='btn btn-primary'>Submit Estimation</button>
+            </div>
+        </form>
     );
 }
 

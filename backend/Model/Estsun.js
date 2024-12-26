@@ -19,7 +19,7 @@ const Estsun = sequelize.define('Estsun', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'estimate',
+            model: 'estimates',
             key: 'id'
         },
         onDelete: 'CASCADE',

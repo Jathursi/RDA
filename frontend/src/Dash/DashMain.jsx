@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 function DashMain({ Toggle }) {
   return (
     <div className="d-flex flex-column h-100">
-      <div className="sticky-top bg-light">
+      <div className="topnav sticky-top bg-light  shadow-sm">
         <DashTopnav Toggle={Toggle} />
       </div>
       <div className=" p-0 mt-5 overflow-hidden  sm:p-5 overflow-auto">

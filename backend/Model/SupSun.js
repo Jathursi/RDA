@@ -1,8 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-    // { Sundries: '', Sun_cost: '', SunQ: '' }
-
 const SupSun = sequelize.define('SupSun', {
     id: {
         type: DataTypes.INTEGER,
@@ -17,15 +15,11 @@ const SupSun = sequelize.define('SupSun', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    SunQ: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     supID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'supsupplier',
+            model: 'suppliment',
             key: 'id'
         },
         onDelete: 'CASCADE',

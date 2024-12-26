@@ -53,13 +53,14 @@ function App() {
             <Route path='compemail' element={<CompEmail />} />
             <Route path='comprint' element={<Comprint />} />
           </Route>
-          <Route path='/home' element={<Navigate to={'main'} />} />
+          {/* <Route path='/home' element={<Navigate to={'main'} />} /> */}
           <Route path='/home' element={<Home />}>
+            <Route index element={<Navigate to='main' />} /> 
             <Route path='main' element={<Main />} />
             <Route path='feedback' element={<Feedback />} />
             <Route path='regist' element={<Regist />} />
             <Route path='entroll' element={<Entroll />} />
-            <Route path='details' element={<Details />} />
+            <Route path='details/:id' element={<Details />} />
           </Route>
         </Routes>
       </BrowserRouter>

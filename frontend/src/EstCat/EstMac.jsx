@@ -6,6 +6,7 @@ function EstMac({ values: initialValues }) {
     const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Suppliers: '',
+        QuotationNo:'',
         Quotationimg: [],
     });
 
@@ -44,6 +45,7 @@ function EstMac({ values: initialValues }) {
         console.log(EstID); // Log EstID to ensure it is correct
         const formData = new FormData();
         formData.append('Suppliers', values.Suppliers);
+        formData.append('QuotationNo', values.QuotationNo);
         formData.append('details', JSON.stringify(macDetails));
 
         // Append images
@@ -132,6 +134,18 @@ function EstMac({ values: initialValues }) {
                     name='Suppliers'
                     value={values.Suppliers}
                     onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
+                />
+            </div>
+        </div>
+        <div className='row mb-3'>
+            <label className='col-sm-2 col-form-label'>Quotation Number:</label>
+            <div className='col-sm-10'>
+                <input
+                    type='text'
+                    className='form-control'
+                    name='QuotationNo'
+                    value={values.QuotationNo}
+                    onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
                 />
             </div>
         </div>

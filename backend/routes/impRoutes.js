@@ -102,5 +102,43 @@ router.get('/implementmat/:logbookID', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch implementmat entries' });
     }
 });
+// import express from 'express';
+// import ImplementMat from '../model/ImplementMat.js';
 
+// const router = express.Router();
+
+// Other routes...
+
+// Route to update the issued column
+router.put('/updateIssued/:id', async (req, res) => {
+    const { id } = req.params;
+    const { issued } = req.body;
+
+    try {
+        const implementMat = await ImplementMat.findByPk(id);
+        if (!implementMat) {
+            return res.status(404).json({ error: 'ImplementMat not found' });
+        }
+
+        implementMat.issued = issued;
+        await implementMat.save();
+
+        res.status(200).json({ message: 'Issued value updated successfully' });
+    } catch (error) {
+        console.error('Error updating issued value:', error);
+        res.status(500).json({ error: 'Failed to update issued value' });
+    }
+});
+router.get('/images/:id', async (req, res) => {
+    const { id: impID } = req.params;
+
+    try {
+        const images = await ImpImage.findAll({ where: { impID } });
+        res.status(200).json(images);
+    } catch (error) {
+        console.error('Error fetching images:', error);
+        res.status(500).json({ error: 'Failed to fetch images' });
+    }
+});
+// export default router;
 export default router;

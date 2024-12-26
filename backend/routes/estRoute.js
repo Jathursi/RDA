@@ -10,7 +10,7 @@ import Estsun from '../model/Estsun.js';
 import QutationImg from '../model/QutationImg.js';
 import EstImage from '../model/EstImage.js';
 import multer from 'multer';
-import ImplemetMat from '../model/ImplemetMat.js';
+import ImplemetMat from '../model/implemetmat.js';
 import Logbook from '../model/Logbook.js';
 import verifyToken from '../middlewares/verifyToken.js';
 
@@ -120,29 +120,17 @@ router.get('/Estselect/:logbookId', async (req, res) => {
 // POST route for submitting category estimation details
 const submitCategory = async (req, res, categoryModel) => {
     const { EstID } = req.params;
-    const { Suppliers, details } = req.body;
+    const { details } = req.body;
 
-    if (!Suppliers || !details) {
-        return res.status(400).json({ error: 'Suppliers and details fields are required.' });
+    if (!details) {
+        return res.status(400).json({ error: 'Details field is required.' });
     }
 
     try {
-        // Save supplier details
-        const supplier = await Supplier.create({ Suppliers, EstID });
-
-        // Save quotation images
-        const images = req.files.map((file) => ({
-            fileType: file.mimetype,
-            fileSize: file.size,
-            fileData: file.buffer,
-            supID: supplier.id,
-        }));
-        await QutationImg.bulkCreate(images);
-
         // Save category details
         const categoryDetails = JSON.parse(details).map((item) => ({
             ...item,
-            supID: supplier.id,
+            EstID,
         }));
         await categoryModel.bulkCreate(categoryDetails);
 
@@ -158,8 +146,7 @@ router.post('/submitCategory/labour/:EstID', upload.array('Quotationimg', 10), (
 router.post('/submitCategory/machining/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estmac));
 router.post('/submitCategory/welding/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estwel));
 router.post('/submitCategory/transport/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, EstTrans));
-router.post('/submitCategory/sundries/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estsun));
-
+router.post('/submitCategory/sundries/:EstID', upload.none(), (req, res) => submitCategory(req, res, Estsun));
 
 import db from '../config/sequelize.js';
 router.post('/implementmat/:logbookID', async (req, res) => {
@@ -183,7 +170,6 @@ router.post('/implementmat/:logbookID', async (req, res) => {
     }
 });
 
-
 // Route to fetch all category data by logbook ID
 router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
     const { LogbookId } = req.params;
@@ -191,36 +177,33 @@ router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
     try {
         const sql = `
             SELECT 
-                supplier.Suppliers AS Suppliers,
-                estmat.Material AS MatItem,
-                estmat.Mat_cost AS MatCost,
-                estmat.MatQ AS MatQuantity,
-                estlab.Labour AS LabItem,
-                estlab.Lab_cost AS LabCost,
-                estlab.LabQ AS LabQuantity,
-                estmac.Machining AS MacItem,
-                estmac.Mac_cost AS MacCost,
-                estmac.MacQ AS MacQuantity,
-                esttrans.Transport AS TransItem,
-                esttrans.Trans_cost AS TransCost,
-                esttrans.TransQ AS TransQuantity,
-                estwel.Welding AS WelItem,
-                estwel.Wel_cost AS WelCost,
-                estwel.WelQ AS WelQuantity,
-                estsun.Sundries AS SunItem,
-                estsun.Sun_cost AS SunCost,
-                estsun.SunQ AS SunQuantity,
-                logbook.id AS LogbookId
-            FROM supplier
-            LEFT JOIN estmat ON supplier.id = estmat.supID
-            LEFT JOIN estlab ON supplier.id = estlab.supID
-            LEFT JOIN estmac ON supplier.id = estmac.supID
-            LEFT JOIN esttrans ON supplier.id = esttrans.supID
-            LEFT JOIN estwel ON supplier.id = estwel.supID
-            LEFT JOIN estsun ON supplier.id = estsun.supID
-            LEFT JOIN estimates ON estimates.id = supplier.EstID
-            LEFT JOIN logbook ON logbook.id = estimates.LogbookID
-            WHERE logbook.id = ?
+            supplier.Suppliers AS Suppliers,
+            estmat.Material AS MatItem,
+            estmat.Mat_cost AS MatCost,
+            estmat.MatQ AS MatQuantity,
+            estlab.Labour AS LabItem,
+            estlab.Lab_cost AS LabCost,
+            estlab.LabQ AS LabQuantity,
+            estmac.Machining AS MacItem,
+            estmac.Mac_cost AS MacCost,
+            estmac.MacQ AS MacQuantity,
+            esttrans.Transport AS TransItem,
+            esttrans.Trans_cost AS TransCost,
+            esttrans.TransQ AS TransQuantity,
+            estwel.Welding AS WelItem,
+            estwel.Wel_cost AS WelCost,
+            estwel.WelQ AS WelQuantity,
+            logbook.id AS LogbookId
+        FROM supplier
+        LEFT JOIN estmat ON supplier.id = estmat.supID
+        LEFT JOIN estlab ON supplier.id = estlab.supID
+        LEFT JOIN estmac ON supplier.id = estmac.supID
+        LEFT JOIN esttrans ON supplier.id = esttrans.supID
+        LEFT JOIN estwel ON supplier.id = estwel.supID
+        LEFT JOIN estimates ON estimates.id = supplier.EstID
+        LEFT JOIN logbook ON logbook.id = estimates.LogbookID
+        WHERE logbook.id = ?
+
         `;
 
         const results = await db.query(sql, {
@@ -232,6 +215,63 @@ router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching category data:', error);
         res.status(500).json({ error: 'An error occurred while fetching category data.' });
+    }
+});
+
+router.get('/images/:id', async (req, res) => {
+    const { id: EstID } = req.params; 
+    try {
+        // Fetch suppliers for the given EstID
+        const suppliers = await Supplier.findAll({ where: { EstID } });
+
+        // Fetch all quotation images for each supplier
+        const images1 = await Promise.all(
+            suppliers.map(supplier => 
+                QutationImg.findAll({ where: { supID: supplier.id } })
+            )
+        );
+
+        // Flatten the array of arrays
+        const flattenedImages1 = images1.flat();
+
+        // Fetch all estimate images for the given EstID
+        const images2 = await EstImage.findAll({ where: { EstID } });
+
+        // Format images into base64
+        const formattedImages1 = flattenedImages1.map(image => ({
+            ...image.dataValues,
+            fileData: image.fileData.toString('base64'),
+        }));
+        const formattedImages2 = images2.map(image => ({
+            ...image.dataValues,
+            fileData: image.fileData.toString('base64'),
+        }));
+
+        const images = {
+            quotationImages: formattedImages1,
+            estimateImages: formattedImages2,
+        };
+
+        res.status(200).json(images);
+    } catch (error) {
+        console.error('Error fetching images:', error);
+        res.status(500).json({ error: 'Failed to fetch images' });
+    }
+});
+
+// Fetch Estimate Details
+router.get('/est/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const estimate = await Estimate.findOne({ where: { id } });
+        if (!estimate) {
+            return res.status(404).json({ error: 'Estimate not found' });
+        }
+
+        res.status(200).json({ estimate });
+    } catch (error) {
+        console.error('Error fetching estimate:', error);
+        res.status(500).json({ error: 'Failed to fetch estimate' });
     }
 });
 

@@ -12,24 +12,29 @@ function Completion() {
         supervised: '',
         initiated: '',
         closed: '',
+        close_date: '',
         approved: '',
+        Voucher:'',
         aditional_fault: ''
     });
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await axios.get(`http://localhost:8081/api/comp/comp/${id}`);
                 console.log('Completion Data:', res.data);
-
-                if (res.data && res.data.length > 0) {
-                    const completionData = res.data[0];
+                const { supervised, initiated, closed, close_date, approved, Voucher, aditional_fault } = res.data;
+                const formattedDate = close_date.split('T')[0];
+                if (res.data) {
                     setValues({
-                        supervised: completionData.supervised || '',
-                        initiated: completionData.initiated || '',
-                        closed: completionData.closed || '',
-                        approved: completionData.approved || '',
-                        aditional_fault: completionData.aditional_fault || ''
+                        supervised: supervised || '',
+                        initiated: initiated || '',
+                        closed: closed || '',
+                        close_date: formattedDate || '',
+                        approved: approved || '',
+                        Voucher: Voucher || '',
+                        aditional_fault: aditional_fault || ''
                     });
                     setIsUpdate(true); // Set to true if data exists
                 }
@@ -37,7 +42,18 @@ function Completion() {
                 console.error('Error fetching completion data:', err);
             }
         };
+
+        const fetchImages = async () => {
+            try {
+                const res = await axios.get(`http://localhost:8081/api/comp/images/${id}`);
+                setImages(res.data);
+            } catch (err) {
+                console.error('Error fetching images:', err);
+            }
+        };
+
         fetchData();
+        fetchImages();
     }, [id]);
 
     const handleUpdate = (e) => {
@@ -45,7 +61,23 @@ function Completion() {
         const url = `http://localhost:8081/api/comp/${isUpdate ? 'comp' : 'Cominsert'}/${id}`;
         const request = isUpdate ? axios.put : axios.post;
 
-        request(url, values)
+        const formData = new FormData();
+        formData.append('supervised', values.supervised);
+        formData.append('initiated', values.initiated);
+        formData.append('closed', values.closed);
+        formData.append('close_date', values.close_date);
+        formData.append('approved', values.approved);
+        formData.append('Voucher', values.Voucher);
+        formData.append('aditional_fault', values.aditional_fault);
+        selectedFiles.forEach((file) => {
+            formData.append('images', file);
+        });
+
+        request(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then(res => {
                 console.log(isUpdate ? "Completion details updated successfully" : "Completion details added successfully");
                 setIsUpdate(true); // After initial post, switch to update mode
@@ -55,6 +87,7 @@ function Completion() {
                 console.error(`Error ${isUpdate ? 'updating' : 'adding'} completion details:`, err);
             });
     };
+
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         const validFiles = files.filter(
@@ -64,14 +97,14 @@ function Completion() {
             alert('Some files are invalid (too large or not an image).');
         }
         setSelectedFiles(validFiles);
-    }
+    };
 
     return (
         <div className="template d-flex align-items-center 100-w sm:w-100">
             <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
                 <form onSubmit={handleUpdate}>
                     <h3>Completion</h3>
-                    <div className='mb-3 row'>
+                    <div className='mb-3  mt-5 row'>
                         <label className='col-sm-2 col-form-label'>Supervised by:</label>
                         <div className='col-sm-10'>
                             <input
@@ -108,6 +141,18 @@ function Completion() {
                         </div>
                     </div>
                     <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Closed Date:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='date'
+                                className='form-control'
+                                name='close_date'
+                                value={values.close_date}
+                                onChange={(e) => setValues({...values, close_date: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
                         <label className='col-sm-2 col-form-label'>Approved by:</label>
                         <div className='col-sm-10'>
                             <input
@@ -125,9 +170,9 @@ function Completion() {
                             <input
                                 type='text'
                                 className='form-control'
-                                name='aditional_fault'
-                                value={values.aditional_fault}
-                                onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })}
+                                name='Voucher'
+                                value={values.Voucher}
+                                onChange={(e) => setValues({ ...values, Voucher: e.target.value })}
                             />
                         </div>
                     </div>
@@ -156,42 +201,23 @@ function Completion() {
                         </button>
                     </div>
                 </form>
+                <div className="mt-4">
+                    <h3>Uploaded Images</h3>
+                    <div className="row">
+                        {images.map((image, index) => (
+                            <div key={index} className="col-sm-4 mb-3">
+                                <img
+                                    src={`data:${image.fileType};base64,${image.fileData}`}
+                                    alt={`Completion ${index + 1}`}
+                                    className="img-fluid"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
-        // <div className='formContainer-com'>
-        //     {/* <div className='formTitle'>Completion</div> */}
-        //     <form onSubmit={handleUpdate} className='form'>
-        //         <div className='formTitle'>Completion</div>
-        //         <div className='formGroup'>
-        //             <label className='label'>Supervised by:</label>
-        //             <input className='input' type='text' name='supervised' value={values.supervised} onChange={(e) => setValues({ ...values, supervised: e.target.value })} />
-        //         </div>
-        //         <div className='formGroup'>
-        //             <label className='label'>Initiated by:</label>
-        //             <input className='input' type='text' name='initiated' value={values.initiated} onChange={(e) => setValues({ ...values, initiated: e.target.value })} />
-        //         </div>
-        //         <div className='formGroup'>
-        //             <label className='label'>Closed by:</label>
-        //             <input className='input' type='text' name='closed' value={values.closed} onChange={(e) => setValues({ ...values, closed: e.target.value })} />
-        //         </div>
-        //         <div className='formGroup'>
-        //             <label className='label'>Approved by:</label>
-        //             <input className='input' type='text' name='approved' value={values.approved} onChange={(e) => setValues({ ...values, approved: e.target.value })} />
-        //         </div>
-        //         <div className='formGroup'> 
-        //             <label className='label'>Voucher:</label>
-        //             <input className='text' type='text' name='aditional_fault' value={values.aditional_fault} onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })} />
-        //         </div>
-        //         <div className='formGroup'>
-        //             <label className='label'>Aditional Fault:</label>
-        //             <input className='textarea' type='text' name='aditional_fault' value={values.aditional_fault} onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })} />
-        //         </div>
-        //         <div className='form-Imp-btn'>
-        //             <button type='submit'>{isUpdate ? 'Update' : 'Add'}</button>
-        //         </div>
-        //     </form>
-        // </div>
-    )
+    );
 }
 
 export default Completion;

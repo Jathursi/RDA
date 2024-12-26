@@ -28,7 +28,7 @@ const Sidenav = () => {
   // };
 
   return (
-    <div className='sticky-top  p-2 bg-light'>
+    <div className='sidenav vh-100 sticky-top  p-2 bg-light'>
       <div className='m-2'>
         <span className='brand-name fs-4'>RDA</span>
       </div>

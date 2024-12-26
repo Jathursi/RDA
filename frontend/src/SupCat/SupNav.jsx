@@ -12,7 +12,7 @@ function SupNav() {
     const { id } = useParams();
     const [values, setValues] = useState({}); // Initialize with an empty object
 
-useEffect(() => {
+    useEffect(() => {
         const fetchEstimate = async () => {
             try {
                 const token = localStorage.getItem('token');
@@ -28,8 +28,8 @@ useEffect(() => {
                     throw new Error(`Error fetching estimate: ${response.statusText}`);
                 }
 
-                const { Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
-                setValues({ supplimentID: id, Date, Estimated });
+                const { id: supID, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
+                setValues({ supID, Date, Estimated });
                 // setIsInitialSubmission(false); // Switch to update mode
             } catch (error) {
                 console.error('Error fetching estimate:', error);
@@ -135,22 +135,22 @@ useEffect(() => {
                     role="tabpanel"
                     aria-labelledby="Material-tab"
                 >
-                    {values.supplimentID && <SupMat values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupMat values={{ supID: values.supID }} />}
                 </div>
                 <div className="tab-pane fade" id="Labours" role="tabpanel" aria-labelledby="Labours-tab">
-                    {values.supplimentID && <SupLab values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupLab values={{ supID: values.supID }} />}
                 </div>
                 <div className="tab-pane fade" id="Machinery" role="tabpanel" aria-labelledby="Machinery-tab">
-                    {values.supplimentID && <SupMac values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupMac values={{ supID: values.supID }} />}
                 </div>
                 <div className="tab-pane fade" id="Transport" role="tabpanel" aria-labelledby="Transport-tab">
-                    {values.supplimentID && <SupTrans values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupTrans values={{ supID: values.supID }} />}
                 </div>
                 <div className="tab-pane fade" id="Welding" role="tabpanel" aria-labelledby="Welding-tab">
-                    {values.supplimentID && <SupWel values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupWel values={{ supID: values.supID }} />}
                 </div>
                 <div className="tab-pane fade" id="Sundries" role="tabpanel" aria-labelledby="Sundries-tab">
-                    {values.supplimentID && <SupSun values={{ supplimentID: values.supplimentID }} />}
+                    {values.supID && <SupSun values={{ supID: values.supID }} />}
                 </div>
             </div>
         </div>

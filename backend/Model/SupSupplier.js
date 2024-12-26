@@ -13,6 +13,10 @@ const SupSupplier = sequelize.define('SupSupplier', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    QuotationNo:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     supplimentID: {
         type: DataTypes.INTEGER,
         allowNull: false,

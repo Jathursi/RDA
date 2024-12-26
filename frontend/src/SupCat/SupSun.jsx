@@ -4,59 +4,32 @@ import axios from 'axios';
 function SupSun({ values: initialValues }) {
     const { supplimentID } = initialValues;
     const [visibleSections, setVisibleSections] = useState(1);
-    const [values, setValues] = useState({
-        Suppliers: '',
-        Quotationimg: [],
-    });
 
-    const createDetailsHandler = (detailsState, setDetailsState, defaultValues) => {
-        const handleChange = (event, index) => {
-            const { name, value } = event.target;
-            const newData = [...detailsState];
-            if (!newData[index]) {
-                newData[index] = {};
-            }
-            newData[index][name] = value;
-            setDetailsState(newData);
-        };
+    const [sundriesDetails, setSundriesDetails] = useState([
+        { Sundries: '', Sun_cost: '' }
+    ]);
 
-        const handleAdd = () => {
-            setDetailsState([...detailsState, defaultValues]);
-            setVisibleSections(visibleSections + 1);
-        };
-        return { handleChange, handleAdd };
+    const handleChange = (event, index) => {
+        const { name, value } = event.target;
+        const newData = [...sundriesDetails];
+        newData[index][name] = value;
+        setSundriesDetails(newData);
     };
 
-    const [sunDetails, setSunDetails] = useState([
-        { Sundries: '', Sun_cost: '', SunQ: '' }
-    ]);
-    const sunHandler = createDetailsHandler(sunDetails, setSunDetails, { Sundries: '', Sun_cost: '', SunQ: '' });
-
-    // Handle file change for quotation image(s)
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        setValues({ ...values, Quotationimg: files });
+    const handleAdd = () => {
+        setSundriesDetails([...sundriesDetails, { Sundries: '', Sun_cost: '' }]);
+        setVisibleSections(visibleSections + 1);
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(supplimentID); // Log EstID to ensure it is correct
+        console.log(supplimentID); // Log supplimentID to ensure it is correct
         const formData = new FormData();
-        formData.append('Suppliers', values.Suppliers);
-        formData.append('details', JSON.stringify(sunDetails));
-
-        // Append images
-        values.Quotationimg.forEach((file) => {
-            formData.append('Quotationimg', file);
-        });
+        formData.append('details', JSON.stringify(sundriesDetails));
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/sup/submitCategory/sundries/${supplimentID}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            await axios.post(`http://localhost:8081/api/sup/submitCategory/sundries/${supplimentID}`, formData);
             alert('Estimation submitted successfully!');
         } catch (error) {
             console.error('Error submitting estimation:', error);
@@ -65,62 +38,46 @@ function SupSun({ values: initialValues }) {
     };
 
     return (
-        <div className='formContainer-imp'>
-            <h1>Sundries Details</h1>
-            <form className='form' onSubmit={handleSubmit}>
-                <div className='form-group'>
-                    <label>Supplier</label>
-                    <input
-                        type='text'
-                        name='Suppliers'
-                        value={values.Suppliers}
-                        onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
-                        placeholder='Suppliers'
-                    />
-                </div>
-                
-                {/* File Input for Quotation Images */}
-                <div className='form-group'>
-                    <label>Quotation Images</label>
-                    <input
-                        type='file'
-                        name='Quotationimg'
-                        multiple
-                        onChange={handleFileChange}
-                    />
-                </div>
-
-                {/* Sundries Details Input */}
-                {sunDetails.map((sun, index) => (
-                    <div key={index}>
-                        <input
-                            type='text'
-                            name='Sundries'
-                            value={sun.Sundries}
-                            onChange={(e) => sunHandler.handleChange(e, index)}
-                            placeholder='Sundries'
-                        />
-                        <input
-                            type='number'
-                            name='Sun_cost'
-                            value={sun.Sun_cost}
-                            onChange={(e) => sunHandler.handleChange(e, index)}
-                            placeholder='Sundries Cost'
-                        />
-                        <input
-                            type='number'
-                            name='SunQ'
-                            value={sun.SunQ}
-                            onChange={(e) => sunHandler.handleChange(e, index)}
-                            placeholder='Sundries Quantity'
-                        />
+        <form onSubmit={handleSubmit}>
+            <h2 className="formTitle pb-2 sm:pb-5">Sundries</h2>
+            {sundriesDetails.map((sundry, index) => (
+                <div key={index}>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Sundries:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="Sundries"
+                                value={sundry.Sundries}
+                                onChange={(e) => handleChange(e, index)}
+                            />
+                        </div>
                     </div>
-                ))}
-                <button type="button" onClick={sunHandler.handleAdd}>Add Sundries</button>
-
-                <button type='submit'>Submit Estimation</button>
-            </form>
-        </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Cost:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="number"
+                                className="form-control"
+                                name="Sun_cost"
+                                value={sundry.Sun_cost}
+                                onChange={(e) => handleChange(e, index)}
+                            />
+                        </div>
+                    </div>
+                    <hr className="text-dark"/>
+                </div>
+            ))}
+            <div className="d-grid gap-3">
+                <button type="button" className="btn btn-secondary" onClick={handleAdd}>
+                    Add Sundry
+                </button>
+                <button type="submit" className="btn btn-primary">
+                    Submit
+                </button>
+            </div>
+        </form>
     );
 }
 

@@ -109,6 +109,22 @@ function Implement() {
         }
     };
 
+    const handleIssuedChange = async (event, itemId) => {
+        const { value } = event.target;
+        const token = localStorage.getItem('token');
+        const url = `http://localhost:8081/api/imp/updateIssued/${itemId}`;
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        try {
+            await axios.put(url, { issued: value }, { headers });
+            fetchImplementMatData(); // Refresh the data after updating
+        } catch (error) {
+            console.error('Error updating issued value:', error.message);
+        }
+    };
+
     useEffect(() => {
         const fetchImplement = async () => {
             const token = localStorage.getItem('token');
@@ -120,13 +136,13 @@ function Implement() {
             try {
                 const response = await axios.get(url, { headers });
 
-                 const { Start_Date,Job_Assigned, Req_date ,Req_off,Auth} = response.data;
-                
+                const { Start_Date, Job_Assigned, Req_date, Req_off, Auth } = response.data;
+
                 const formattedDate = Start_Date.split('T')[0];
                 const formattedDatereq = Req_date.split('T')[0];
 
                 setValues({
-                    Start_Date:formattedDate,
+                    Start_Date: formattedDate,
                     Job_Assigned,
                     Req_date: formattedDatereq,
                     Req_off,
@@ -228,6 +244,8 @@ function Implement() {
                                 <th>Material</th>
                                 <th>Quantity</th>
                                 <th>Cost</th>
+                                <th>Issued</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,6 +260,15 @@ function Implement() {
                                         <td>{item.item}</td>
                                         <td>{item.quantity}</td>
                                         <td>{item.cost}</td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                value={item.issued}
+                                                onChange={(e) => handleIssuedChange(e, item.id)}
+                                                onBlur={(e) => handleIssuedChange(e, item.id)}
+                                            />
+                                        </td>
+                                        <td>{item.issued * item.cost}</td>
                                     </tr>
                                 ))
                             ))}

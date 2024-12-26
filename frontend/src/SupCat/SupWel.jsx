@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function SupWel({ values: initialValues }) {
-    const { supplimentID } = initialValues;
+    const { supID } = initialValues;
     const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Suppliers: '',
+        QuotationNo: '',
         Quotationimg: [],
     });
 
@@ -41,9 +42,10 @@ function SupWel({ values: initialValues }) {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(supplimentID); // Log EstID to ensure it is correct
+        console.log(supID); // Log supID to ensure it is correct
         const formData = new FormData();
         formData.append('Suppliers', values.Suppliers);
+        formData.append('QuotationNo', values.QuotationNo);
         formData.append('details', JSON.stringify(welDetails));
 
         // Append images
@@ -52,7 +54,7 @@ function SupWel({ values: initialValues }) {
         });
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/sup/submitCategory/welding/${supplimentID}`, formData, {
+            const response = await axios.post(`http://localhost:8081/api/sup/submitCategory/welding/${supID}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -65,62 +67,98 @@ function SupWel({ values: initialValues }) {
     };
 
     return (
-        <div className='formContainer-imp'>
-            <h1>Welding Details</h1>
-            <form className='form' onSubmit={handleSubmit}>
-                <div className='form-group'>
-                    <label>Supplier</label>
+        <form className='mt-4' onSubmit={handleSubmit}>
+            <h3>Welding Details</h3>
+            <div className='mb-3 row'>
+                <label className='col-sm-2 col-form-label'>Supplier:</label>
+                <div className='col-sm-10'>
                     <input
                         type='text'
+                        className='form-control'
                         name='Suppliers'
                         value={values.Suppliers}
                         onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
-                        placeholder='Suppliers'
+                        placeholder='Supplier'
                     />
                 </div>
-                
-                {/* File Input for Quotation Images */}
-                <div className='form-group'>
-                    <label>Quotation Images</label>
+            </div>
+            <div className='mb-3 row'>
+                <label className='col-sm-2 col-form-label'>Quotation Number:</label>
+                <div className='col-sm-10'>
                     <input
+                        type='text'
+                        className='form-control'
+                        name='QuotationNo'
+                        value={values.QuotationNo}
+                        onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
+                        placeholder='Quotation Number'
+                    />
+                </div>
+            </div>
+            <div className='mb-3 row'>
+                <label className='col-sm-2 col-form-label'>Quotation Images:</label>
+                <div className='col-sm-10'>
+                    <input
+                        className='form-control'
                         type='file'
-                        name='Quotationimg'
                         multiple
                         onChange={handleFileChange}
                     />
                 </div>
-
-                {/* Welding Details Input */}
-                {welDetails.map((wel, index) => (
-                    <div key={index}>
-                        <input
-                            type='text'
-                            name='Welding'
-                            value={wel.Welding}
-                            onChange={(e) => welHandler.handleChange(e, index)}
-                            placeholder='Welding'
-                        />
-                        <input
-                            type='number'
-                            name='Wel_cost'
-                            value={wel.Wel_cost}
-                            onChange={(e) => welHandler.handleChange(e, index)}
-                            placeholder='Welding Cost'
-                        />
-                        <input
-                            type='number'
-                            name='WelQ'
-                            value={wel.WelQ}
-                            onChange={(e) => welHandler.handleChange(e, index)}
-                            placeholder='Welding Quantity'
-                        />
+            </div>
+            {welDetails.map((wel, index) => (
+                <div key={index}>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Welding:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Welding'
+                                value={wel.Welding}
+                                onChange={(e) => welHandler.handleChange(e, index)}
+                                placeholder='Welding'
+                            />
+                        </div>
                     </div>
-                ))}
-                <button type="button" onClick={welHandler.handleAdd}>Add Welding</button>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Welding Cost:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='number'
+                                className='form-control'
+                                name='Wel_cost'
+                                value={wel.Wel_cost}
+                                onChange={(e) => welHandler.handleChange(e, index)}
+                                placeholder='Welding Cost'
+                            />
+                        </div>
+                    </div>
+                    <div className='mb-3 row'>
+                        <label className='col-sm-2 col-form-label'>Welding Quantity:</label>
+                        <div className='col-sm-10'>
+                            <input
+                                type='number'
+                                className='form-control'
+                                name='WelQ'
+                                value={wel.WelQ}
+                                onChange={(e) => welHandler.handleChange(e, index)}
+                                placeholder='Welding Quantity'
+                            />
+                        </div>
+                    </div>
+                </div>
+            ))}
 
-                <button type='submit'>Submit Estimation</button>
-            </form>
-        </div>
+            <div className='d-grid mb-3'>
+            <button type='button' className='btn btn-secondary' onClick={welHandler.handleAdd}>
+                Add Welding
+            </button>
+            <button type='submit' className='btn btn-primary'>
+                Submit Estimation
+            </button>
+            </div>
+        </form>
     );
 }
 

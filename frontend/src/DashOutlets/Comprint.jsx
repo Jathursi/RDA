@@ -252,7 +252,7 @@ const PrintDocument = ({ values, valuesImp, Summary, Material , Out}) => (
         </View>
         <View style={styles.table}>
           <View style={styles.view1}>
-            <View style={[styles.tableCellTitle, styles.tableCellTitleQty]}><Text>Vaucher</Text></View>
+            <View style={[styles.tableCellTitle, styles.tableCellTitleQty]}><Text>Voucher</Text></View>
             <View style={[styles.tableCellTitle, styles.tableCellTitleCost]}><Text>Supplier</Text></View>
             <View style={[styles.tableCellTitle, styles.tableCellTitleTotal]}><Text>Req Date</Text></View>
             {/* <View style={[styles.tableCellTitle, styles.tableCellTitleSign]}><Text>price</Text></View> */}

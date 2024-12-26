@@ -30,7 +30,7 @@ function EstSun({ values: initialValues }) {
         try {
             await axios.post(
                 url,
-                { details: sundriesDetails },
+                { details: JSON.stringify(sundriesDetails) },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

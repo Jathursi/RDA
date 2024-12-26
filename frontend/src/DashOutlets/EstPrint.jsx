@@ -90,7 +90,7 @@ function EstPrint() {
 
 
     const renderTable = (tableData, isSupplierTable) => (
-        <table border="1" style={{ marginBottom: '20px', width: '70%' }}>
+        <table className='table'>
             <thead>
                 <tr>
                     <th>Supplier</th>

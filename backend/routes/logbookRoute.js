@@ -70,4 +70,39 @@ router.get('/Logbook', verifyToken, async (req, res) => {
   }
 });
 
+router.get('/log/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const logbookEntry = await Logbook.findOne({
+      where: { id: id },
+    });
+    if (!logbookEntry) {
+      return res.status(404).json({ error: 'Logbook entry not found' });
+    }
+
+    const checklistImages = await CheckList.findAll({
+      where: { book_id: id },
+    });
+
+    const crosscheckImages = await CrossCheck.findAll({
+      where: { book_id: id },
+    });
+
+    const checklistImagesWithBase64 = checklistImages.map((image) => ({
+      ...image.toJSON(),
+      base64Data: image.fileData.toString('base64'),
+    }));
+
+    const crosscheckImagesWithBase64 = crosscheckImages.map((image) => ({
+      ...image.toJSON(),
+      base64Data: image.fileData.toString('base64'),
+    }));
+
+    res.status(200).json({ logbookEntry, checklistImages: checklistImagesWithBase64, crosscheckImages: crosscheckImagesWithBase64 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the logbook entry' });
+  }
+});
+
 export default router;

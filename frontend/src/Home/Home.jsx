@@ -20,7 +20,7 @@ function Home() {
           </div>
         )}
         {/* Main Content */}
-        <div className={`col ${toggle ? 'col-10' : 'col-12'} d-flex flex-column m-0 p-0`}>
+        <div className={` col ${toggle ? 'col-10' : 'col-12'} d-flex flex-column m-0 p-0`}>
           <HomeMain Toggle={Toggle} />
         </div>
       </div>

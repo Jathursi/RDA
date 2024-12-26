@@ -20,7 +20,7 @@ function EstNav() {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.get(`http://localhost:8081/api/est/Estselect/${id}`, {
+                const response = await axios.get(`http://localhost:8081/api/est/est/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
