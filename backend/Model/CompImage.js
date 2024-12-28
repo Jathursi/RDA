@@ -20,7 +20,7 @@ const CompImage = sequelize.define('CompImage', {
         allowNull: false,
     },
     CompID: {
-        type: DataTypes.INTEGER, // Change this to STRING to match the id field in Regist
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'completion',
@@ -30,7 +30,7 @@ const CompImage = sequelize.define('CompImage', {
         onUpdate: 'CASCADE',
     }
 }, {
-    tableName: 'compimage', // Ensure this matches the table name in your database
+    tableName: 'compimage',
     timestamps: false
 });
 

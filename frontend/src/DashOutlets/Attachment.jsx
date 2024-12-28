@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -9,23 +9,25 @@ const Attachment = () => {
   const [resources, setResources] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(false); // State to trigger re-fetch
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [modalImage, setModalImage] = useState(null); // State to store the image for the modal
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
   };
 
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:8081/api/attachment/resources/${id}`);
       setResources(response.data);
     } catch (error) {
       console.error('There was an error fetching the resources!', error);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchResources();
-  }, [id, updateTrigger]); // Remove fetchResources from the dependency array
+  }, [id, updateTrigger, fetchResources]);
 
   const handleNameChange = (e) => {
     setCustomName(e.target.value);
@@ -58,24 +60,30 @@ const Attachment = () => {
       setUpdateTrigger(!updateTrigger); // Toggle the update trigger to re-fetch resources
       setCustomName(''); // Reset custom name
       setFiles([]); // Reset file input
-
-      // Directly re-fetch resources to update immediately
       fetchResources();
     } catch (error) {
       console.error('There was an error uploading the files!', error);
     }
   };
 
-  // Delete resource
   const handleDelete = async (resourceId) => {
-    console.log('Deleting resource with ID:', resourceId); // Log the ID for debugging
     try {
-      await axios.delete(`http://localhost:8081/api/attachment/resource/${resourceId}`); // Fixed URL here
+      await axios.delete(`http://localhost:8081/api/attachment/resource/${resourceId}`);
       alert('Resource deleted successfully');
       setUpdateTrigger(!updateTrigger); // Trigger re-fetch to update list
     } catch (error) {
       console.error('There was an error deleting the resource!', error);
     }
+  };
+
+  const openModal = (fileData, fileType) => {
+    setModalImage({ fileData, fileType });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalImage(null);
   };
 
   return (
@@ -106,7 +114,7 @@ const Attachment = () => {
               />
             </div>
           </div>
-          <div className="d-grid ">
+          <div className="d-grid">
             <button type="submit" className="btn btn-primary">
               Upload
             </button>
@@ -121,6 +129,7 @@ const Attachment = () => {
                   src={`data:${resource.fileType};base64,${resource.fileData}`}
                   alt={resource.fileName}
                   className="resourceImage"
+                  onClick={() => openModal(resource.fileData, resource.fileType)} // Open modal on click
                 />
               ) : resource.fileType === 'application/pdf' ? (
                 <iframe
@@ -142,6 +151,22 @@ const Attachment = () => {
             </div>
           ))}
         </div>
+
+        {/* Modal for image preview */}
+        {showModal && modalImage && (
+          <div className="modal" onClick={closeModal}>
+            <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+              <button className="closeButton" onClick={closeModal}>
+                &times;
+              </button>
+              <img
+                src={`data:${modalImage.fileType};base64,${modalImage.fileData}`}
+                alt="Preview"
+                className="modalImage"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

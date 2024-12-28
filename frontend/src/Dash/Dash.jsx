@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import Sidenav from './Sidenav'
 import DashMain from './DashMain';
+import Dashright from './Dashright';
 function Dash() {
     const [toggle, setToggle] = useState(true);
     
@@ -17,11 +18,14 @@ function Dash() {
           </div>
         )}
         {/* Main Content */}
-        <div className={`col ${toggle ? 'col-10' : 'col-12'} d-flex flex-column m-0 p-0`}>
+        <div className={`d-flex col-8 flex-column m-0 p-0`}>
           <DashMain Toggle={Toggle} />
         </div>
         {/* rightside bar */}
-        
+        <div className='col-2 bg-light'>
+          {/* <Dashright /> */}
+          <Dashright/> 
+        </div>
       </div>
     </div>
     // <div className='dash'>

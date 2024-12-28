@@ -35,7 +35,7 @@ const Completion = sequelize.define('Completion', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    book_id: {
+    logbookID: {
         type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         references: {
             model: 'logbook',

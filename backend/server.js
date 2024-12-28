@@ -6,6 +6,8 @@ import routes from './routes/index.js'; // Import routes
 import sequelize from './config/sequelize.js';
 // import impRoute from './routes/impRoute.js';
 import dotenv from 'dotenv';
+import './model/associations.js'; // Import associations to ensure they are defined
+
 
 dotenv.config();
 const app = express();
@@ -32,15 +34,10 @@ app.use('/api', routes); // Use the main routes
 // app.use('/api/users', userRoutes); // Use the user routes
 // app.use('/api', impRoute);
 
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('Database & tables created!');
-  })
-  .catch((err) => {
-    console.error('Error syncing database:', err);
-  });
-
-const PORT = process.env.PORT || 8081;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+sequelize.sync().then(() => {
+    app.listen(8081, () => {
+        console.log('Server is running on port 8081');
+    });
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
 });

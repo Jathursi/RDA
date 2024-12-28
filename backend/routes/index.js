@@ -7,6 +7,7 @@ import supRoutes from './supRoutes.js';
 import impRoutes from './impRoutes.js';
 import AttachmentRoutes from './AttachmentRoutes.js';
 import CompRoutes from './CompRoutes.js';
+import compEmailRoute from './compEmailRoute.js';
 const router = Router();
 
 router.use('/users', userRoutes);
@@ -16,4 +17,5 @@ router.use('/sup', supRoutes);
 router.use('/imp', impRoutes);
 router.use('/attachment', AttachmentRoutes);
 router.use('/comp', CompRoutes);
+router.use('/email', compEmailRoute);
 export default router;

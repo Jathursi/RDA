@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Set up multer to store files in memory with size limits
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
     storage,
     limits: {
         fileSize: 100 * 1024 * 1024 // Limit file size to 100MB (100 * 1024 * 1024 bytes)
@@ -17,7 +17,7 @@ const upload = multer({
 // Route to create a new completion entry
 router.post('/Cominsert/:id', upload.array('images'), async (req, res) => {
     const { id: book_id } = req.params;
-    const { supervised, initiated, closed,Voucher, close_date, approved, aditional_fault } = req.body;
+    const { supervised, initiated, closed, Voucher, close_date, approved, aditional_fault } = req.body;
 
     try {
         const newCompletion = await Completion.create({
@@ -28,7 +28,7 @@ router.post('/Cominsert/:id', upload.array('images'), async (req, res) => {
             approved,
             Voucher,
             aditional_fault,
-            book_id,
+            logbookID: book_id,
         });
 
         if (req.files && req.files.length > 0) {
@@ -50,13 +50,13 @@ router.post('/Cominsert/:id', upload.array('images'), async (req, res) => {
     }
 });
 
-// Route to update an existing completion entry
+// Route to update an existing completion entry and add new images
 router.put('/comp/:id', upload.array('images'), async (req, res) => {
     const { id: book_id } = req.params;
     const { supervised, initiated, Voucher, closed, close_date, approved, aditional_fault } = req.body;
 
     try {
-        const completion = await Completion.findOne({ where: { book_id } });
+        const completion = await Completion.findOne({ where: { logbookID: book_id } });
 
         if (!completion) {
             return res.status(404).json({ error: 'No completion entry found to update for the given book ID.' });
@@ -82,13 +82,11 @@ router.put('/comp/:id', upload.array('images'), async (req, res) => {
         res.status(500).json({ error: 'An error occurred while updating the completion entry.' });
     }
 });
-
-// Route to fetch a completion entry by book ID
 router.get('/comp/:id', async (req, res) => {
-    const { id: book_id } = req.params;
+    const { id } = req.params;
 
     try {
-        const completion = await Completion.findOne({ where: { book_id } });
+        const completion = await Completion.findOne({ where: { id } });
 
         if (!completion) {
             return res.status(404).json({ error: 'No completion entry found for the given book ID.' });
@@ -120,5 +118,28 @@ router.get('/images/:id', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching images.' });
     }
 });
+
+// Route to delete a specific completion image
+router.delete('/comp/image/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Find the image by its ID
+        const image = await CompImage.findOne({ where: { id } });
+
+        if (!image) {
+            return res.status(404).json({ error: 'No completion image found to delete for the given ID.' });
+        }
+
+        // Delete the image
+        await image.destroy();
+
+        res.status(200).json({ message: 'Completion image deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting completion image:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the completion image.' });
+    }
+});
+
 
 export default router;

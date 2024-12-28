@@ -20,7 +20,7 @@ const EstImage = sequelize.define('EstImage', {
         allowNull: false,
     },
     EstID: {
-        type: DataTypes.INTEGER, // Change this to STRING to match the id field in Regist
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'estimates',
@@ -30,7 +30,7 @@ const EstImage = sequelize.define('EstImage', {
         onUpdate: 'CASCADE',
     }
 }, {
-    tableName: 'estimage', // Ensure this matches the table name in your database
+    tableName: 'estimage',
     timestamps: false
 });
 

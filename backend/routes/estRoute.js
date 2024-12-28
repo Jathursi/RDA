@@ -173,7 +173,6 @@ router.post('/implementmat/:logbookID', async (req, res) => {
 // Route to fetch all category data by logbook ID
 router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
     const { LogbookId } = req.params;
-
     try {
         const sql = `
             SELECT 
@@ -203,14 +202,11 @@ router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
         LEFT JOIN estimates ON estimates.id = supplier.EstID
         LEFT JOIN logbook ON logbook.id = estimates.LogbookID
         WHERE logbook.id = ?
-
         `;
-
         const results = await db.query(sql, {
             replacements: [LogbookId],
             type: db.QueryTypes.SELECT,
         });
-
         res.status(200).json(results);
     } catch (error) {
         console.error('Error fetching category data:', error);
@@ -221,23 +217,14 @@ router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
 router.get('/images/:id', async (req, res) => {
     const { id: EstID } = req.params; 
     try {
-        // Fetch suppliers for the given EstID
         const suppliers = await Supplier.findAll({ where: { EstID } });
-
-        // Fetch all quotation images for each supplier
         const images1 = await Promise.all(
             suppliers.map(supplier => 
                 QutationImg.findAll({ where: { supID: supplier.id } })
             )
         );
-
-        // Flatten the array of arrays
         const flattenedImages1 = images1.flat();
-
-        // Fetch all estimate images for the given EstID
         const images2 = await EstImage.findAll({ where: { EstID } });
-
-        // Format images into base64
         const formattedImages1 = flattenedImages1.map(image => ({
             ...image.dataValues,
             fileData: image.fileData.toString('base64'),
@@ -259,7 +246,6 @@ router.get('/images/:id', async (req, res) => {
     }
 });
 
-// Fetch Estimate Details
 router.get('/est/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -267,7 +253,6 @@ router.get('/est/:id', async (req, res) => {
         if (!estimate) {
             return res.status(404).json({ error: 'Estimate not found' });
         }
-
         res.status(200).json({ estimate });
     } catch (error) {
         console.error('Error fetching estimate:', error);

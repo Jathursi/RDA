@@ -72,12 +72,12 @@ function Entroll({ searchTerm }) {
                   {book.role !== 'Superadmin' && (
                     <>
                       {book.approval === 'Pending' || book.approval === 'Access Denied' ? (
-                        <button className='success' type="button" onClick={(e) => handleApproval(e, book.id, 'Approved')}>
+                        <button className='btn btn-success' type="button" onClick={(e) => handleApproval(e, book.id, 'Approved')}>
                           <FaCheck />
                         </button>
                       ) : null}
                       {book.approval === 'Approved' ? (
-                        <button className='Deny' type="button" onClick={(e) => handleApproval(e, book.id, 'Access Denied')}>
+                        <button className='btn btn-danger' type="button" onClick={(e) => handleApproval(e, book.id, 'Access Denied')}>
                           <IoMdClose />
                         </button>
                       ) : null}

@@ -21,6 +21,7 @@ function EstDetails() {
                 });
 
                 const { Date, Estimated } = response.data.estimate;
+                // const formattedDate = Date.split('T')[0];
                 const formattedDate = Date.split('T')[0];
                 setEst({ Date: formattedDate, Estimated });
             } catch (error) {
