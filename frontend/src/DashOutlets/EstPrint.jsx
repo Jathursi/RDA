@@ -6,7 +6,29 @@ function EstPrint() {
     const { id: book_id } = useParams();
     const [data, setData] = useState([]);
     const [supplierData, setSupplierData] = useState([]);
-    const [clickedRows, setClickedRows] = useState(new Set());
+    // const [clickedRows, setClickedRows] = useState(new Set());
+    // const [clickedRows, setClickedRows] = useState(new Set());
+    const [storedRows, setStoredRows] = useState(new Set());
+
+    useEffect(() => {
+        const fetchImplementedItems = async () => {
+    try {
+        const response = await axios.get(`http://localhost:8081/api/imp/implementedItems/${book_id}`);
+        setStoredRows(response.data)
+        // setClickedRows(implementedRows);
+    } catch (error) {
+        console.error('Error fetching implemented items:', error);
+    }
+};
+
+
+        fetchData(
+            `http://localhost:8081/api/est/fetchAllCategories/${book_id}`,
+            setData,
+            groupDataBySupplier
+        );
+        fetchImplementedItems();
+    }, [book_id]);
 
     const groupDataBySupplier = (categories) => {
         const grouped = {};
@@ -56,12 +78,12 @@ function EstPrint() {
             setDataCallback(groupedData);
 
             // Extract and set initially implemented rows
-            const implementedRows = new Set(
-                response.data
-                    .filter((item) => item.isImplemented)
-                    .map((item) => `${item.Suppliers}-${item.MatItem || item.LabItem || item.MacItem || item.TransItem || item.WelItem || item.SunItem}`)
-            );
-            setClickedRows(implementedRows);
+            // const implementedRows = new Set(
+            //     response.data
+            //         .filter((item) => item.isImplemented)
+            //         .map((item) => `${item.Suppliers}-${item.MatItem || item.LabItem || item.MacItem || item.TransItem || item.WelItem || item.SunItem}`)
+            // );
+            // setClickedRows(implementedRows);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -75,11 +97,8 @@ function EstPrint() {
         );
     }, [book_id]);
 
-    const handleRowClick = async (supplier, item, category, cost, quantity) => {
-    console.log('Payload:', { supplier, category, item, cost, quantity, logbookID: book_id });
-
+   const handleRowClick = async (supplier, item, category, cost, quantity) => {
     try {
-        // Check if the item has already been implemented
         const response = await axios.post(`http://localhost:8081/api/est/implementmat/${book_id}`, {
             supplier,
             category,
@@ -89,19 +108,27 @@ function EstPrint() {
             logbookID: book_id,
         });
 
-        // Mark the item as implemented and add it to the Set for a permanent tick mark
-        setClickedRows((prev) => {
-            const updated = new Set(prev);
-            updated.add(`${supplier}-${item}`);
-            return updated;
-        });
+        const { id } = response.data;
+
+        // Mark the item as stored in the backend
+        // await axios.patch(`http://localhost:8081/api/imp/implementmat/${id}`, { stored: true });
+
+        // // Update the state to show the tick
+        // setClickedRows((prev) => {
+        //     const updated = new Set(prev);
+        //     updated.add(`${supplier}-${item}`);
+        //     return updated;
+        // });
     } catch (error) {
-        console.error('Error adding item to implementmat:', error);
+        if (error.response && error.response.status === 400) {
+            alert(error.response.data.error);
+        } else {
+            console.error('Error adding item to implementmat:', error);
+        }
     }
 };
 
-
-    const renderTable = (tableData, isSupplierTable) => (
+    const renderTable = (tableData) => (
         <table className='table'>
             <thead>
                 <tr>
@@ -111,6 +138,7 @@ function EstPrint() {
                     <th>Quantity</th>
                     <th>Subtotal</th>
                     <th>Total</th>
+                    <th>Implemented</th>
                 </tr>
             </thead>
             <tbody>
@@ -122,7 +150,7 @@ function EstPrint() {
                                 handleRowClick(
                                     supplierData.supplierName,
                                     item.Item,
-                                    isSupplierTable ? 'SupplierCategory' : 'EstimateCategory',
+                                    'EstimateCategory',
                                     item.Cost,
                                     item.Quantity
                                 )
@@ -140,11 +168,19 @@ function EstPrint() {
                             {idx === 0 && (
                                 <td rowSpan={supplierData.items.length}>
                                     {supplierData.total}
-                                    {clickedRows.has(`${supplierData.supplierName}-${item.Item}`) && (
-                                        <span style={{ color: 'green' }}> ✔️</span>
-                                    )}
                                 </td>
                             )}
+                            <td>
+                                {storedRows.map((storedRow) => (
+                                    storedRow.supplier === supplierData.supplierName &&
+                                    storedRow.item === item.Item && (
+                                        <span key={`${supplierData.supplierName}-${item.Item}`}>
+                                            {/* tick */}
+                                            &#10003;
+                                        </span>
+                                    )
+                                ))}
+                            </td>
                         </tr>
                     ))
                 )}
@@ -158,13 +194,13 @@ function EstPrint() {
             {data.length === 0 ? (
                 <p>Loading or no data available...</p>
             ) : (
-                renderTable(data, false)
+                renderTable(data)
             )}
             <h2>Supplier Details</h2>
             {supplierData.length === 0 ? (
                 <p>Loading or no data available...</p>
             ) : (
-                renderTable(supplierData, true)
+                renderTable(supplierData)
             )}
         </div>
     );

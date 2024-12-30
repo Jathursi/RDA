@@ -10,7 +10,7 @@ import Estsun from '../model/Estsun.js';
 import QutationImg from '../model/QutationImg.js';
 import EstImage from '../model/EstImage.js';
 import multer from 'multer';
-import ImplemetMat from '../model/implemetmat.js';
+import ImplementMat from '../model/ImplementMat.js';
 import Logbook from '../model/Logbook.js';
 import verifyToken from '../middlewares/verifyToken.js';
 
@@ -30,28 +30,25 @@ router.post('/Estinsert/:logbookId', upload.array('images'), async (req, res) =>
     }
 
     try {
-        // Check if an estimate already exists for this logbookId
-        const existingEstimate = await Estimate.findOne({ where: { LogbookID: logbookId } });
+        const existingEstimate = await Estimate.findOne({ where: { logbookID: logbookId } });
 
         if (existingEstimate) {
             return res.status(400).json({ error: 'Estimate already exists for this logbook ID.' });
         }
 
-        // Create the estimate
         const estimate = await Estimate.create({
             Date,
             Estimated,
-            LogbookID: logbookId,
+            logbookID: logbookId, // Ensure correct field name
         });
 
-        // Check and process uploaded images
         if (req.files && req.files.length > 0) {
             const images = await EstImage.bulkCreate(
                 req.files.map((file) => ({
                     fileType: file.mimetype,
                     fileSize: file.size,
-                    fileData: file.buffer, // Save binary data to the database
-                    EstID: estimate.id,   // Associate images with the created estimate
+                    fileData: file.buffer,
+                    EstID: estimate.id,
                 }))
             );
 
@@ -72,7 +69,9 @@ router.post('/Estinsert/:logbookId', upload.array('images'), async (req, res) =>
     }
 });
 
-router.put('/Estupdate/:logbookId', async (req, res) => {
+
+// Route to update an existing estimate and add additional images
+router.put('/Estupdate/:logbookId', upload.array('images'), async (req, res) => {
     const { Date, Estimated } = req.body;
     const { logbookId } = req.params;
 
@@ -88,6 +87,18 @@ router.put('/Estupdate/:logbookId', async (req, res) => {
         }
 
         await estimate.update({ Date, Estimated });
+
+        // Check and process uploaded images
+        if (req.files && req.files.length > 0) {
+            const images = await EstImage.bulkCreate(
+                req.files.map((file) => ({
+                    fileType: file.mimetype,
+                    fileSize: file.size,
+                    fileData: file.buffer, // Save binary data to the database
+                    EstID: estimate.id,   // Associate images with the updated estimate
+                }))
+            );
+        }
 
         res.status(200).json({ message: 'Estimate updated successfully' });
     } catch (error) {
@@ -152,23 +163,34 @@ import db from '../config/sequelize.js';
 router.post('/implementmat/:logbookID', async (req, res) => {
     const { supplier, category, item, cost, quantity, logbookID } = req.body;
 
-    console.log('Received payload:', { supplier, category, item, cost, quantity, logbookID });
-
     try {
-        const newEntry = await ImplemetMat.create({
+        // Check if the item already exists in the ImplementMat table
+        const existingEntry = await ImplementMat.findOne({
+            where: { supplier, category, item, logbookID },
+        });
+
+        if (existingEntry) {
+            return res.status(400).json({ error: 'Item already implemented and cannot be added again.' });
+        }
+
+        // If not, create a new entry with stored set to true
+        const newEntry = await ImplementMat.create({
             supplier,
             category,
             item,
             cost,
             quantity,
             logbookID,
+            stored: true, // Set stored to true
         });
+
         res.status(201).json(newEntry);
     } catch (error) {
         console.error('Error adding implementmat:', error);
         res.status(500).json({ error: 'Failed to add implementmat' });
     }
 });
+
 
 // Route to fetch all category data by logbook ID
 router.get('/fetchAllCategories/:LogbookId', async (req, res) => {

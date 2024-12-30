@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
 
 function Completion() {
     const navigate = useNavigate();
@@ -18,7 +19,18 @@ function Completion() {
         aditional_fault: ''
     });
     const [images, setImages] = useState([]);
-
+    const [options, setOptions] = useState([]);
+useEffect(() => {
+        axios.get('http://localhost:8081/api/drop/names', { withCredentials: true })
+            .then(response => {
+                const { uniqueNames } = response.data;
+                const nameOptions = uniqueNames.map(name => ({ value: name, label: name }));
+                setOptions(nameOptions);
+            })
+            .catch(error => {
+                console.error('Error fetching names:', error);
+            });
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -55,7 +67,13 @@ function Completion() {
         fetchData();
         fetchImages();
     }, [id]);
-
+const handleSelectChange = (selectedOption, actionMeta) => {
+        const { name } = actionMeta;
+        setValues(prevState => ({
+            ...prevState,
+            [name]: selectedOption ? selectedOption.value : ''
+        }));
+    };
     const handleUpdate = (e) => {
         e.preventDefault();
         const url = `http://localhost:8081/api/comp/${isUpdate ? 'comp' : 'Cominsert'}/${id}`;
@@ -107,36 +125,42 @@ function Completion() {
                     <div className='mb-3  mt-5 row'>
                         <label className='col-sm-2 col-form-label'>Supervised by:</label>
                         <div className='col-sm-10'>
-                            <input
+                            <CreatableSelect
                                 type='text'
                                 className='form-control'
                                 name='supervised'
-                                value={values.supervised}
-                                onChange={(e) => setValues({ ...values, supervised: e.target.value })}
+                                value={options.find(option => option.value === values.supervised)}
+                                // value={values.supervised}
+                                options={options}
+                                onChange={handleSelectChange}
                             />
                         </div>
                     </div>
                     <div className='mb-3 row'>
                         <label className='col-sm-2 col-form-label'>Initiated by:</label>
                         <div className='col-sm-10'>
-                            <input
+                            <CreatableSelect
                                 type='text'
                                 className='form-control'
                                 name='initiated'
-                                value={values.initiated}
-                                onChange={(e) => setValues({ ...values, initiated: e.target.value })}
+                                options={options}
+                                // value={values.initiated}
+                                value={options.find(option => option.value === values.initiated)}
+                                onChange={handleSelectChange}
                             />
                         </div>
                     </div>
                     <div className='mb-3 row'>
                         <label className='col-sm-2 col-form-label'>Closed by:</label>
                         <div className='col-sm-10'>
-                            <input
+                            <CreatableSelect
                                 type='text'
                                 className='form-control'
                                 name='closed'
-                                value={values.closed}
-                                onChange={(e) => setValues({ ...values, closed: e.target.value })}
+                                // value={values.closed}
+                                options={options}
+                                value={options.find(option => option.value === values.closed)}
+                                onChange={handleSelectChange}
                             />
                         </div>
                     </div>
@@ -155,12 +179,14 @@ function Completion() {
                     <div className='mb-3 row'>
                         <label className='col-sm-2 col-form-label'>Approved by:</label>
                         <div className='col-sm-10'>
-                            <input
+                            <CreatableSelect
                                 type='text'
                                 className='form-control'
                                 name='approved'
-                                value={values.approved}
-                                onChange={(e) => setValues({ ...values, approved: e.target.value })}
+                                options={options}
+                                // value={values.approved}
+                                value={options.find(option => option.value === values.approved)}
+                                onChange={handleSelectChange}
                             />
                         </div>
                     </div>

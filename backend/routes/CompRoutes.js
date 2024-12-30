@@ -122,24 +122,27 @@ router.get('/images/:id', async (req, res) => {
 // Route to delete a specific completion image
 router.delete('/comp/image/:id', async (req, res) => {
     const { id } = req.params;
+    console.log(`Received request to delete image with ID: ${id}`); // Debugging log
 
     try {
-        // Find the image by its ID
+        // Check if the image exists
         const image = await CompImage.findOne({ where: { id } });
 
         if (!image) {
+            console.log(`No image found with ID: ${id}`); // Debugging log
             return res.status(404).json({ error: 'No completion image found to delete for the given ID.' });
         }
 
         // Delete the image
         await image.destroy();
-
+        console.log(`Image with ID: ${id} deleted successfully`); // Debugging log
         res.status(200).json({ message: 'Completion image deleted successfully' });
     } catch (error) {
         console.error('Error deleting completion image:', error);
         res.status(500).json({ error: 'An error occurred while deleting the completion image.' });
     }
 });
+
 
 
 export default router;

@@ -5,6 +5,7 @@ import RegDetails from '../HomeDetails/RegDetails';
 import EstDetails from '../HomeDetails/EstDetails';
 import ImpDetails from '../HomeDetails/ImpDetails';
 import CompDetails from '../HomeDetails/CompDetails';
+import OutDetails from '../HomeDetails/OutDetails';
 function Details() {
   const { id } = useParams();
   return (
@@ -13,7 +14,9 @@ function Details() {
         <RegDetails values = {{id}}/>
         <EstDetails values = {{id}}/>       
         <ImpDetails values = {{id}}/>
+        <OutDetails values = {{id}}/>
         <CompDetails values = {{id}}/>
+
       </div>
     </div>
   );

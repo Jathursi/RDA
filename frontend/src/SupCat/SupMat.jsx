@@ -29,9 +29,9 @@ function SupMat({ values: initialValues }) {
     };
 
     const [matDetails, setMatDetails] = useState([
-        { Material: '', Mat_cost: '', MatQ: '' }
+        { Material: '', Mat_cost: '', MatQ: '', supID: supID }
     ]);
-    const matHandler = createDetailsHandler(matDetails, setMatDetails, { Material: '', Mat_cost: '', MatQ: '' });
+    const matHandler = createDetailsHandler(matDetails, setMatDetails, { Material: '', Mat_cost: '', MatQ: '', supID: supID });
 
     // Handle file change for quotation image(s)
     const handleFileChange = (e) => {

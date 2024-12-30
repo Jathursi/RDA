@@ -6,7 +6,7 @@ function SupLab({ values: initialValues }) {
     const [visibleSections, setVisibleSections] = useState(1);
     const [values, setValues] = useState({
         Suppliers: '',
-        QuotationNo:'',
+        QuotationNo: '',
         Quotationimg: [],
     });
 
@@ -29,9 +29,9 @@ function SupLab({ values: initialValues }) {
     };
 
     const [labDetails, setLabDetails] = useState([
-        { Labour: '', Lab_cost: '', LabQ: '' }
+        { Labour: '', Lab_cost: '', LabQ: '', supID: supID }
     ]);
-    const labHandler = createDetailsHandler(labDetails, setLabDetails, { Labour: '', Lab_cost: '', LabQ: '' });
+    const labHandler = createDetailsHandler(labDetails, setLabDetails, { Labour: '', Lab_cost: '', LabQ: '', supID: supID });
 
     // Handle file change for quotation image(s)
     const handleFileChange = (e) => {
@@ -42,7 +42,7 @@ function SupLab({ values: initialValues }) {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(supID); // Log EstID to ensure it is correct
+        console.log(supID); // Log supID to ensure it is correct
         const formData = new FormData();
         formData.append('Suppliers', values.Suppliers);
         formData.append('QuotationNo', values.QuotationNo);
@@ -68,148 +68,91 @@ function SupLab({ values: initialValues }) {
 
     return (
         <form className='mt-4' onSubmit={handleSubmit}>
-                <h3>Labour Details</h3>
-                <div className="mb-3 row">
-                    <label className="col-sm-2 col-form-label">Suppliers:</label>
-                    <div className="col-sm-10">
-                        <input
-                            type='text'
-                            className='form-control'
-                            name='Suppliers'
-                            value={values.Suppliers}
-                            onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
-                        />
-                    </div>
+            <h3>Labour Details</h3>
+            <div className="mb-3 row">
+                <label className="col-sm-2 col-form-label">Suppliers:</label>
+                <div className="col-sm-10">
+                    <input
+                        type='text'
+                        className='form-control'
+                        name='Suppliers'
+                        value={values.Suppliers}
+                        onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
+                    />
                 </div>
-                <div className="mb-3 row">
-                    <label className="col-sm-2 col-form-label">Quotation Number:</label>
-                    <div className="col-sm-10">
-                        <input
-                            type='text'
-                            className='form-control'
-                            name='QuotationNo'
-                            value={values.QuotationNo}
-                            onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
-                        />
-                    </div>
+            </div>
+            <div className="mb-3 row">
+                <label className="col-sm-2 col-form-label">Quotation Number:</label>
+                <div className="col-sm-10">
+                    <input
+                        type='text'
+                        className='form-control'
+                        name='QuotationNo'
+                        value={values.QuotationNo}
+                        onChange={(e) => setValues({ ...values, QuotationNo: e.target.value })}
+                    />
                 </div>
-                <div className="mb-3 row">
-                    <label className="col-sm-2 col-form-label">Quotation Image:</label>
-                    <div className="col-sm-10">
-                        <input
-                            type='file'
-                            multiple
-                            className='form-control'
-                            onChange={handleFileChange}
-                        />
-                    </div>
+            </div>
+            <div className="mb-3 row">
+                <label className="col-sm-2 col-form-label">Quotation Image:</label>
+                <div className="col-sm-10">
+                    <input
+                        type='file'
+                        multiple
+                        className='form-control'
+                        onChange={handleFileChange}
+                    />
                 </div>
-                {labDetails.map((lab, index) => (
-                    <div key={index}>
-                        <div className="mb-3 row">
-                            <label className="col-sm-2 col-form-label">Labour:</label>
-                            <div className="col-sm-10">
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    name='Labour'
-                                    value={lab.Labour}
-                                    onChange={(e) => labHandler.handleChange(e, index)}
-                                />
-                            </div>
-                        </div>
-                        <div className="mb-3 row">
-                            <label className="col-sm-2 col-form-label">Labour Cost:</label>
-                            <div className="col-sm-10">
-                                <input
-                                    type='text'
-                                    name='Lab_cost'
-                                    className='form-control'
-                                    value={lab.Lab_cost}
-                                    onChange={(e) => labHandler.handleChange(e, index)}
-                                />
-                            </div>
-                        </div>
-                        <div className="mb-3 row">
-                            <label className="col-sm-2 col-form-label">Labour Quantity:</label>
-                            <div className="col-sm-10">
-                                <input
-                                    type='text'
-                                    name='LabQ'
-                                    className='form-control'
-                                    value={lab.LabQ}
-                                    onChange={(e) => labHandler.handleChange(e, index)}
-                                />
-                            </div>
+            </div>
+            {labDetails.map((lab, index) => (
+                <div key={index}>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Labour:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='Labour'
+                                value={lab.Labour}
+                                onChange={(e) => labHandler.handleChange(e, index)}
+                            />
                         </div>
                     </div>
-                ))}
-                <div className="d-grid gap-3">
-                    <button type='button' className='btn btn-secondary' onClick={labHandler.handleAdd}>
-                        Add Labour
-                    </button>
-                    <button type='submit' className='btn btn-primary'>
-                        Submit
-                    </button>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Labour Cost:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type='text'
+                                name='Lab_cost'
+                                className='form-control'
+                                value={lab.Lab_cost}
+                                onChange={(e) => labHandler.handleChange(e, index)}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Labour Quantity:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type='text'
+                                name='LabQ'
+                                className='form-control'
+                                value={lab.LabQ}
+                                onChange={(e) => labHandler.handleChange(e, index)}
+                            />
+                        </div>
+                    </div>
                 </div>
-            </form>
-        // <div className='formContainer-imp'>
-        //     <h1>Labour Details</h1>
-        //     <form className='form' onSubmit={handleSubmit}>
-        //         <div className='form-group'>
-        //             <label>Supplier</label>
-        //             <input
-        //                 type='text'
-        //                 name='Suppliers'
-        //                 value={values.Suppliers}
-        //                 onChange={(e) => setValues({ ...values, Suppliers: e.target.value })}
-        //                 placeholder='Suppliers'
-        //             />
-        //         </div>
-        //         <div cl
-                
-        //         {/* File Input for Quotation Images */}
-        //         <div className='form-group'>
-        //             <label>Quotation Images</label>
-        //             <input
-        //                 type='file'
-        //                 name='Quotationimg'
-        //                 multiple
-        //                 onChange={handleFileChange}
-        //             />
-        //         </div>
-
-        //         {/* Labour Details Input */}
-        //         {labDetails.map((lab, index) => (
-        //             <div key={index}>
-        //                 <input
-        //                     type='text'
-        //                     name='Labour'
-        //                     value={lab.Labour}
-        //                     onChange={(e) => labHandler.handleChange(e, index)}
-        //                     placeholder='Labour'
-        //                 />
-        //                 <input
-        //                     type='number'
-        //                     name='Lab_cost'
-        //                     value={lab.Lab_cost}
-        //                     onChange={(e) => labHandler.handleChange(e, index)}
-        //                     placeholder='Labour Cost'
-        //                 />
-        //                 <input
-        //                     type='number'
-        //                     name='LabQ'
-        //                     value={lab.LabQ}
-        //                     onChange={(e) => labHandler.handleChange(e, index)}
-        //                     placeholder='Labour Quantity'
-        //                 />
-        //             </div>
-        //         ))}
-        //         <button type="button" onClick={labHandler.handleAdd}>Add Labour</button>
-
-        //         <button type='submit'>Submit Estimation</button>
-        //     </form>
-        // </div>
+            ))}
+            <div className="d-grid gap-3">
+                <button type='button' className='btn btn-secondary' onClick={labHandler.handleAdd}>
+                    Add Labour
+                </button>
+                <button type='submit' className='btn btn-primary'>
+                    Submit
+                </button>
+            </div>
+        </form>
     );
 }
 

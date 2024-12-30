@@ -2,61 +2,59 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import EstNav from '../EstCat/EstNav';
+import CreatableSelect from 'react-select/creatable';
+
 function Estimation() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [values, setValues] = useState({ Date: '', Estimated: '', EstID: '' });
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isInitialSubmission, setIsInitialSubmission] = useState(true);
-
-    const handleChange = (e) => {
-        setValues({ ...values, [e.target.name]: e.target.value });
-    };
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        const validFiles = files.filter(
-            (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
-        );
-        if (validFiles.length !== files.length) {
-            alert('Some files are invalid (too large or not an image).');
-        }
-        setSelectedFiles(validFiles);
-    };
+    const [options, setOptions] = useState([]);
 
     useEffect(() => {
-    const fetchEstimate = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('No token found');
-            }
+        const fetchEstimate = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No token found');
+                }
 
-            const response = await axios.get(`http://localhost:8081/api/est/est/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
+                const response = await axios.get(`http://localhost:8081/api/est/Estselect/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.status !== 200) {
+                    throw new Error(`Error fetching estimate: ${response.statusText}`);
+                }
+
+                const { Date, Estimated } = response.data.estimate;
+
+                // Convert the date to "YYYY-MM-DD" format
+                const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
+
+                setValues({ EstID: id, Date: formattedDate, Estimated });
+                setIsInitialSubmission(false); // Switch to update mode
+            } catch (error) {
+                console.error('Error fetching estimate:', error);
+                alert(error.message);
+            }
+        };
+
+        fetchEstimate();
+    }, [id]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8081/api/drop/names', { withCredentials: true })
+            .then(response => {
+                const { uniqueNames } = response.data;
+                const nameOptions = uniqueNames.map(name => ({ value: name, label: name }));
+                setOptions(nameOptions);
+            })
+            .catch(error => {
+                console.error('Error fetching names:', error);
             });
-
-            if (response.status !== 200) {
-                throw new Error(`Error fetching estimate: ${response.statusText}`);
-            }
-
-            const { Date, Estimated } = response.data.estimate;
-
-            // Convert the date to "YYYY-MM-DD" format
-            const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
-
-            setValues({ EstID: id, Date: formattedDate, Estimated });
-            setIsInitialSubmission(false); // Switch to update mode
-        } catch (error) {
-            console.error('Error fetching estimate:', error);
-            alert(error.message);
-        }
-    };
-
-    fetchEstimate();
-}, [id]);
-
-
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -95,6 +93,33 @@ function Estimation() {
         }
     };
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setValues(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleSelectChange = (selectedOption, actionMeta) => {
+        const { name } = actionMeta;
+        setValues(prevState => ({
+            ...prevState,
+            [name]: selectedOption ? selectedOption.value : ''
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const validFiles = files.filter(
+            (file) => file.size <= 100 * 1024 * 1024 && file.type.startsWith('image/')
+        );
+        if (validFiles.length !== files.length) {
+            alert('Some files are invalid (too large or not an image).');
+        }
+        setSelectedFiles(validFiles);
+    };
+
     return (
         <div className="template d-flex align-items-center 100-w sm:w-100">
             <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
@@ -115,12 +140,14 @@ function Estimation() {
                     <div className="mb-3 row">
                         <label className="col-sm-2 col-form-label">Estimated by:</label>
                         <div className="col-sm-10">
-                            <input
-                                type="text"
-                                className="form-control"
+                            <CreatableSelect
                                 name="Estimated"
-                                value={values.Estimated}
-                                onChange={handleChange}
+                                value={options.find(option => option.value === values.Estimated)}
+                                onChange={handleSelectChange}
+                                options={options}
+                                isClearable
+                                isSearchable
+                                placeholder="Select or type to add"
                             />
                         </div>
                     </div>
@@ -136,7 +163,7 @@ function Estimation() {
                         </button>
                     </div>
                 </form>
-                {values.EstID && <EstNav values = {{EstID: values.EstID}} />}
+                {values.EstID && <EstNav values={{ EstID: values.EstID }} />}
             </div>
         </div>
     );

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function SupSun({ values: initialValues }) {
-    const { supplimentID } = initialValues;
+    const { supID } = initialValues;
     const [visibleSections, setVisibleSections] = useState(1);
 
     const [sundriesDetails, setSundriesDetails] = useState([
-        { Sundries: '', Sun_cost: '' }
+        { Sundries: '', Sun_cost: '', supID: supID }
     ]);
 
     const handleChange = (event, index) => {
@@ -17,19 +17,19 @@ function SupSun({ values: initialValues }) {
     };
 
     const handleAdd = () => {
-        setSundriesDetails([...sundriesDetails, { Sundries: '', Sun_cost: '' }]);
+        setSundriesDetails([...sundriesDetails, { Sundries: '', Sun_cost: '', supID: supID }]);
         setVisibleSections(visibleSections + 1);
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(supplimentID); // Log supplimentID to ensure it is correct
+        console.log(supID); // Log supID to ensure it is correct
         const formData = new FormData();
         formData.append('details', JSON.stringify(sundriesDetails));
 
         try {
-            await axios.post(`http://localhost:8081/api/sup/submitCategory/sundries/${supplimentID}`, formData);
+            await axios.post(`http://localhost:8081/api/sup/submitCategory/sundries/${supID}`, formData);
             alert('Estimation submitted successfully!');
         } catch (error) {
             console.error('Error submitting estimation:', error);

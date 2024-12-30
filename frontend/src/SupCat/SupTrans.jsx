@@ -29,9 +29,9 @@ function SupTrans({ values: initialValues }) {
     };
 
     const [tranDetails, setTranDetails] = useState([
-        { Transport: '', Trans_cost: '', TransQ: '' }
+        { Transport: '', Trans_cost: '', TransQ: '', supID: supID }
     ]);
-    const tranHandler = createDetailsHandler(tranDetails, setTranDetails, { Transport: '', Trans_cost: '', TransQ: '' });
+    const tranHandler = createDetailsHandler(tranDetails, setTranDetails, { Transport: '', Trans_cost: '', TransQ: '', supID: supID });
 
     // Handle file change for quotation image(s)
     const handleFileChange = (e) => {

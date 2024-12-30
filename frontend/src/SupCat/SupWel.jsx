@@ -29,9 +29,9 @@ function SupWel({ values: initialValues }) {
     };
 
     const [welDetails, setWelDetails] = useState([
-        { Welding: '', Wel_cost: '', WelQ: '' }
+        { Welding: '', Wel_cost: '', WelQ: '', supID: supID }
     ]);
-    const welHandler = createDetailsHandler(welDetails, setWelDetails, { Welding: '', Wel_cost: '', WelQ: '' });
+    const welHandler = createDetailsHandler(welDetails, setWelDetails, { Welding: '', Wel_cost: '', WelQ: '', supID: supID });
 
     // Handle file change for quotation image(s)
     const handleFileChange = (e) => {
@@ -151,12 +151,12 @@ function SupWel({ values: initialValues }) {
             ))}
 
             <div className='d-grid mb-3'>
-            <button type='button' className='btn btn-secondary' onClick={welHandler.handleAdd}>
-                Add Welding
-            </button>
-            <button type='submit' className='btn btn-primary'>
-                Submit Estimation
-            </button>
+                <button type='button' className='btn btn-secondary' onClick={welHandler.handleAdd}>
+                    Add Welding
+                </button>
+                <button type='submit' className='btn btn-primary'>
+                    Submit Estimation
+                </button>
             </div>
         </form>
     );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './dashout.css';
+import CreatableSelect from 'react-select/creatable';
 
 function Implement() {
     const { id } = useParams();
@@ -108,7 +109,25 @@ function Implement() {
             console.error('Error fetching implementmat data:', error.message);
         }
     };
-
+    const [options, setOptions] = useState([]);
+useEffect(() => {
+        axios.get('http://localhost:8081/api/drop/names', { withCredentials: true })
+            .then(response => {
+                const { uniqueNames } = response.data;
+                const nameOptions = uniqueNames.map(name => ({ value: name, label: name }));
+                setOptions(nameOptions);
+            })
+            .catch(error => {
+                console.error('Error fetching names:', error);
+            });
+    }, []);
+const handleSelectChange = (selectedOption, actionMeta) => {
+        const { name } = actionMeta;
+        setValues(prevState => ({
+            ...prevState,
+            [name]: selectedOption ? selectedOption.value : ''
+        }));
+    };
     const handleIssuedChange = async (event, itemId) => {
         const { value } = event.target;
         const token = localStorage.getItem('token');
@@ -178,12 +197,14 @@ function Implement() {
                     <div className='mb-3 row'>
                         <label className='col-sm-2 col-form-label'>Job Assigned:</label>
                         <div className='col-sm-10'>
-                            <input
+                            <CreatableSelect
                                 type='text'
                                 className='form-control'
                                 name='Job_Assigned'
-                                value={values.Job_Assigned}
-                                onChange={handleChange}
+                                // value={values.Job_Assigned}
+                                value={options.find(option => option.value === values.Job_Assigned)}
+                                onChange={handleSelectChange}
+                                options={options}
                             />
                         </div>
                     </div>

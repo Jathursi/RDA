@@ -29,9 +29,9 @@ function SupMac({ values: initialValues }) {
     };
 
     const [macDetails, setMacDetails] = useState([
-        { Machining: '', Mac_cost: '', MacQ: '' }
+        { Machining: '', Mac_cost: '', MacQ: '', supID: supID }
     ]);
-    const macHandler = createDetailsHandler(macDetails, setMacDetails, { Machining: '', Mac_cost: '', MacQ: '' });
+    const macHandler = createDetailsHandler(macDetails, setMacDetails, { Machining: '', Mac_cost: '', MacQ: '', supID: supID });
 
     // Handle file change for quotation image(s)
     const handleFileChange = (e) => {

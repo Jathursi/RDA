@@ -32,6 +32,11 @@ const ImplementMat = sequelize.define('ImplementMat', {
         allowNull: false,
         defaultValue: 0, // Default value for issued
     },
+    stored: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true, // Default value for stored
+    },
     logbookID: {
         type: DataTypes.STRING,
         allowNull: false,

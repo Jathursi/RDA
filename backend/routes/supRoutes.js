@@ -118,29 +118,17 @@ router.get('/Supselect/:logbookId', async (req, res) => {
 // POST route for submitting category estimation details
 const submitCategory = async (req, res, categoryModel) => {
     const { supplimentID } = req.params;
-    const { Suppliers, QuotationNo, details } = req.body;
+    const { details } = req.body;
 
-    if (!Suppliers || !QuotationNo || !details) {
-        return res.status(400).json({ error: 'Suppliers, QuotationNo, and details fields are required.' });
+    if (!details) {
+        return res.status(400).json({ error: 'Details field is required.' });
     }
 
     try {
-        // Save supplier details
-        const supsupplier = await SupSupplier.create({ QuotationNo, Suppliers, supplimentID });
-
-        // Save quotation images
-        const images = req.files.map((file) => ({
-            fileType: file.mimetype,
-            fileSize: file.size,
-            fileData: file.buffer,
-            supID: supsupplier.id,
-        }));
-        await SupQuotation.bulkCreate(images);
-
         // Save category details
         const categoryDetails = JSON.parse(details).map((item) => ({
             ...item,
-            supplimentID: supplimentID,
+            supplimentID,
         }));
         await categoryModel.bulkCreate(categoryDetails);
 
@@ -156,7 +144,7 @@ router.post('/submitCategory/labour/:supplimentID', upload.array('Quotationimg',
 router.post('/submitCategory/machining/:supplimentID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, SupMac));
 router.post('/submitCategory/welding/:supplimentID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, SupWel));
 router.post('/submitCategory/transport/:supplimentID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, SupTrans));
-router.post('/submitCategory/sundries/:supplimentID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, SupSun));
+router.post('/submitCategory/sundries/:supplimentID', upload.none(), (req, res) => submitCategory(req, res, SupSun));
 
 import db from '../config/sequelize.js';
 

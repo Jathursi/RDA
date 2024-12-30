@@ -2,7 +2,9 @@ import express from 'express';
 import multer from 'multer';
 import Implement from '../model/Impliment.js';
 import ImpImage from '../model/impImage.js';
-import ImplementMat from '../model/implemetmat.js';
+// import ImplementMat from '../model/ImplementMat.js';
+import ImplementMat from '../model/ImplementMat.js';
+
 
 const router = express.Router();
 
@@ -104,6 +106,38 @@ router.get('/implementmat/:logbookID', async (req, res) => {
 });
 // import express from 'express';
 // import ImplementMat from '../model/ImplementMat.js';
+router.get('/implementedItems/:logbookID', async (req, res) => {
+  const { logbookID } = req.params;
+
+  try {
+    const implementedItems = await ImplementMat.findAll({ where: { logbookID } });
+    res.status(200).json(implementedItems);
+  } catch (error) {
+    console.error('Error fetching implemented items:', error);
+    res.status(500).json({ error: 'Failed to fetch implemented items' });
+  }
+});
+// Update the 'stored' field for an item
+router.patch('/implementmat/:id', async (req, res) => {
+    const { id } = req.params;
+    const { stored } = req.body;
+
+    try {
+        const item = await ImplementMat.findByPk(id);
+        if (!item) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        item.stored = stored;
+        await item.save();
+
+        res.status(200).json(item);
+    } catch (error) {
+        console.error('Error updating item:', error);
+        res.status(500).json({ error: 'Failed to update item' });
+    }
+});
+
 
 // const router = express.Router();
 

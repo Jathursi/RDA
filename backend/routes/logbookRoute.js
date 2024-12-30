@@ -105,4 +105,56 @@ router.get('/log/:id', async (req, res) => {
   }
 });
 
+// delete logbook image crosscheck, checklist
+router.delete('/log/checklistImage/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log(`Received request to delete checklist image with ID: ${id}`); // Debugging log
+
+    try {
+        const checklistImage = await CheckList.findByPk(id);
+        if (!checklistImage) {
+            console.log(`No checklist image found with ID: ${id}`); // Debugging log
+            return res.status(404).json({ error: 'Checklist image not found' });
+        }
+        await checklistImage.destroy();
+        console.log(`Checklist image with ID: ${id} deleted successfully`); // Debugging log
+        res.status(200).json({ message: 'Checklist image deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting checklist image:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the checklist image' });
+    }
+});
+
+router.delete('/log/crosscheckImage/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log(`Received request to delete crosscheck image with ID: ${id}`); // Debugging log
+
+    try {
+        const crosscheckImage = await CrossCheck.findByPk(id);
+        if (!crosscheckImage) {
+            console.log(`No crosscheck image found with ID: ${id}`); // Debugging log
+            return res.status(404).json({ error: 'Crosscheck image not found' });
+        }
+        await crosscheckImage.destroy();
+        console.log(`Crosscheck image with ID: ${id} deleted successfully`); // Debugging log
+        res.status(200).json({ message: 'Crosscheck image deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting crosscheck image:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the crosscheck image' });
+    }
+});
+// router.delete('/log/crosscheckImage/:id', async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const crosscheckImage = await CrossCheck.findByPk(id);
+//     if (!crosscheckImage) {
+//       return res.status(404).json({ error: 'Crosscheck image not found' });
+//     }
+//     await crosscheckImage.destroy();
+//     res.status(200).json({ message: 'Crosscheck image deleted successfully' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'An error occurred while deleting the crosscheck image' });
+//   }
+// });
 export default router;

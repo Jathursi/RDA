@@ -1,35 +1,38 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
-// import Estimate from './Estimate.js';
-import Suppliment from './Suppliment.js';
+// import Supplier from './Supplier.js';
 
-const SupSupplier = sequelize.define('SupSupplier', {
+const Outimg = sequelize.define('Outimg', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    Suppliers: {
+    fileType: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    QuotationNo:{
-        type: DataTypes.STRING,
+    fileSize: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
-    supID: {
+    fileData: {
+        type: DataTypes.BLOB('long'),
+        allowNull: false,
+    },
+    OutID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Suppliment,
+            model: 'outsource',
             key: 'id',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     },
 }, {
-    tableName: 'supsupplier',
-    timestamps: true,
+    tableName: 'outimg',
+    timestamps: false
 });
 
-export default SupSupplier;
+export default Outimg;

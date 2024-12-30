@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
 import './Outlethome.css';
 
 function Regist() {
@@ -22,6 +23,7 @@ function Regist() {
 
     const [checklistImage, setChecklistImage] = useState(null);
     const [crosscheckImage, setCrosscheckImage] = useState(null);
+    const [options, setOptions] = useState([]);
 
     useEffect(() => {
         axios
@@ -31,6 +33,17 @@ function Regist() {
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
+            });
+
+        axios
+            .get('http://localhost:8081/api/drop/names', { withCredentials: true })
+            .then(response => {
+                const { uniqueNames } = response.data;
+                const nameOptions = uniqueNames.map(name => ({ value: name, label: name }));
+                setOptions(nameOptions);
+            })
+            .catch(error => {
+                console.error('Error fetching names:', error);
             });
     }, []);
 
@@ -70,6 +83,14 @@ function Regist() {
         setValues(prevState => ({
             ...prevState,
             [name]: value
+        }));
+    };
+
+    const handleSelectChange = (selectedOption, actionMeta) => {
+        const { name } = actionMeta;
+        setValues(prevState => ({
+            ...prevState,
+            [name]: selectedOption ? selectedOption.value : ''
         }));
     };
 
@@ -206,14 +227,14 @@ function Regist() {
                     <div className="mb-3 row">
                         <label htmlFor="Inspected" className="col-sm-2 col-form-label">Inspected By</label>
                         <div className="col-sm-10">
-                            <input
-                                type="text"
+                            <CreatableSelect
                                 name="Inspected"
-                                value={values.Inspected}
-                                className="form-control"
-                                placeholder="Enter Inspected By"
-                                onChange={handleChange}
-                                required
+                                value={options.find(option => option.value === values.Inspected)}
+                                onChange={handleSelectChange}
+                                options={options}
+                                isClearable
+                                isSearchable
+                                placeholder="Select or type to add"
                             />
                         </div>
                     </div>
@@ -251,14 +272,14 @@ function Regist() {
                     <div className="mb-3 row">
                         <label htmlFor="CrossCheckby" className="col-sm-2 col-form-label">CrossCheck By</label>
                         <div className="col-sm-10">
-                            <input
-                                type="text"
+                            <CreatableSelect
                                 name="CrossCheckby"
-                                value={values.CrossCheckby}
-                                className="form-control"
-                                placeholder="Enter CrossCheck By"
-                                onChange={handleChange}
-                                required
+                                value={options.find(option => option.value === values.CrossCheckby)}
+                                onChange={handleSelectChange}
+                                options={options}
+                                isClearable
+                                isSearchable
+                                placeholder="Select or type to add"
                             />
                         </div>
                     </div>

@@ -30,7 +30,6 @@ function SupNav() {
 
                 const { id: supID, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
                 setValues({ supID, Date, Estimated });
-                // setIsInitialSubmission(false); // Switch to update mode
             } catch (error) {
                 console.error('Error fetching estimate:', error);
                 alert(error.message);
