@@ -120,7 +120,7 @@ const Attachment = () => {
             </button>
           </div>
         </form>
-        <div className="resourcesList">
+        {/* <div className="resourcesList">
           {resources.map((resource) => (
             <div key={resource.id} className="resourceItem">
               <h3>{resource.fileName}</h3>
@@ -152,7 +152,7 @@ const Attachment = () => {
           ))}
         </div>
 
-        {/* Modal for image preview */}
+        {/* Modal for image preview 
         {showModal && modalImage && (
           <div className="modal" onClick={closeModal}>
             <div className="modalContent" onClick={(e) => e.stopPropagation()}>
@@ -166,7 +166,7 @@ const Attachment = () => {
               />
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -77,13 +77,7 @@ function EstPrint() {
             const groupedData = groupDataCallback(response.data);
             setDataCallback(groupedData);
 
-            // Extract and set initially implemented rows
-            // const implementedRows = new Set(
-            //     response.data
-            //         .filter((item) => item.isImplemented)
-            //         .map((item) => `${item.Suppliers}-${item.MatItem || item.LabItem || item.MacItem || item.TransItem || item.WelItem || item.SunItem}`)
-            // );
-            // setClickedRows(implementedRows);
+
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -93,6 +87,13 @@ function EstPrint() {
         fetchData(
             `http://localhost:8081/api/est/fetchAllCategories/${book_id}`,
             setData,
+            groupDataBySupplier
+        );
+    }, [book_id]);
+    useEffect(() => {
+        fetchData(
+            `http://localhost:8081/api/sup/fetchAllCategories/${book_id}`,
+            setSupplierData,
             groupDataBySupplier
         );
     }, [book_id]);
@@ -171,7 +172,7 @@ function EstPrint() {
                                 </td>
                             )}
                             <td>
-                                {storedRows.map((storedRow) => (
+                                {Array.isArray(storedRows) && storedRows.map((storedRow) => (
                                     storedRow.supplier === supplierData.supplierName &&
                                     storedRow.item === item.Item && (
                                         <span key={`${supplierData.supplierName}-${item.Item}`}>

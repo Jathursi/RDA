@@ -135,4 +135,23 @@ router.get('/Outview/:logbookId', async (req, res) => {
     }
 });
 
+// delete of outimg
+router.delete('/Outdelete/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log('ID received for deletion:', id); // Add logging for debugging
+
+    try {
+        const outimg = await Outimg.findOne({ where: { id } });
+        if (!outimg) {
+            return res.status(404).json({ error: 'Outimg not found' });
+        }
+
+        await outimg.destroy();
+        res.status(200).json({ message: 'Outimg deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting outimg:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the outimg.' });
+    }
+});
+
 export default router;

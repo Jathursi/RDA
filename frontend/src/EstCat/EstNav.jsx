@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 
 function EstNav() {
     const { id } = useParams();
+    // alert('Estimate ID:', id);
     const [values, setValues] = useState({}); // Initialize with an empty object
 
     useEffect(() => {
@@ -27,9 +28,11 @@ function EstNav() {
                 if (response.status !== 200) {
                     throw new Error(`Error fetching estimate: ${response.statusText}`);
                 }
-
+                const { id: EstID, Date, Estimated } = response.data.estimate;
+                
                 // Set values with the data fetched
-                setValues({ EstID: id });
+                setValues({  EstID, Date, Estimated });
+                console.log('Estimate Data:', response.data.EstID);
             } catch (error) {
                 console.error('Error fetching estimate:', error);
                 alert(error.message);
@@ -53,7 +56,7 @@ function EstNav() {
                         aria-controls="home"
                         aria-selected="true"
                     >
-                        Material
+                        Material {values.EstID}
                     </button>
                 </li>
                 <li className="nav-item" role="presentation">

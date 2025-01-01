@@ -39,49 +39,51 @@ function Implement() {
         setSelectedFiles(validFiles);
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+const handleSubmit = (event) => {
+    event.preventDefault();
 
-        const token = localStorage.getItem('token');
-        const url = isInitialSubmission
-            ? `http://localhost:8081/api/imp/Iminsert/${id}`
-            : `http://localhost:8081/api/imp/Imput/${id}`;
+    const token = localStorage.getItem('token');
+    const url = isInitialSubmission
+        ? `http://localhost:8081/api/imp/Iminsert/${id}`
+        : `http://localhost:8081/api/imp/Imput/${id}`;
 
-        const method = isInitialSubmission ? 'post' : 'put';
+    const method = isInitialSubmission ? 'post' : 'put';
 
-        const formData = new FormData();
-        formData.append('Start_Date', values.Start_Date);
-        formData.append('Job_Assigned', values.Job_Assigned);
-        formData.append('Req_date', values.Req_date);
-        formData.append('Req_off', values.Req_off);
-        formData.append('Auth', values.Auth);
-        selectedFiles.forEach((file) => {
-            formData.append('images', file);
-        });
+    const formData = new FormData();
+    formData.append('Start_Date', values.Start_Date);
+    formData.append('Job_Assigned', values.Job_Assigned);
+    formData.append('Req_date', values.Req_date);
+    formData.append('Req_off', values.Req_off);
+    formData.append('Auth', values.Auth);
+    selectedFiles.forEach((file) => {
+        formData.append('images', file);
+    });
 
-        axios({
-            method,
-            url,
-            data: formData,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-            },
+    axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    })
+        .then((res) => {
+            console.log(
+                isInitialSubmission
+                    ? 'Logbook entry submitted successfully'
+                    : 'Logbook entry updated successfully'
+            );
+            setIsInitialSubmission(false);
+            fetchImplementMatData(); // Fetch the updated implementmat data
+            navigate('/home');
+            alert('Implement data submitted successfully');
         })
-            .then((res) => {
-                console.log(
-                    isInitialSubmission
-                        ? 'Logbook entry submitted successfully'
-                        : 'Logbook entry updated successfully'
-                );
-                setIsInitialSubmission(false);
-                fetchImplementMatData(); // Fetch the updated implementmat data
-                navigate('/Home');
-            })
-            .catch((err) => {
-                console.error('Error with logbook entry:', err.message);
-            });
-    };
+        .catch((err) => {
+            console.error('Error with logbook entry:', err.message);
+            alert(err.response?.data?.error || err.message);
+        });
+};
 
     const fetchImplementMatData = async () => {
         const token = localStorage.getItem('token');
@@ -209,7 +211,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                         </div>
                     </div>
                     <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Required Date:</label>
+                        <label className='col-sm-2 col-form-label'>Requested Date:</label>
                         <div className='col-sm-10'>
                             <input
                                 type='date'
@@ -221,7 +223,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                         </div>
                     </div>
                     <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Required Officer:</label>
+                        <label className='col-sm-2 col-form-label'>Requested Officer:</label>
                         <div className='col-sm-10'>
                             <input
                                 type='text'

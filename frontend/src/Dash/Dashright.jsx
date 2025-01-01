@@ -20,7 +20,7 @@ function Dashright() {
     const [resources, setResources] = useState([]);
     const [selectedresImage, setSelectedresImage] = useState(''); // For the clicked image
     const [selectedoutImage, setSelectedoutImage] = useState(''); // For the clicked image
-
+    const [supImages, setsupImages] = useState([]); // For the clicked image
     // Fetch logbook data
     useEffect(() => {
         axios
@@ -168,6 +168,19 @@ function Dashright() {
         setShowModal(true);
     };
 
+    useEffect(() => {
+        const fetchSupImages = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8081/api/sup/images/${id}`);
+                setsupImages(response.data);
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                setError('Failed to fetch images.');
+            }
+        };
+        fetchSupImages();
+    }, [id]);
+
     // Ensure `data` is not null before destructuring
     const checklistImages = data?.checklistImages || [];
     const crosscheckImages = data?.crosscheckImages || [];
@@ -193,53 +206,63 @@ function Dashright() {
     const { image1 } = outimage || {};
 
     const imageArray1 = (image1 || []).map((image, index) => ({
-        src: `data:${image.fileType};base64,${image.fileData}`,
-        label: `OutSource ${index + 1}`,
-    }));
+    id: image.id, // Include the ID here
+    src: `data:${image.fileType};base64,${image.fileData}`,
+    label: `OutSource ${index + 1}`,
+}));
+    const { quotationImages1 = [], estimateImages1 = [] } = supImages;
 
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8081/api/attachment/resource/${id}`);
-            alert('Resource deleted successfully');
-            setUpdateTrigger(!updateTrigger); // Trigger re-fetch to update list
-        } catch (error) {
-            console.error('There was an error deleting the resource!', error);
-        }
-    };
+    const imageArray2 = [
+        ...quotationImages1.map((image) => ({
+            src: `data:${image.fileType};base64,${image.fileData}`,
+            label: 'Quotation',
+        })),
+        ...estimateImages1.map((image) => ({
+            src: `data:${image.fileType};base64,${image.fileData}`,
+            label: 'Estimation',
+        })),
+    ];
 
-    const handleDeletecomp = async (imageId) => {
-        console.log('Attempting to delete image with ID:', imageId); // Debug log
-        try {
-            await axios.delete(`http://localhost:8081/api/comp/image/${imageId}`);
-            alert('Resource deleted successfully');
-            setUpdateTrigger(!updateTrigger);
-        } catch (error) {
-            console.error('Error during delete:', error);
-        }
-    };
-
-    const handleDeleteChecklistImage = async (imageId) => {
-    console.log('Attempting to delete checklist image with ID:', imageId); // Debug log
+    const handleDelete = async (resourceId) => {
     try {
-        await axios.delete(`http://localhost:8081/api/log/checklistImage/${imageId}`);
-        alert('Checklist image deleted successfully');
-        setUpdateTrigger(!updateTrigger);
+      await axios.delete(`http://localhost:8081/api/attachment/resource/${resourceId}`);
+      alert('Resource deleted successfully');
+      setUpdateTrigger(!updateTrigger); // Trigger re-fetch to update list
     } catch (error) {
-        console.error('Error deleting checklist image:', error);
+      console.error('There was an error deleting the resource!', error);
+    }
+  };
+const handleOutDelete = async (imagid) => {
+    try {
+        const response = await axios.delete(`http://localhost:8081/api/out/Outdelete/${imagid}`);
+        alert(response.data.message); // Display server response message
+        setUpdateTrigger(!updateTrigger); // Trigger re-fetch
+    } catch (error) {
+        console.error('There was an error deleting the outsource image:', error);
+        setError('Failed to delete the outsource image.'); // Optional UI feedback
     }
 };
-
-const handleDeleteCrosscheckImage = async (imageId) => {
-    console.log('Attempting to delete crosscheck image with ID:', imageId); // Debug log
-    try {
-        await axios.delete(`http://localhost:8081/api/log/crosscheckImage/${imageId}`);
-        alert('Crosscheck image deleted successfully');
-        setUpdateTrigger(!updateTrigger);
+const handleregdelete = async (regid) =>{
+     try {
+        const response = await axios.delete(`http://localhost:8081/api/logbook/delete/${regid}`);
+        alert(response.data.message); // Display server response message
+        setUpdateTrigger(!updateTrigger); // Trigger re-fetch
     } catch (error) {
-        console.error('Error deleting crosscheck image:', error);
+        console.error('There was an error deleting the outsource image:', error);
+        setError('Failed to delete the outsource image.'); // Optional UI feedback
     }
-};
-
+}
+ 
+const handleestdelete = async (estid) =>{
+     try {
+        const response = await axios.delete(`http://localhost:8081/api/est/delete/${estid}`);
+        alert(response.data.message); // Display server response message
+        setUpdateTrigger(!updateTrigger); // Trigger re-fetch
+    } catch (error) {
+        console.error('There was an error deleting the outsource image:', error);
+        setError('Failed to delete the outsource image.'); // Optional UI feedback
+    }
+}
     return (
     <div className='sticky-top min-vh-100 overflow-auto'>
         <div className=''>
@@ -255,6 +278,12 @@ const handleDeleteCrosscheckImage = async (imageId) => {
                             >
                                 {image.label} {index + 1}
                             </button>
+                            {/* <button
+                                className="deleteButton"
+                                onClick={() => handleregdelete(image.id)}
+                            >
+                                Delete
+                            </button> */}
                         </div>
                     ))}
                 </div>
@@ -271,6 +300,38 @@ const handleDeleteCrosscheckImage = async (imageId) => {
                         >
                             {image.label} {index + 1}
                         </button>
+                        {/* <button
+                                className="deleteButton"
+                                onClick={() => handleestdelete(image.id)}
+                            >
+
+                                Delete
+                            </button> */}
+                        </div>
+                    ))}
+                    {/* </div> */}
+                    {imageArray.length === 0 && <p>No estimation images available.</p>}
+                </div>
+            </div>
+            <div className="mt-3">
+                <h5>Suppliment</h5>
+                <div className="d-flex flex-wrap gap-3">
+                    {imageArray2.map((image, index) => (
+                    <div key={index} className="image-preview">
+                        <button
+                            key={index}
+                            className="btn btn-link text-start"
+                            onClick={() => handleImageClick(image)}
+                        >
+                            {image.label} {index + 1}
+                        </button>
+                        {/* <button
+                                className="deleteButton"
+                                onClick={() => handleestdelete(image.id)}
+                            >
+
+                                Delete
+                            </button> */}
                         </div>
                     ))}
                     {/* </div> */}
@@ -340,14 +401,17 @@ const handleDeleteCrosscheckImage = async (imageId) => {
                 <h5>Images</h5>
                 <div className="d-flex flex-column gap-2">
                     {imageArray1.map((image, index) => (
-                        <button
-                            key={index}
-                            className="btn btn-link text-start"
-                            onClick={() => handleImageClickout(image.src)}
-                        >
-                            {image.label}
-                        </button>
-                    ))}
+    <div key={index}>
+        <button
+            className="btn btn-link text-start"
+            onClick={() => handleImageClickout(image.src)}
+        >
+            {image.label}
+        </button>
+    </div>
+))}
+
+
                 </div>
             </div>
             {selectedImage && (

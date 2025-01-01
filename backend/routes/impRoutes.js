@@ -1,8 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import Implement from '../model/Impliment.js';
-import ImpImage from '../model/impImage.js';
-// import ImplementMat from '../model/ImplementMat.js';
+import ImpImage from '../model/ImpImage.js';
 import ImplementMat from '../model/ImplementMat.js';
 
 
@@ -33,9 +32,10 @@ router.post('/Iminsert/:id', upload.array('images'), async (req, res) => {
                     fileType: file.mimetype,
                     fileSize: file.size,
                     fileData: file.buffer, // Save binary data to the database
-                    impID: newEntry.id,   // Associate images with the created implement
+                    ImpID: newEntry.id,   // Associate images with the created implement
                 }))
             );
+            console.log('Images saved:', images); // Log saved images
         }
 
         res.status(201).json(newEntry);
@@ -51,14 +51,18 @@ router.put('/Imput/:id', upload.array('images'), async (req, res) => {
     const { Start_Date, Job_Assigned, Req_date, Req_off, Auth } = req.body;
 
     try {
-        const updatedEntry = await Implement.update({
+        const implement = await Implement.findOne({ where: { logbookID } });
+        
+        if (!implement) {
+            return res.status(404).json({ error: 'Implement entry not found' });
+        }
+
+        await implement.update({ 
             Start_Date,
             Job_Assigned,
             Req_date,
             Req_off,
             Auth,
-        }, {
-            where: { logbookID }
         });
 
         if (req.files && req.files.length > 0) {
@@ -67,12 +71,13 @@ router.put('/Imput/:id', upload.array('images'), async (req, res) => {
                     fileType: file.mimetype,
                     fileSize: file.size,
                     fileData: file.buffer, // Save binary data to the database
-                    impID: logbookID,   // Associate images with the updated implement
+                    ImpID: implement.id,   // Associate images with the updated implement
                 }))
             );
+            console.log('Additional images saved:', images); // Log saved images
         }
 
-        res.status(200).json(updatedEntry);
+        res.status(200).json(implement);
     } catch (error) {
         console.error('Error updating implement:', error);
         res.status(500).json({ error: 'Failed to update implement' });

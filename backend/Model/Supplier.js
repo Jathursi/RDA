@@ -20,7 +20,7 @@ const Supplier = sequelize.define('Supplier', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Estimate,
+            model: 'estimates',
             key: 'id',
         },
         onDelete: 'CASCADE',

@@ -5,7 +5,7 @@ import EstNav from '../EstCat/EstNav';
 import CreatableSelect from 'react-select/creatable';
 
 function Estimation() {
-    const { id } = useParams();
+    const { id: logbookID } = useParams();
     const navigate = useNavigate();
     const [values, setValues] = useState({ Date: '', Estimated: '', EstID: '' });
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -20,7 +20,7 @@ function Estimation() {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.get(`http://localhost:8081/api/est/Estselect/${id}`, {
+                const response = await axios.get(`http://localhost:8081/api/est/Estselect/${logbookID}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -28,21 +28,22 @@ function Estimation() {
                     throw new Error(`Error fetching estimate: ${response.statusText}`);
                 }
 
-                const { Date, Estimated } = response.data.estimate;
+                const { id: EstID, Date, Estimated } = response.data.estimate;
 
                 // Convert the date to "YYYY-MM-DD" format
                 const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
 
-                setValues({ EstID: id, Date: formattedDate, Estimated });
+                setValues({ EstID, Date: formattedDate, Estimated });
+                console.log('Estimate Data:', response.data);
                 setIsInitialSubmission(false); // Switch to update mode
             } catch (error) {
                 console.error('Error fetching estimate:', error);
-                alert(error.message);
+                // alert(error.message);
             }
         };
 
         fetchEstimate();
-    }, [id]);
+    }, [logbookID]);
 
     useEffect(() => {
         axios.get('http://localhost:8081/api/drop/names', { withCredentials: true })
@@ -67,8 +68,8 @@ function Estimation() {
 
         const token = localStorage.getItem('token');
         const url = isInitialSubmission
-            ? `http://localhost:8081/api/est/Estinsert/${id}`
-            : `http://localhost:8081/api/est/Estupdate/${id}`;
+            ? `http://localhost:8081/api/est/Estinsert/${logbookID}`
+            : `http://localhost:8081/api/est/Estupdate/${logbookID}`;
         const method = isInitialSubmission ? 'post' : 'put';
 
         try {
@@ -124,7 +125,7 @@ function Estimation() {
         <div className="template d-flex align-items-center 100-w sm:w-100">
             <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
                 <form onSubmit={handleSubmit}>
-                    <h2 className="formTitle pb-2 sm:pb-5">Estimation</h2>
+                    <h2 className="formTitle pb-2 sm:pb-5">Estimation {values.EstID}</h2>
                     <div className="mb-3 row">
                         <label className="col-sm-2 col-form-label">Date:</label>
                         <div className="col-sm-10">

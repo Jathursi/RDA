@@ -1,14 +1,15 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
-import EmailComp from '../model/EmailComp.js';
-import EmailAttachment from '../model/EmailAttachment.js';
+import EmailAuth from '../model/EmailAuth.js';
+import AuthAttachment from '../model/AuthAttachment.js';
 import Docs from '../model/Docs.js';
 import EstImage from '../model/EstImage.js';
+import QutationImg from '../model/QutationImg.js';
 import path from 'path';
 import Implement from '../model/Impliment.js';
 import Completion from '../model/Completion.js';
-import ImpImage from '../model/ImpImage.js';
-import CompImage from '../model/CompImage.js';
+// import ImpImage from '../model/ImpImage.js';
+// import CompImage from '../model/CompImage.js';
 import dotenv from 'dotenv';
 import sequelize from '../config/sequelize.js';
 
@@ -35,7 +36,7 @@ router.post('/send-emailattach1/:logbookID', async (req, res) => {
         console.log('Received email request:', { emails, subject, message, attachments, logbookID });
 
         // Fetch selected attachments based on provided IDs using raw SQL queries
-        const [docs, estImages, impImages, compImages] = await Promise.all([
+        const [docs, estImages, qutationImg] = await Promise.all([
             attachments.length > 0 ? sequelize.query(`
                 SELECT fileName, fileType, fileData, id 
                 FROM docs 
@@ -56,19 +57,11 @@ router.post('/send-emailattach1/:logbookID', async (req, res) => {
                 }),
             sequelize.query(`
                 SELECT  fileSize, fileType, fileData, id 
-                FROM impimage 
-                WHERE ImpID IN (
-                    SELECT id FROM implement WHERE logbookID = :logbookID
-                )`, 
-                { 
-                    replacements: { logbookID },
-                    type: sequelize.QueryTypes.SELECT
-                }),
-            sequelize.query(`
-                SELECT  fileSize, fileType, fileData, id 
-                FROM compimage 
-                WHERE CompID IN (
-                    SELECT id FROM completion WHERE logbookID = :logbookID
+                FROM qutationimg 
+                WHERE supID IN (
+                    SELECT supplier.id FROM supplier 
+                    LEFT JOIN estimates ON supplier.id = estimates.supID
+                    WHERE estimates.logbookID = :logbookID
                 )`, 
                 { 
                     replacements: { logbookID },
@@ -76,7 +69,7 @@ router.post('/send-emailattach1/:logbookID', async (req, res) => {
                 })
         ]);
 
-        const allFiles = [...docs, ...estImages, ...impImages, ...compImages];
+        const allFiles = [...docs, ...estImages, qutationImg ];
         console.log('Fetched files:', allFiles);
 
         // Map valid attachments for email
@@ -86,10 +79,8 @@ router.post('/send-emailattach1/:logbookID', async (req, res) => {
                 // Generate default filenames based on model type and index
                 if (file instanceof EstImage) {
                     filename = `initial_fault${index + 1}`;
-                } else if (file instanceof ImpImage) {
+                } else if (file instanceof QutationImg) {
                     filename = `implementation${index + 1}`;
-                } else if (file instanceof CompImage) {
-                    filename = `final${index + 1}`;
                 } else {
                     filename = `unnamed${index + 1}`;
                 }
@@ -157,15 +148,15 @@ const mailOptions = {
 
         // Save email details and attachments in the database
         const emailCompPromises = emails.map(async email => {
-            const emailComp = await EmailComp.create({ email, book_id: logbookID, subject, message });
+            const emailComp = await EmailAuth.create({ email, book_id: logbookID, subject, message });
 
             const attachmentPromises = allFiles.map(async file => {
                 if (!file.fileName) {
                     console.error('Skipping invalid attachment:', file);
                     return;
                 }
-                await EmailAttachment.create({
-                    emailCompId: emailComp.id,
+                await AuthAttachment.create({
+                    emailAuthId: emailComp.id,
                     fileId: file.id,
                     fileName: file.fileName,
                     fileType: file.fileType,

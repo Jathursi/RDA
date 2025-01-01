@@ -21,8 +21,8 @@ function Regist() {
         CrossCheckby: ''
     });
 
-    const [checklistImage, setChecklistImage] = useState(null);
-    const [crosscheckImage, setCrosscheckImage] = useState(null);
+    const [checklistImages, setChecklistImages] = useState([]);
+    const [crosscheckImages, setCrosscheckImages] = useState([]);
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
@@ -57,12 +57,12 @@ function Regist() {
         });
 
         // Append files
-        if (checklistImage) {
-            formData.append('checklistImage', checklistImage);
-        }
-        if (crosscheckImage) {
-            formData.append('crosscheckImage', crosscheckImage);
-        }
+        checklistImages.forEach((image, index) => {
+            formData.append(`checklistImage`, image);
+        });
+        crosscheckImages.forEach((image, index) => {
+            formData.append(`crosscheckImage`, image);
+        });
 
         // Append user ID
         formData.append('userID', userID);
@@ -94,9 +94,9 @@ function Regist() {
         }));
     };
 
-    const handleFileChange = (e, setFile) => {
-        const file = e.target.files[0];
-        setFile(file || null);
+    const handleFileChange = (e, setFiles) => {
+        const files = Array.from(e.target.files);
+        setFiles(files);
     };
 
     const handleRadioChange = (e) => {
@@ -190,7 +190,8 @@ function Regist() {
                                 type="file"
                                 id="checklistImage"
                                 accept="image/*"
-                                onChange={(e) => handleFileChange(e, setChecklistImage)}
+                                multiple
+                                onChange={(e) => handleFileChange(e, setChecklistImages)}
                             />
                         </div>
                     </div>
@@ -255,7 +256,7 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Location" className="col-sm-2 col-form-label">Location</label>
+                        <label htmlFor="Location" className="col-sm-2 col-form-label">Division</label>
                         <div className="col-sm-10">
                             <input
                                 type="text"
@@ -291,7 +292,8 @@ function Regist() {
                                 type="file"
                                 id="crosscheckImage"
                                 accept="image/*"
-                                onChange={(e) => handleFileChange(e, setCrosscheckImage)}
+                                multiple
+                                onChange={(e) => handleFileChange(e, setCrosscheckImages)}
                             />
                         </div>
                     </div>

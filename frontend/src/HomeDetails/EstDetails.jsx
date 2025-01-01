@@ -182,13 +182,15 @@ function EstDetails() {
                     <h5>Images</h5>
                     <div className="d-flex flex-column gap-2">
                         {imageArray.map((image, index) => (
-                            <button
-                                key={index}
-                                className="btn btn-link text-start"
-                                onClick={() => handleImageClick(image)}
-                            >
-                                {image.label} {index + 1}
-                            </button>
+                            <div className='d-flex flex-wrap gap-3'>
+                                <button
+                                    key={index}
+                                    className="btn btn-link text-start"
+                                    onClick={() => handleImageClick(image)}
+                                >
+                                    {image.label} {index + 1}
+                                </button>
+                            </div>
                         ))}
                     </div>
                 </div>

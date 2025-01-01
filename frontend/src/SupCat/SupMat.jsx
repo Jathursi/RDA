@@ -68,7 +68,7 @@ function SupMat({ values: initialValues }) {
 
     return (
         <form className='mt-4' onSubmit={handleSubmit}>
-            <h3>Material Details</h3>
+            <h3>Material Details {supID}</h3>
             <div className='row mb-3'>
                 <label className='col-sm-2 col-form-label'>Suppliers:</label>
                 <div className='col-sm-10'>

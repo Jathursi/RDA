@@ -4,8 +4,8 @@ import sequelize from "../config/sequelize.js";
 const Estsun = sequelize.define('Estsun', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
     },
     Sundries: {
         type: DataTypes.STRING,

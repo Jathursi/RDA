@@ -361,138 +361,162 @@ const PrintButton = () => {
     totalOtherQ: 0,
     totalOtherP: 0
   });
-
 useEffect(() => {
-    axios.get(`http://localhost:8081/api/reg/Regist/${id}`, { withCredentials: true })
-      .then(response => {
-        if (response.data && response.data.length > 0) {
-          const data = response.data[0]; // Assuming the response is an array with one object
-          setValues({
-            id: data.id,
-            Vehicle_num: data.Vehicle_num,
-            Year: data.Year,
-            Vehicle_type: data.Vehicle_type,
-            Fault: data.Fault,
-            Inspected: data.Inspected,
-            Meter: data.Meter,
-            Location: data.Location,
-            Reference: data.Reference,
-            Response: data.Response,
-            CrossCheck: data.CrossCheck
-          });
-        } else {
-          console.error('No data found');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, [id]);
+        axios
+            .get(`http://localhost:8081/api/logbook/log/${id}`, { withCredentials: true })
+            .then((response) => {
+              if (response.data && response.data.length > 0) {
+                const values = response.data[0]
+                setValues({
+                  id: values.id,
+                  Vehicle_num: values.Vehicle_num,
+                  Year: values.Year,
+                  Vehicle_type: values.Vehicle_type,
+                  Fault: values.Fault,
+                  Inspected: values.Inspected,
+                  Meter: values.Meter,
+                  Location: values.Location,
+                  Reference: values.Reference,
+                  Response: values.Response,
+                  CrossCheck: values.CrossCheck
+                }
+                );}
+            })
+            .catch((err) => {
+                setError('An error occurred. Please try again.');
+                console.error('Error fetching data:', err);
+            });
+    }, [id]);
+// useEffect(() => {
+//     axios.get(`http://localhost:8081/api/reg/Regist/${id}`, { withCredentials: true })
+//       .then(response => {
+        ; // Assuming the response is an array with one object
+//           setValues({
+//             id: data.id,
+//             Vehicle_num: data.Vehicle_num,
+//             Year: data.Year,
+//             Vehicle_type: data.Vehicle_type,
+//             Fault: data.Fault,
+//             Inspected: data.Inspected,
+//             Meter: data.Meter,
+//             Location: data.Location,
+//             Reference: data.Reference,
+//             Response: data.Response,
+//             CrossCheck: data.CrossCheck
+//           });
+//         } else {
+//           console.error('No data found');
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error fetching data:', error);
+//       });
+//   }, [id]);
 
-useEffect(() => {
-  const fetchDetailsImp = async () => {
-    try {
-      const res2 = await axios.get(`http://localhost:8081/api/imp/Imview/${id}`);
-      const res3 = await axios.get(`http://localhost:8081/api/comp/comp/${id}`);
-      setValuesImp(
-        res2.data[0] || {
-          Start_Date: '',
-          Job_Assigned: '',
-          Req_date: '',
-          Req_off: '',
-          Vaucher: '',
-          Auth: '',
-          supplier: ''
-        }
-      );
-      setValuesImp(prevValues => ({
-        ...prevValues,
-        ...res3.data[0] || { 
-          supervised: '',
-          initiated: '',
-          closed: '',
-          approved: '',
-          aditional_fault: '',
-        }
-      }));
-    } catch (err) {
-      console.error("Error fetching details:", err);
-      alert("Failed to fetch details. Please try again later.");
-    }
-  };
+// useEffect(() => {
+//   const fetchDetailsImp = async () => {
+//     try {
+//       const res2 = await axios.get(`http://localhost:8081/api/imp/Imview/${id}`);
+//       const res3 = await axios.get(`http://localhost:8081/api/comp/comp/${id}`);
+//       setValuesImp(
+//         res2.data[0] || {
+//           Start_Date: '',
+//           Job_Assigned: '',
+//           Req_date: '',
+//           Req_off: '',
+//           Vaucher: '',
+//           Auth: '',
+//           supplier: ''
+//         }
+//       );
+//       setValuesImp(prevValues => ({
+//         ...prevValues,
+//         ...res3.data[0] || { 
+//           supervised: '',
+//           initiated: '',
+//           closed: '',
+//           approved: '',
+//           aditional_fault: '',
+//         }
+//       }));
+//     } catch (err) {
+//       console.error("Error fetching details:", err);
+//       alert("Failed to fetch details. Please try again later.");
+//     }
+//   };
 
-  fetchDetailsImp();
-}
-, [id]);
+//   fetchDetailsImp();
+// }
+// , [id]);
 
-useEffect(() => {
-  const fetchDetailsImp = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8081/api/Sum/SumAll/${id}`)
-      console.log('Summary Data:', res.data);
-      const data = res.data;
-      setSummaryData({
-          totalMatCost: data.results1[0]?.totalMatCost || 0,
-          totalMatQ: data.results1[0]?.totalMatQ || 0,
-          totalMatP: data.results1[0]?.totalMatP || 0,
-          totalLabCost: data.results2[0]?.totalLabCost || 0,
-          totalLabQ: data.results2[0]?.totalLabQ || 0,
-          totalLabP: data.results2[0]?.totalLabP || 0,
-          totalTransCost: data.results3[0]?.totalTransCost || 0,
-          totalTransQ: data.results3[0]?.totalTransQ || 0,
-          totalTransP: data.results3[0]?.totalTransP || 0,
-          totalStockCost: data.results3[0]?.totalStockCost || 0,
-          totalStockQ: data.results3[0]?.totalStockQ || 0,
-          totalStockP: data.results3[0]?.totalStockP || 0,
-          totalSunCost: data.results3[0]?.totalSunCost || 0,
-          totalSunQ: data.results3[0]?.totalSunQ || 0,
-          totalSunP: data.results3[0]?.totalSunP || 0,
-          totalWelCost: data.results3[0]?.totalWelCost || 0,
-          totalWelQ: data.results3[0]?.totalWelQ || 0,
-          totalWelP: data.results3[0]?.totalWelP || 0,
-          totalMacCost: data.results3[0]?.totalMacCost || 0,
-          totalMacQ: data.results3[0]?.totalMacQ || 0,
-          totalMacP: data.results3[0]?.totalMacP || 0,
-          totalOtherCost: data.results3[0]?.totalOtherCost || 0,
-          totalOtherQ: data.results3[0]?.totalOtherQ || 0,
-          totalOtherP: data.results3[0]?.totalOtherP || 0
-        });
-    }
-    catch (err) {
-      console.error('Error fetching summary data:', err);
-      alert('Failed to fetch summary data. Please try again later.');
-    }
-  };
-  fetchDetailsImp();
-}, [id]);
+// useEffect(() => {
+//   const fetchDetailsImp = async () => {
+//     try {
+//       const res = await axios.get(`http://localhost:8081/api/Sum/SumAll/${id}`)
+//       console.log('Summary Data:', res.data);
+//       const data = res.data;
+//       setSummaryData({
+//           totalMatCost: data.results1[0]?.totalMatCost || 0,
+//           totalMatQ: data.results1[0]?.totalMatQ || 0,
+//           totalMatP: data.results1[0]?.totalMatP || 0,
+//           totalLabCost: data.results2[0]?.totalLabCost || 0,
+//           totalLabQ: data.results2[0]?.totalLabQ || 0,
+//           totalLabP: data.results2[0]?.totalLabP || 0,
+//           totalTransCost: data.results3[0]?.totalTransCost || 0,
+//           totalTransQ: data.results3[0]?.totalTransQ || 0,
+//           totalTransP: data.results3[0]?.totalTransP || 0,
+//           totalStockCost: data.results3[0]?.totalStockCost || 0,
+//           totalStockQ: data.results3[0]?.totalStockQ || 0,
+//           totalStockP: data.results3[0]?.totalStockP || 0,
+//           totalSunCost: data.results3[0]?.totalSunCost || 0,
+//           totalSunQ: data.results3[0]?.totalSunQ || 0,
+//           totalSunP: data.results3[0]?.totalSunP || 0,
+//           totalWelCost: data.results3[0]?.totalWelCost || 0,
+//           totalWelQ: data.results3[0]?.totalWelQ || 0,
+//           totalWelP: data.results3[0]?.totalWelP || 0,
+//           totalMacCost: data.results3[0]?.totalMacCost || 0,
+//           totalMacQ: data.results3[0]?.totalMacQ || 0,
+//           totalMacP: data.results3[0]?.totalMacP || 0,
+//           totalOtherCost: data.results3[0]?.totalOtherCost || 0,
+//           totalOtherQ: data.results3[0]?.totalOtherQ || 0,
+//           totalOtherP: data.results3[0]?.totalOtherP || 0
+//         });
+//     }
+//     catch (err) {
+//       console.error('Error fetching summary data:', err);
+//       alert('Failed to fetch summary data. Please try again later.');
+//     }
+//   };
+//   fetchDetailsImp();
+// }, [id]);
 
-  useEffect(() => {
-    const fetchMaterial = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8081/api/imp/ImviewMat/${id}`);
-        setMaterial(response.data || []); // Ensure data is set as an array
-      } catch (error) {
-        console.error("Error fetching material data:", error);
-        setError("Failed to fetch material data. Please try again later.");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMaterial = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8081/api/imp/ImviewMat/${id}`);
+  //       setMaterial(response.data || []); // Ensure data is set as an array
+  //     } catch (error) {
+  //       console.error("Error fetching material data:", error);
+  //       setError("Failed to fetch material data. Please try again later.");
+  //     }
+  //   };
 
-    fetchMaterial();
-  }, [id]);
+  //   fetchMaterial();
+  // }, [id]);
 
-  useEffect(() => {
-    const fetOut = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8081/api/out/Outview/${id}`);
-        setOut(response.data || []);
-      } catch (error) {
-        console.error("Error fetching out data:", error);
-        setError("Failed to fetch out data. Please try again later.");
-      }
-    }
-    fetOut();
-  }
-  , [id]);
+  // useEffect(() => {
+  //   const fetOut = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8081/api/out/Outview/${id}`);
+  //       setOut(response.data || []);
+  //     } catch (error) {
+  //       console.error("Error fetching out data:", error);
+  //       setError("Failed to fetch out data. Please try again later.");
+  //     }
+  //   }
+  //   fetOut();
+  // }
+  // , [id]);
 
   const handleSave = async () => {
     const blob = await pdf(<PrintDocument values={values} valuesImp={valuesImp} Summary={summaryData} Material={material} />).toBlob();

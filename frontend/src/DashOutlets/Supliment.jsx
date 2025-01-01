@@ -41,13 +41,13 @@ function Supliment() {
                     throw new Error(`Error fetching estimate: ${response.statusText}`);
                 }
 
-                const {No, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
+                const {No,id: supID, Date, Estimated } = response.data.suppliment; // Ensure this matches the response structure
                 const formattedDate = Date.split('T')[0]; // Split at "T" and take the first part
-                setValues({ supID: id, No, Date : formattedDate, Estimated });
+                setValues({ supID, No, Date : formattedDate, Estimated });
                 setIsInitialSubmission(false); // Switch to update mode
             } catch (error) {
                 console.error('Error fetching estimate:', error);
-                alert(error.message);
+                // alert(error.message);
             }
         };
 
@@ -87,14 +87,14 @@ function Supliment() {
             navigate('/home');
         } catch (err) {
             console.error('Error submitting estimation:', err.response?.data || err.message);
-            alert(err.response?.data?.error || err.message);
+            // alert(err.response?.data?.error || err.message);
         }
     };
 
     return (
         <div className="template d-flex align-items-center 100-w  sm:w-100 ">
         <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
-            <h3>Suppliment</h3>
+            <h3>Suppliment {values.supID}</h3>
             <form className='mt-4'  onSubmit={handleSubmit}>
                 <div className="mb-3 row">
                     <label className="col-sm-2 col-form-label">Estimate No:</label>

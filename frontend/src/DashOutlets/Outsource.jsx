@@ -277,26 +277,144 @@ function OutSource() {
     };
 
     return (
-        <div className="template">
-            <form onSubmit={handleSubmit}>
-                <h2>Out Source</h2>
-                <input type="date" name="Date" value={values.Date} onChange={handleChange} placeholder="Date" />
-                <input type="text" name="Description" value={values.Description} onChange={handleChange} placeholder="Description" />
-                <input type="text" name="Job_NO" value={values.Job_NO} onChange={handleChange} placeholder="Job_NO" />
-                <input type="text" name="Supplier" value={values.Supplier} onChange={handleChange} placeholder="Supplier" />
-                <input type="text" name="cost" value={values.cost} onChange={handleChange} placeholder="Cost" />
-                <input type="text" name="Authority" value={values.Authority} onChange={handleChange} placeholder="Authority" />
-                <input type="file" multiple onChange={handleFileChange} />
+        // <div className="template">
+        //     <form onSubmit={handleSubmit}>
+        //         <h2>Out Source</h2>
+        //         <input type="date" name="Date" value={values.Date} onChange={handleChange} placeholder="Date" />
+        //         <input type="text" name="Description" value={values.Description} onChange={handleChange} placeholder="Description" />
+        //         <input type="text" name="Job_NO" value={values.Job_NO} onChange={handleChange} placeholder="Job_NO" />
+        //         <input type="text" name="Supplier" value={values.Supplier} onChange={handleChange} placeholder="Supplier" />
+        //         <input type="text" name="cost" value={values.cost} onChange={handleChange} placeholder="Cost" />
+        //         <input type="text" name="Authority" value={values.Authority} onChange={handleChange} placeholder="Authority" />
+        //         <input type="file" multiple onChange={handleFileChange} />
 
-                {sundries.map((sundry, index) => (
-                    <div key={index}>
-                        <input type="text" name="Sundries" value={sundry.Sundries} onChange={(e) => handleSundriesChange(e, index)} placeholder="Sundries" />
-                        <input type="text" name="Sun_cost" value={sundry.Sun_cost} onChange={(e) => handleSundriesChange(e, index)} placeholder="Cost" />
+        //         {sundries.map((sundry, index) => (
+        //             <div key={index}>
+        //                 <input type="text" name="Sundries" value={sundry.Sundries} onChange={(e) => handleSundriesChange(e, index)} placeholder="Sundries" />
+        //                 <input type="text" name="Sun_cost" value={sundry.Sun_cost} onChange={(e) => handleSundriesChange(e, index)} placeholder="Cost" />
+        //             </div>
+        //         ))}
+        //         <button type="button" onClick={handleAddMoreSundries}>Add More Sundries</button>
+        //         <button type="submit">{isSubmitted ? 'Update' : 'Submit'}</button>
+        //     </form>
+        // </div>
+        <div className="template d-flex align-items-center 100-w sm:w-100">
+            <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+                <form onSubmit={handleSubmit}>
+                    <h3>Out Source</h3>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Date:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="date"
+                                className="form-control"
+                                name="Date"
+                                value={values.Date}
+                                onChange={handleChange}
+                            />
+                        </div>
                     </div>
-                ))}
-                <button type="button" onClick={handleAddMoreSundries}>Add More Sundries</button>
-                <button type="submit">{isSubmitted ? 'Update' : 'Submit'}</button>
-            </form>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Description:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="Description"
+                                value={values.Description}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Job_NO:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="Job_NO"
+                                value={values.Job_NO}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Supplier:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="Supplier"
+                                value={values.Supplier}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Cost:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="cost"
+                                value={values.cost}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Authority:</label>
+                        <div className="col-sm-10">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="Authority"
+                                value={values.Authority}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Image</label>
+                        <div className="col-sm-10">
+                            <input className="form-control" type="file" multiple onChange={handleFileChange} />
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">Sundries</label>
+                        <div className="col-sm-10">
+                            {sundries.map((sundry, index) => (
+                                <div key={index} className="mb-3">
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        name="Sundries"
+                                        placeholder="Sundries"
+                                        value={sundry.Sundries}
+                                        onChange={(e) => handleSundriesChange(e, index)}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="Sun_cost"
+                                        placeholder="Cost"
+                                        value={sundry.Sun_cost}
+                                        onChange={(e) => handleSundriesChange(e, index)}
+                                    />
+                                </div>
+                            ))}
+                            <button type="button" className="btn btn-secondary" onClick={handleAddMoreSundries}>
+                                Add More Sundries
+                            </button>
+                        </div>
+                    </div>
+                    <div className="d-grid">
+                        <button type="submit" className="btn btn-primary">
+                            {isSubmitted ? 'Update' : 'Submit'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

@@ -19,7 +19,7 @@ const ImpImage = sequelize.define('ImpImage', {
         type: DataTypes.BLOB('long'),
         allowNull: false,
     },
-    impID: {
+    ImpID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

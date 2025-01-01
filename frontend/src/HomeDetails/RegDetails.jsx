@@ -37,7 +37,7 @@ function RegDetails() {
 
     return (
         <div>
-            <h3>Details for Log ID: {id}</h3>
+            {/* <h3>Details for Log ID: {id}</h3> */}
             <div className="mb-2 row gap-5">
                 <div className="col-sm-7">
                     <table className="table">
@@ -73,7 +73,7 @@ function RegDetails() {
                                 <td>{logbookEntry.Meter}</td>
                             </tr>
                             <tr>
-                                <td>Location</td>
+                                <td>Division</td>
                                 <td>{logbookEntry.Location}</td>
                             </tr>
                             <tr>
@@ -81,7 +81,7 @@ function RegDetails() {
                                 <td>{logbookEntry.Reference}</td>
                             </tr>
                             <tr>
-                                <td>Response</td>
+                                <td>TR / CheckList</td>
                                 <td>{logbookEntry.Response}</td>
                             </tr>
                             <tr>
@@ -95,6 +95,7 @@ function RegDetails() {
                     <h5>Images</h5>
                     <div className="d-flex flex-column gap-2">
                         {images.map((image, index) => (
+                            <div className='d-flex flex-wrap gap-3'>
                             <button
                                 key={index}
                                 className="btn btn-link text-start"
@@ -102,6 +103,7 @@ function RegDetails() {
                             >
                                 {image.label} {index + 1}
                             </button>
+                            </div>
                         ))}
                     </div>
                 </div>

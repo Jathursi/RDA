@@ -12,6 +12,7 @@ import compEmailRoute from './compEmailRoute.js';
 import DropRoutes from './DropRoutes.js';
 import UserInfRoutess from './UserInfRoutess.js';
 import deleteRoutes from './deleteRoutes.js';
+import EmailAuthRoute from './EmailAuthRoute.js'
 const router = Router();
 
 router.use('/users', userRoutes);
@@ -26,4 +27,5 @@ router.use('/out', OutRoute);
 router.use('/drop', DropRoutes);
 router.use('/userinf', UserInfRoutess);
 router.use('/delete', deleteRoutes);
+router.use('/emailauth', EmailAuthRoute);
 export default router;

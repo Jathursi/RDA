@@ -1,23 +1,27 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
-import Logbook from './Logbook.js';
+// import Attachments from './Attachments.js';
 
-const Estimate = sequelize.define('Estimate', {
+const EmailAuth = sequelize.define('EmailAuth', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true,
+        primaryKey: true
     },
-    Estimated: {
+    email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
-    Date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    logbookID: {
+    subject: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    message: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    book_id: {
+        type: DataTypes.STRING, // Change this to STRING to match the id field in Regist
         allowNull: false,
         references: {
             model: 'logbook',
@@ -25,11 +29,10 @@ const Estimate = sequelize.define('Estimate', {
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
-    },
-    // Other fields...
+    }
 }, {
-    tableName: 'estimates',
+    tableName: 'emailauth',
     timestamps: false
 });
 
-export default Estimate;
+export default EmailAuth;

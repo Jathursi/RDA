@@ -53,7 +53,7 @@ function SupNav() {
                         aria-controls="home"
                         aria-selected="true"
                     >
-                        Material
+                        Material {values.supID}
                     </button>
                 </li>
                 <li className="nav-item" role="presentation">

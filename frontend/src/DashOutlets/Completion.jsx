@@ -228,9 +228,9 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                     </div>
                 </form>
                 <div className="mt-4">
-                    <h3>Uploaded Images</h3>
+                    {/* <h3>Uploaded Images</h3> */}
                     <div className="row">
-                        {images.map((image, index) => (
+                        {/* {images.map((image, index) => (
                             <div key={index} className="col-sm-4 mb-3">
                                 <img
                                     src={`data:${image.fileType};base64,${image.fileData}`}
@@ -238,7 +238,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                                     className="img-fluid"
                                 />
                             </div>
-                        ))}
+                        ))} */}
                     </div>
                 </div>
             </div>

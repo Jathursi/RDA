@@ -34,6 +34,8 @@ const Implement = sequelize.define('Implement', {
             model: 'logbook',
             key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     },
 }, {
     tableName: 'implement',

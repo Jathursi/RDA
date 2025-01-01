@@ -41,34 +41,34 @@ function EstMat({ values: initialValues }) {
 
     // Handle form submission
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log(EstID); // Log EstID to ensure it is correct
-        const formData = new FormData();
-        formData.append('Suppliers', values.Suppliers);
-        formData.append('QuotationNo', values.QuotationNo);
-        formData.append('details', JSON.stringify(matDetails));
+    e.preventDefault();
+    console.log(EstID); // Log EstID to ensure it is correct
+    const formData = new FormData();
+    formData.append('Suppliers', values.Suppliers);
+    formData.append('QuotationNo', values.QuotationNo);
+    formData.append('details', JSON.stringify(matDetails));
 
-        // Append images
-        values.Quotationimg.forEach((file) => {
-            formData.append('Quotationimg', file);
+    // Append images
+    values.Quotationimg.forEach((file) => {
+        formData.append('Quotationimg', file);
+    });
+
+    try {
+        const response = await axios.post(`http://localhost:8081/api/est/submitCategory/material/${EstID}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
-
-        try {
-            const response = await axios.post(`http://localhost:8081/api/est/submitCategory/material/${EstID}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            alert('Estimation submitted successfully!');
-        } catch (error) {
-            console.error('Error submitting estimation:', error);
-            alert('Failed to submit estimation');
-        }
-    };
+        alert('Estimation submitted successfully!');
+    } catch (error) {
+        console.error('Error submitting estimation:', error);
+        alert('Failed to submit estimation');
+    }
+};
 
     return (
         <form className='mt-4' onSubmit={handleSubmit}>
-            <h3>Material Details</h3>
+            <h3>Material Details {EstID}</h3>
             <div className='row mb-3'>
                 <label className='col-sm-2 col-form-label'>Suppliers:</label>
                 <div className='col-sm-10'>

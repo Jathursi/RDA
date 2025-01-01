@@ -33,24 +33,28 @@ router.post('/Logbook', verifyToken, upload.fields([{ name: 'checklistImage' }, 
 
     // Store checklist image if provided
     if (req.files.checklistImage) {
-      const checklistImage = req.files.checklistImage[0];
-      await CheckList.create({
-        fileType: checklistImage.mimetype,
-        fileSize: checklistImage.size,
-        fileData: checklistImage.buffer,
-        book_id: logbookEntry.id,
-      });
+      const checklistImages = req.files.checklistImage;
+      await CheckList.bulkCreate(
+        checklistImages.map((image) => ({
+          fileType: image.mimetype,
+          fileSize: image.size,
+          fileData: image.buffer,
+          book_id: logbookEntry.id,
+        }))
+      );
     }
 
     // Store crosscheck image if provided
     if (req.files.crosscheckImage) {
-      const crosscheckImage = req.files.crosscheckImage[0];
-      await CrossCheck.create({
-        fileType: crosscheckImage.mimetype,
-        fileSize: crosscheckImage.size,
-        fileData: crosscheckImage.buffer,
-        book_id: logbookEntry.id,
-      });
+      const crosscheckImages = req.files.crosscheckImage;
+      await CrossCheck.bulkCreate(
+        crosscheckImages.map((image) => ({
+          fileType: image.mimetype,
+          fileSize: image.size,
+          fileData: image.buffer,
+          book_id: logbookEntry.id,
+        }))
+      );
     }
 
     res.status(201).json({ message: 'Logbook entry created successfully', logbookEntry });
@@ -105,56 +109,31 @@ router.get('/log/:id', async (req, res) => {
   }
 });
 
-// delete logbook image crosscheck, checklist
-router.delete('/log/checklistImage/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log(`Received request to delete checklist image with ID: ${id}`); // Debugging log
+// delete route for crosscheck and checklist image
+router.delete('/delete/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log('ID received for deletion:', id);
 
-    try {
-        const checklistImage = await CheckList.findByPk(id);
-        if (!checklistImage) {
-            console.log(`No checklist image found with ID: ${id}`); // Debugging log
-            return res.status(404).json({ error: 'Checklist image not found' });
-        }
-        await checklistImage.destroy();
-        console.log(`Checklist image with ID: ${id} deleted successfully`); // Debugging log
-        res.status(200).json({ message: 'Checklist image deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting checklist image:', error);
-        res.status(500).json({ error: 'An error occurred while deleting the checklist image' });
+  try {
+    const checklistImage = await CheckList.findOne({ where: { id } });
+    if (!checklistImage) {
+      return res.status(404).json({ error: 'Checklist image not found' });
     }
-});
-
-router.delete('/log/crosscheckImage/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log(`Received request to delete crosscheck image with ID: ${id}`); // Debugging log
-
-    try {
-        const crosscheckImage = await CrossCheck.findByPk(id);
-        if (!crosscheckImage) {
-            console.log(`No crosscheck image found with ID: ${id}`); // Debugging log
-            return res.status(404).json({ error: 'Crosscheck image not found' });
-        }
-        await crosscheckImage.destroy();
-        console.log(`Crosscheck image with ID: ${id} deleted successfully`); // Debugging log
-        res.status(200).json({ message: 'Crosscheck image deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting crosscheck image:', error);
-        res.status(500).json({ error: 'An error occurred while deleting the crosscheck image' });
+    const crosscheckImage = await CrossCheck.findOne({ where: { id } });
+    if (!crosscheckImage) {
+      return res.status(404).json({ error: 'Crosscheck image not found' });
     }
-});
-// router.delete('/log/crosscheckImage/:id', async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const crosscheckImage = await CrossCheck.findByPk(id);
-//     if (!crosscheckImage) {
-//       return res.status(404).json({ error: 'Crosscheck image not found' });
-//     }
-//     await crosscheckImage.destroy();
-//     res.status(200).json({ message: 'Crosscheck image deleted successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred while deleting the crosscheck image' });
-//   }
-// });
+    
+    await checklistImage.destroy();
+    await crosscheckImage.destroy();
+    res.status(200).json({ message: 'Checklist image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting checklist image:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the checklist image' });
+  }
+}
+
+);  
+
+
 export default router;
