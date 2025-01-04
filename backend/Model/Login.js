@@ -28,11 +28,16 @@ const Login = sequelize.define('Login', {
   vehicleNumber: {
     type: DataTypes.STRING,
     allowNull: true,
+    unique: true, // Ensure vehicleNumber is unique and indexed
   },
   approval: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'Pending',
+  },
+  lastOnline: {
+    type: DataTypes.DATE,
+    allowNull: true,
   },
 }, {
   tableName: 'logins',

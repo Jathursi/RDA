@@ -1,66 +1,43 @@
 import React from 'react';
-import { IoHome } from "react-icons/io5";
-import { PiTrademarkRegistered } from "react-icons/pi";
-import { MdFeedback } from "react-icons/md";
-import { FaPenNib } from "react-icons/fa";
-import { CgProfile } from "react-icons/cg";
-import { IoSettingsOutline } from "react-icons/io5";
-import { CiLogout } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
-import img from '../Assets/log.png';
-// import '../App.css';
-import '../App.css';
+// import { MaterialIcon } from './MaterialIcon';
 
-function HomeSidenav() {
+const HomeSidebar = ({ isActive, showNav }) => {
     const navigate = useNavigate();
-    return (
-        <div className='sidenav vh-100 sticky-top  p-2 bg-light'>
-            <div className='m-2'>
-                <span className='brand-name fs-4'>RDA</span>
-            </div>
-            <hr className='bg-white' />
-            <div className='list-group list-group-flush'>
-                <div 
-                    className='list-group-item bg-light py-2'
-                    style={{whiteSpace: 'nowrap'}} 
-                    onClick={() => navigate('/home')}
-                >
-                    <IoHome className='fs-5 me-3' />
-                    <span className='fs-5 d-none d-sm-inline'>Home</span>
-                </div>
-                <div 
-                    className='list-group-item bg-light py-2' 
-                    onClick={() => navigate('regist')}
-                    style={{whiteSpace: 'nowrap'}} 
-                >
-                    <PiTrademarkRegistered className='fs-5 me-3' />
-                    <span className='fs-5 d-none d-sm-inline'>Register</span>
-                </div>
-                <div 
-                    className='list-group-item bg-light py-2' 
-                    onClick={() => navigate('entroll')}
-                    style={{whiteSpace: 'nowrap'}} 
-                >
-                    <FaPenNib className='fs-5 me-3' />
-                    <span className='fs-5 d-none d-sm-inline'>Enroll</span>
-                </div>
-                <div
-                    className='list-group-item bg-light py-2' 
-                    onClick={() => navigate('feedback')}
-                    style={{whiteSpace: 'nowrap'}} 
-                >
-                    <MdFeedback className='fs-5 me-3' />
-                    <span className='fs-5 d-none d-sm-inline'>Feedback</span>
-                </div>
-                <div className='list-group-item bg-light py-2'
-                    style={{whiteSpace: 'nowrap'}} 
-                >
-                    <CgProfile className='fs-5 me-3' />
-                    <span className='fs-5 d-none d-sm-inline'>Profile</span>
-                </div>
-            </div>
-        </div>
-    );
-}
+  return (
+    <nav id="sidebar" className={`${isActive ? 'active' : ''} ${showNav ? 'show-nav' : ''}`}>
+      <div className="sidebar-header">
+        <h3>
+          {/* <img src="/img/logo.png" alt="logo" className="img-fluid" /> */}
+          <span>RDA</span>
+        </h3>
+      </div>
+      <ul className="list-unstyled components">
+        <li className="active">
+          <a onClick={()=> navigate('/home')} className="dashboard">
+            {/* <MaterialIcon>dashboard</MaterialIcon> */}
+            <span>log book</span>
+          </a>
+          
+        </li>
+        <li className="">
+          <a onClick={()=> navigate('entroll')} className="dashboard">
+            {/* <MaterialIcon>dashboard</MaterialIcon> */}
+            <span>Profiles</span>
+          </a>
+          
+        </li>
+        <li className="">
+          <a onClick={()=> navigate('feedback')} className="dashboard">
+            {/* <MaterialIcon>dashboard</MaterialIcon> */}
+            <span>Feedbacks</span>
+          </a>
+          
+        </li>
 
-export default HomeSidenav;
+      </ul>
+    </nav>
+  );
+};
+
+export default HomeSidebar;

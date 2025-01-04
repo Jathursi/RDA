@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
+// import Sidebar from './components/Sidebar';
+// import Navbar from './components/Navbar';
+// import Dashboard from './components/Dashboard';
 import HomeSidenav from './HomeSidenav';
-import HomeMain from './HomeMain';
+import Nav from './Nav';
 import '../App.css';
+import { Outlet } from 'react-router-dom';
 
-function Home() {
-  const [toggle, setToggle] = useState(true);
+const Home = () => {
+  const [sidebarActive, setSidebarActive] = useState(false);
+  const [showNav, setShowNav] = useState(false);
 
-  const Toggle = () => {
-    setToggle(!toggle);
+  const toggleSidebar = () => {
+    setSidebarActive(!sidebarActive);
+  };
+
+  const toggleNav = () => {
+    setShowNav(!showNav);
   };
 
   return (
-    <div className="container-fluid min-vh-100 d-flex flex-column">
-      <div className="row flex-grow-1">
-        {/* Sidebar */}
-        {toggle && (
-          <div className="col-2 g-0 bg-light min-vh-100">
-            <HomeSidenav />
-          </div>
-        )}
-        {/* Main Content */}
-        <div className={` col ${toggle ? 'col-10' : 'col-12'} d-flex flex-column m-0 p-0`}>
-          <HomeMain Toggle={Toggle} />
+    <div className="wrapper">
+      <div className={`body-overlay ${showNav ? 'show-nav' : ''}`} onClick={toggleNav} />
+      <HomeSidenav isActive={sidebarActive} showNav={showNav} />
+      <div className={`content ${sidebarActive ? 'active' : ''}`}>
+        <Nav toggleSidebar={toggleSidebar} toggleNav={toggleNav} />
+        {/* <Dashboard /> */}
+        <div className='main-content'>
+          <Outlet />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Home;

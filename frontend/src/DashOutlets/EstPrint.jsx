@@ -31,45 +31,47 @@ function EstPrint() {
     }, [book_id]);
 
     const groupDataBySupplier = (categories) => {
-        const grouped = {};
+    const grouped = {};
 
-        categories.forEach((item) => {
-            const {
-                Suppliers, MatItem, MatCost, MatQuantity,
-                LabItem, LabCost, LabQuantity, MacItem,
-                MacCost, MacQuantity, TransItem, TransCost,
-                TransQuantity, WelItem, WelCost, WelQuantity,
-                SunItem, SunCost, SunQuantity, isImplemented,
-            } = item;
+    categories.forEach((item) => {
+        const {
+            Suppliers, MatItem, MatCost, MatQuantity,
+            LabItem, LabCost, LabQuantity, MacItem,
+            MacCost, MacQuantity, TransItem, TransCost,
+            TransQuantity, WelItem, WelCost, WelQuantity,
+            SunItem, SunCost, SunQuantity, isImplemented,
+        } = item;
 
-            if (!grouped[Suppliers]) {
-                grouped[Suppliers] = {
-                    supplierName: Suppliers,
-                    items: [],
-                    total: 0,
-                };
-            }
-
-            const addItem = (itemName, itemCost, itemQuantity, isLabor = false) => {
-                if (itemName && itemCost) {
-                    const subtotal = isLabor ? itemCost : itemCost * itemQuantity;
-                    grouped[Suppliers].items.push({
-                        Item: itemName, Cost: itemCost, Quantity: itemQuantity, subtotal, isImplemented,
-                    });
-                    grouped[Suppliers].total += subtotal;
-                }
+        if (!grouped[Suppliers]) {
+            grouped[Suppliers] = {
+                supplierName: Suppliers,
+                items: [],
+                total: 0,
             };
+        }
 
-            addItem(MatItem, MatCost, MatQuantity);
-            addItem(LabItem, LabCost, LabQuantity, true); // Handle labor items differently
-            addItem(MacItem, MacCost, MacQuantity);
-            addItem(TransItem, TransCost, TransQuantity);
-            addItem(WelItem, WelCost, WelQuantity);
-            addItem(SunItem, SunCost, SunQuantity);
-        });
+        const addItem = (itemName, itemCost, itemQuantity, isLabor = false) => {
+            if (itemName && itemCost) {
+                const cost = parseFloat(itemCost);
+                const quantity = parseFloat(itemQuantity);
+                const subtotal = isLabor ? cost : cost * quantity;
+                grouped[Suppliers].items.push({
+                    Item: itemName, Cost: cost, Quantity: quantity, subtotal, isImplemented,
+                });
+                grouped[Suppliers].total += subtotal;
+            }
+        };
 
-        return Object.values(grouped);
-    };
+        addItem(MatItem, MatCost, MatQuantity);
+        addItem(LabItem, LabCost, LabQuantity, true); // Handle labor items differently
+        addItem(MacItem, MacCost, MacQuantity);
+        addItem(TransItem, TransCost, TransQuantity);
+        addItem(WelItem, WelCost, WelQuantity);
+        addItem(SunItem, SunCost, SunQuantity);
+    });
+
+    return Object.values(grouped);
+};
 
     const fetchData = async (url, setDataCallback, groupDataCallback) => {
         try {
@@ -130,64 +132,64 @@ function EstPrint() {
 };
 
     const renderTable = (tableData) => (
-        <table className='table'>
-            <thead>
-                <tr>
-                    <th>Supplier</th>
-                    <th>Item</th>
-                    <th>Cost</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Total</th>
-                    <th>Implemented</th>
-                </tr>
-            </thead>
-            <tbody>
-                {tableData.map((supplierData, index) =>
-                    supplierData.items.map((item, idx) => (
-                        <tr
-                            key={`${index}-${idx}`}
-                            onClick={() =>
-                                handleRowClick(
-                                    supplierData.supplierName,
-                                    item.Item,
-                                    'EstimateCategory',
-                                    item.Cost,
-                                    item.Quantity
-                                )
-                            }
-                        >
-                            {idx === 0 && (
-                                <td rowSpan={supplierData.items.length} style={{ textAlign: 'left' }}>
-                                    {supplierData.supplierName}
-                                </td>
-                            )}
-                            <td>{item.Item}</td>
-                            <td>{item.Cost}</td>
-                            <td>{item.Quantity}</td>
-                            <td>{item.subtotal}</td>
-                            {idx === 0 && (
-                                <td rowSpan={supplierData.items.length}>
-                                    {supplierData.total}
-                                </td>
-                            )}
-                            <td>
-                                {Array.isArray(storedRows) && storedRows.map((storedRow) => (
-                                    storedRow.supplier === supplierData.supplierName &&
-                                    storedRow.item === item.Item && (
-                                        <span key={`${supplierData.supplierName}-${item.Item}`}>
-                                            {/* tick */}
-                                            &#10003;
-                                        </span>
-                                    )
-                                ))}
+    <table className='table'>
+        <thead>
+            <tr>
+                <th>Supplier</th>
+                <th>Item</th>
+                <th>Cost</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Total</th>
+                <th>Implemented</th>
+            </tr>
+        </thead>
+        <tbody>
+            {tableData.map((supplierData, index) =>
+                supplierData.items.map((item, idx) => (
+                    <tr
+                        key={`${index}-${idx}`}
+                        onClick={() =>
+                            handleRowClick(
+                                supplierData.supplierName,
+                                item.Item,
+                                'EstimateCategory',
+                                item.Cost,
+                                item.Quantity
+                            )
+                        }
+                    >
+                        {idx === 0 && (
+                            <td rowSpan={supplierData.items.length} style={{ textAlign: 'left' }}>
+                                {supplierData.supplierName}
                             </td>
-                        </tr>
-                    ))
-                )}
-            </tbody>
-        </table>
-    );
+                        )}
+                        <td>{item.Item}</td>
+                        <td>{item.Cost}</td>
+                        <td>{item.Quantity}</td>
+                        <td>{item.subtotal.toFixed(2)}</td>
+                        {idx === 0 && (
+                            <td rowSpan={supplierData.items.length}>
+                                {supplierData.total.toFixed(2)}
+                            </td>
+                        )}
+                        <td>
+                            {Array.isArray(storedRows) && storedRows.map((storedRow) => (
+                                storedRow.supplier === supplierData.supplierName &&
+                                storedRow.item === item.Item && (
+                                    <span key={`${supplierData.supplierName}-${item.Item}`}>
+                                        {/* tick */}
+                                        &#10003;
+                                    </span>
+                                )
+                            ))}
+                        </td>
+                    </tr>
+                ))
+            )}
+        </tbody>
+    </table>
+);
 
     return (
         <div className='m-4'>
@@ -197,12 +199,12 @@ function EstPrint() {
             ) : (
                 renderTable(data)
             )}
-            <h2>Supplier Details</h2>
+            {/* <h2>Supplier Details</h2>
             {supplierData.length === 0 ? (
                 <p>Loading or no data available...</p>
             ) : (
                 renderTable(supplierData)
-            )}
+            )} */}
         </div>
     );
 }

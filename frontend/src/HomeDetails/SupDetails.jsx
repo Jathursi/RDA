@@ -164,6 +164,9 @@ function SupDetails() {
             src: `data:${image.fileType};base64,${image.fileData}`,
             label: 'Quotation',
         })),
+    ];
+
+    const imageArray2 = [
         ...estimateImages1.map((image) => ({
             src: `data:${image.fileType};base64,${image.fileData}`,
             label: 'Estimation',
@@ -189,16 +192,43 @@ function SupDetails() {
                     </table>
                 </div>
                 <div className="col-sm-4 ">
-                    <h5>Images</h5>
-                    <div className="d-flex flex-column gap-2">
+                    <h5>Condition of vehicle</h5>
+                    <div className="d-flex flex-wrap gap-2">
+                        {imageArray2.map((image, index) => (
+                            <div className='d-flex flex-wrap gap-3'>
+                                <button
+                                    key={index}
+                                    // className="btn btn-link text-start"
+                                    className="thumbnail"
+                                    onClick={() => handleImageClick(image)}
+                                >
+                                    {/* {image.label} {index + 1} */}
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                        style={{ width: '100px', height: '100px' }}
+                                    />
+
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <h5>Quotation images</h5>
+                    <div className="d-flex flex-wrap gap-2">
                         {imageArray.map((image, index) => (
                             <div className='d-flex flex-wrap gap-3'>
                                 <button
                                     key={index}
-                                    className="btn btn-link text-start"
+                                    // className="btn btn-link text-start"
+                                    className="thumbnail"
                                     onClick={() => handleImageClick(image)}
                                 >
-                                    {image.label} {index + 1}
+                                    {/* {image.label} {index + 1} */}
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                        style={{ width: '100px', height: '100px' }}
+                                    />
                                 </button>
                             </div>
                         ))}

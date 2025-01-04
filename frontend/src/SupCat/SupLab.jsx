@@ -131,7 +131,7 @@ function SupLab({ values: initialValues }) {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">Labour Quantity:</label>
+                        <label className="col-sm-2 col-form-label">Labour Hours:</label>
                         <div className="col-sm-10">
                             <input
                                 type='text'

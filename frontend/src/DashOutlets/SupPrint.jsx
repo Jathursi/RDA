@@ -2,121 +2,63 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-function SupPrint() {
+function EstPrint() {
     const { id: book_id } = useParams();
     const [data, setData] = useState([]);
-    const [supsupplierData, setSupplierData] = useState([]);
-    const [clickedRows, setClickedRows] = useState(new Set());
+    const [supplierData, setSupplierData] = useState([]);
+    // const [clickedRows, setClickedRows] = useState(new Set());
+    // const [clickedRows, setClickedRows] = useState(new Set());
+    const [storedRows, setStoredRows] = useState(new Set());
 
-    // const groupDataBySupplier = (categories) => {
-    //     const grouped = {};
+    useEffect(() => {
+        const fetchImplementedItems = async () => {
+    try {
+        const response = await axios.get(`http://localhost:8081/api/imp/implementedItems/${book_id}`);
+        setStoredRows(response.data)
+        // setClickedRows(implementedRows);
+    } catch (error) {
+        console.error('Error fetching implemented items:', error);
+    }
+};
 
-    //     categories.forEach((item) => {
-    //         const {
-    //             Suppliers, MatItem, MatCost, MatQuantity,
-    //             LabItem, LabCost, LabQuantity, MacItem,
-    //             MacCost, MacQuantity, TransItem, TransCost,
-    //             TransQuantity, WelItem, WelCost, WelQuantity,
-    //             SunItem, SunCost, SunQuantity,
-    //         } = item;
 
-    //         if (!grouped[Suppliers]) {
-    //             grouped[Suppliers] = {
-    //                 supplierName: Suppliers,
-    //                 items: [],
-    //                 total: 0,
-    //             };
-    //         }
+        fetchData(
+            `http://localhost:8081/api/est/fetchAllCategories/${book_id}`,
+            setData,
+            groupDataBySupplier
+        );
+        fetchImplementedItems();
+    }, [book_id]);
 
-    //         const addItem = (itemName, itemCost, itemQuantity, isLabor = false) => {
-    //             if (itemName && itemCost) {
-    //                 const subtotal = isLabor ? itemCost : itemCost * itemQuantity;
-    //                 grouped[Suppliers].items.push({
-    //                     Item: itemName, Cost: itemCost, Quantity: itemQuantity, subtotal,
-    //                 });
-    //                 grouped[Suppliers].total += subtotal;
-    //             }
-    //         };
-
-    //         addItem(MatItem, MatCost, MatQuantity);
-    //         addItem(LabItem, LabCost, LabQuantity, true); // Handle labor items differently
-    //         addItem(MacItem, MacCost, MacQuantity);
-    //         addItem(TransItem, TransCost, TransQuantity);
-    //         addItem(WelItem, WelCost, WelQuantity);
-    //         addItem(SunItem, SunCost, SunQuantity);
-    //     });
-
-    //     return Object.values(grouped);
-    // };
-    // const fetchData = async (url, setDataCallback, groupDataCallback) => {
-    //     try {
-    //         const response = await axios.get(url);
-    //         const groupedData = groupDataCallback(response.data);
-    //         setDataCallback(groupedData);
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // };
-    
-    const groupDataBySupplimentAndSupplier = (categories) => {
+    const groupDataBySupplier = (categories) => {
     const grouped = {};
 
     categories.forEach((item) => {
         const {
-            no: supplimentNo,
-            Suppliers,
-            MatItem,
-            MatCost,
-            MatQuantity,
-            LabItem,
-            LabCost,
-            LabQuantity,
-            MacItem,
-            MacCost,
-            MacQuantity,
-            TransItem,
-            TransCost,
-            TransQuantity,
-            WelItem,
-            WelCost,
-            WelQuantity,
-            SunItem,
-            SunCost,
-            SunQuantity,
+            Suppliers, MatItem, MatCost, MatQuantity,
+            LabItem, LabCost, LabQuantity, MacItem,
+            MacCost, MacQuantity, TransItem, TransCost,
+            TransQuantity, WelItem, WelCost, WelQuantity,
+            SunItem, SunCost, SunQuantity, isImplemented,
         } = item;
 
-        // Create a new suppliment group if it doesn't exist
-        if (!grouped[supplimentNo]) {
-            grouped[supplimentNo] = {
-                supplimentNo,
-                suppliers: {},
-            };
-        }
-
-        const supplimentGroup = grouped[supplimentNo];
-
-        // Create a new supplier group if it doesn't exist under the current suppliment
-        if (!supplimentGroup.suppliers[Suppliers]) {
-            supplimentGroup.suppliers[Suppliers] = {
+        if (!grouped[Suppliers]) {
+            grouped[Suppliers] = {
                 supplierName: Suppliers,
                 items: [],
                 total: 0,
             };
         }
 
-        const supplierGroup = supplimentGroup.suppliers[Suppliers];
-
-        // Add items to the supplier group
         const addItem = (itemName, itemCost, itemQuantity, isLabor = false) => {
             if (itemName && itemCost) {
-                const subtotal = isLabor ? itemCost : itemCost * itemQuantity;
-                supplierGroup.items.push({
-                    Item: itemName,
-                    Cost: itemCost,
-                    Quantity: itemQuantity,
-                    subtotal,
+                const cost = parseFloat(itemCost);
+                const quantity = parseFloat(itemQuantity);
+                const subtotal = isLabor ? cost : cost * quantity;
+                grouped[Suppliers].items.push({
+                    Item: itemName, Cost: cost, Quantity: quantity, subtotal, isImplemented,
                 });
-                supplierGroup.total += subtotal;
+                grouped[Suppliers].total += subtotal;
             }
         };
 
@@ -128,25 +70,37 @@ function SupPrint() {
         addItem(SunItem, SunCost, SunQuantity);
     });
 
-    // Convert the grouped object into an array for easier processing in the UI
-    return Object.values(grouped).map((supplimentGroup) => ({
-        supplimentNo: supplimentGroup.supplimentNo,
-        suppliers: Object.values(supplimentGroup.suppliers),
-    }));
+    return Object.values(grouped);
 };
 
-    
+    const fetchData = async (url, setDataCallback, groupDataCallback) => {
+        try {
+            const response = await axios.get(url);
+            const groupedData = groupDataCallback(response.data);
+            setDataCallback(groupedData);
+
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     useEffect(() => {
         fetchData(
-            `http://localhost:8081/api/sup/fetchAllCategories/${book_id}`,
+            `http://localhost:8081/api/est/fetchAllCategories/${book_id}`,
             setData,
             groupDataBySupplier
         );
     }, [book_id]);
+    useEffect(() => {
+        fetchData(
+            `http://localhost:8081/api/sup/fetchAllCategories/${book_id}`,
+            setSupplierData,
+            groupDataBySupplier
+        );
+    }, [book_id]);
 
-    const handleRowClick = async (supplier, item, category, cost, quantity) => {
-    console.log('Payload:', { supplier, category, item, cost, quantity, logbookID: book_id }); // Log the payload
-
+   const handleRowClick = async (supplier, item, category, cost, quantity) => {
     try {
         const response = await axios.post(`http://localhost:8081/api/est/implementmat/${book_id}`, {
             supplier,
@@ -156,81 +110,103 @@ function SupPrint() {
             quantity,
             logbookID: book_id,
         });
-        console.log('Item added to implementmat:', response.data);
 
-        // Add a tick mark by storing the clicked row
-        setClickedRows((prev) => new Set(prev).add(`${supplier}-${item}`));
+        const { id } = response.data;
+
+        // Mark the item as stored in the backend
+        // await axios.patch(`http://localhost:8081/api/imp/implementmat/${id}`, { stored: true });
+
+        // // Update the state to show the tick
+        // setClickedRows((prev) => {
+        //     const updated = new Set(prev);
+        //     updated.add(`${supplier}-${item}`);
+        //     return updated;
+        // });
     } catch (error) {
-        console.error('Error adding item to implementmat:', error);
+        if (error.response && error.response.status === 400) {
+            alert(error.response.data.error);
+        } else {
+            console.error('Error adding item to implementmat:', error);
+        }
     }
 };
 
-
-    const renderTable = (tableData, isSupplierTable) => (
-        <table border="1" style={{ marginBottom: '20px', width: '70%' }}>
-            <thead>
-                <tr>
-                    <th>Supplier</th>
-                    <th>Item</th>
-                    <th>Cost</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {tableData.map((supplierData, index) =>
-                    supplierData.items.map((item, idx) => (
-                        <tr
-                            key={`${index}-${idx}`}
-                            onClick={() =>
-                                handleRowClick(
-                                    supplierData.supplierName,
-                                    item.Item,
-                                    isSupplierTable ? 'SupplierCategory' : 'EstimateCategory',
-                                    item.Cost,
-                                    item.Quantity
+    const renderTable = (tableData) => (
+    <table className='table'>
+        <thead>
+            <tr>
+                <th>Supplier</th>
+                <th>Item</th>
+                <th>Cost</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Total</th>
+                <th>Implemented</th>
+            </tr>
+        </thead>
+        <tbody>
+            {tableData.map((supplierData, index) =>
+                supplierData.items.map((item, idx) => (
+                    <tr
+                        key={`${index}-${idx}`}
+                        onClick={() =>
+                            handleRowClick(
+                                supplierData.supplierName,
+                                item.Item,
+                                'EstimateCategory',
+                                item.Cost,
+                                item.Quantity
+                            )
+                        }
+                    >
+                        {idx === 0 && (
+                            <td rowSpan={supplierData.items.length} style={{ textAlign: 'left' }}>
+                                {supplierData.supplierName}
+                            </td>
+                        )}
+                        <td>{item.Item}</td>
+                        <td>{item.Cost}</td>
+                        <td>{item.Quantity}</td>
+                        <td>{item.subtotal.toFixed(2)}</td>
+                        {idx === 0 && (
+                            <td rowSpan={supplierData.items.length}>
+                                {supplierData.total.toFixed(2)}
+                            </td>
+                        )}
+                        <td>
+                            {Array.isArray(storedRows) && storedRows.map((storedRow) => (
+                                storedRow.supplier === supplierData.supplierName &&
+                                storedRow.item === item.Item && (
+                                    <span key={`${supplierData.supplierName}-${item.Item}`}>
+                                        {/* tick */}
+                                        &#10003;
+                                    </span>
                                 )
-                            }
-                        >
-                            {idx === 0 && (
-                                <td rowSpan={supplierData.items.length} style={{ textAlign: 'left' }}>
-                                    {supplierData.supplierName}
-                                </td>
-                            )}
-                            <td>{item.Item}</td>
-                            <td>{item.Cost}</td>
-                            <td>{item.Quantity}</td>
-                            <td>{item.subtotal}</td>
-                            {idx === 0 && (
-                                <td rowSpan={supplierData.items.length}>
-                                    {supplierData.total}
-                                    {clickedRows.has(`${supplierData.supplierName}-${item.Item}`) && ' ✔️'}
-                                </td>
-                            )}
-                        </tr>
-                    ))
-                )}
-            </tbody>
-        </table>
-    );
+                            ))}
+                        </td>
+                    </tr>
+                ))
+            )}
+        </tbody>
+    </table>
+);
 
     return (
-        <div>
-            <h1>Estimation Details</h1>
+        <div className='m-4'>
+            {/* <h2>Estimation Details</h2>
             {data.length === 0 ? (
                 <p>Loading or no data available...</p>
             ) : (
-                renderTable(data, false)
-            )}
-            <h1>Supplier Details</h1>
-            {supsupplierData.length === 0 ? (
+                renderTable(data)
+            )} */}
+            <h2>Supplier Details</h2>
+            {supplierData.length === 0 ? (
                 <p>Loading or no data available...</p>
             ) : (
-                renderTable(supsupplierData, true)
+                renderTable(supplierData)
             )}
         </div>
     );
 }
 
-export default SupPrint;
+export default EstPrint;

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import SupNav from '../SupCat/SupNav';
+import SupPrint from '../DashOutlets/SupPrint';
 
 function Supliment() {
     const { id } = useParams();
@@ -149,6 +150,7 @@ function Supliment() {
             {values.supID && <SupWel values={{ supID: values.supID }} />}
             {values.supID && <SupSun values={{ supID: values.supID }} />}
             {values.supID && <SupLab values={{ supID: values.supID }} />} */}
+            <SupPrint/>
         </div>
         </div>
     );

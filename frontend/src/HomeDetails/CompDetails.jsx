@@ -109,10 +109,15 @@ function CompDetails() {
                         {images.map((image, index) => (
                             <div key={index} className="image-preview" onClick={() => setSelectedImage(image)}>
                                 <button
-                                    className="btn btn-link text-start"
+                                    // className="btn btn-link text-start"
+                                    className="thumbnail"
                                     onClick={() => setSelectedImage(image)}
                                 >
-                                    {image.label}
+                                    {/* {image.label} */}
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                    />
                                 </button>
                             </div>
                         ))}

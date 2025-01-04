@@ -243,7 +243,7 @@ function UserInfo() {
                                 className="form-control"
                                 name="title"
                                 rows={4}
-                                placeholder="Enter title"
+                                placeholder="Enter progress"
                                 value={form.title}
                                 onChange={handleInputChange}
                             ></textarea>
@@ -257,7 +257,7 @@ function UserInfo() {
                                 className="form-control"
                                 name="content"
                                 rows={4}
-                                placeholder="Enter content"
+                                placeholder="Enter progress"
                                 value={form.content}
                                 onChange={handleInputChange}
                             ></textarea>

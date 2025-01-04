@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import EstNav from '../EstCat/EstNav';
 import CreatableSelect from 'react-select/creatable';
+import EstPrint from './EstPrint';
 
 function Estimation() {
     const { id: logbookID } = useParams();
@@ -165,6 +166,7 @@ function Estimation() {
                     </div>
                 </form>
                 {values.EstID && <EstNav values={{ EstID: values.EstID }} />}
+                <EstPrint/>
             </div>
         </div>
     );

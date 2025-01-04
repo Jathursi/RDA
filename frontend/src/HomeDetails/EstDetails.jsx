@@ -154,6 +154,9 @@ function EstDetails() {
             src: `data:${image.fileType};base64,${image.fileData}`,
             label: 'Quotation',
         })),
+    ];
+
+    const imageArray2 = [   
         ...estimateImages.map((image) => ({
             src: `data:${image.fileType};base64,${image.fileData}`,
             label: 'Estimation',
@@ -179,16 +182,64 @@ function EstDetails() {
                     </table>
                 </div>
                 <div className="col-sm-4 ">
-                    <h5>Images</h5>
-                    <div className="d-flex flex-column gap-2">
+                    <h5>Initial condition</h5>
+                    <div className="d-flex flex-wrap gap-2">
+                        {imageArray2.map((image, index) => (
+                            <div className='d-flex flex-wrap gap-3'>
+                                <button
+                                    key={index}
+                                    className="thumbnail"
+                                    style={{
+                                        cursor: 'pointer',
+                                        width: '100px',
+                                        height: '100px',
+                                        overflow: 'hidden',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '5px'
+                                    }}
+                                    onClick={() => handleImageClick(image)}
+                                >
+                                    {/* {image.label} {index + 1} */}
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                        style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                    }}
+                                    />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <h5>Quotation Images</h5>
+                    <div className="d-flex flex-wrap gap-2">
                         {imageArray.map((image, index) => (
                             <div className='d-flex flex-wrap gap-3'>
                                 <button
                                     key={index}
-                                    className="btn btn-link text-start"
+                                    className="thumbnail"
+                                    style={{
+                                        cursor: 'pointer',
+                                        width: '100px',
+                                        height: '100px',
+                                        overflow: 'hidden',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '5px'
+                                    }}
                                     onClick={() => handleImageClick(image)}
                                 >
-                                    {image.label} {index + 1}
+                                    {/* {image.label} {index + 1} */}
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                        style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                    }}
+                                    />
                                 </button>
                             </div>
                         ))}

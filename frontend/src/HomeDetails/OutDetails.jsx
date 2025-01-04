@@ -93,14 +93,16 @@ function OutDetails() {
                 </div>
                 <div className="col-sm-4">
                     <h5>Images</h5>
-                    <div className="d-flex flex-column gap-2">
+                    <div className="d-flex flex-wrap gap-2">
                         {imageArray.map((image, index) => (
                             <button
                                 key={index}
-                                className="btn btn-link text-start"
+                                // className="btn btn-link text-start"
+                                className='thumbnail'
                                 onClick={() => setSelectedImage(image.src)}
                             >
-                                {image.label}
+                                {/* {image.label} */}
+                                <img src={image.src} alt={image.label} style={{ width: '100%' }} />
                             </button>
                         ))}
                     </div>

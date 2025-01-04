@@ -6,9 +6,10 @@ function HomeMain({ Toggle }) {
   return (
     <div className="d-flex flex-column h-100">
       <div className="topnav sticky-top bg-light ">
-        <Nav Toggle={Toggle} />
+        <Nav/>
+        {/*Toggle={Toggle}  */}
       </div>
-      <div className=" p-0 mt-5 overflow-hidden  sm:p-5 overflow-auto">
+      <div className="home-out p-0 m-3 bg-white rounded">
         <Outlet />
       </div>
     </div>

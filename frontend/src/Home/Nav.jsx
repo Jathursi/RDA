@@ -1,48 +1,64 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import {FaBars} from 'react-icons/fa'
-function Nav({Toggle}) {
-    const navigate = useNavigate();
+import React from 'react';
+// import { MaterialIcon } from './MaterialIcon';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { HiOutlineDotsVertical } from "react-icons/hi";
+const Nav = ({ toggleSidebar, toggleNav }) => {
   return (
-    <nav
-        className="navbar px-3 navbar-expand-sm m-2"
-    >
-        {/* <i className="navbar-brand" onClick={Toggle}>Navbar</i> */}
-        <FaBars className='navbar-brand fs-4' onClick={Toggle} />
-        <button className="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId"
-            aria-controls="collapsibleNavId"  aria-expanded="false" aria-label="Toggle navigation"
-        ></button>
-        {/* <form className="d-flex my-2 my-lg-0">
-                <input
-                    className="form-control me-sm-2"
-                    type="text"
-                    placeholder="Search"
-                />
-                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
-                    Search
-                </button>
-            </form> */}
-        <div className="collapse navbar-collapse" id="collapsibleNavId">
-            <ul className="navbar-nav ms-auto mt-2 mt-lg-0">
-                <li className="nav-item dropdown">
-                    <a
-                        className="nav-link dropdown-toggle"
-                        id="dropdownId"
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                        >RDA</a>
-                    <div className="dropdown-menu" aria-labelledby="dropdownId">
-                        <a className="dropdown-item">Profile</a>
-                        <a className="dropdown-item">Setting</a>
-                        <div className="dropdown-item" onClick={() =>navigate('/')}>Logout</div>
-                    </div>
-                </li>
-            </ul>
+    <div className="top-navbar">
+      <nav className="navbar navbar-expand-lg">
+        <div className="container-fluid">
+          <button type="button" onClick={toggleSidebar} id="sidebarCollapse" className="d-xl-block d-lg-block d-md-mone d-none">
+            {/* <MaterialIcon>arrow_back_ios</MaterialIcon> */}
+            <span className="material-icons"><ArrowBackIosIcon /></span>
+          </button>
+          
+          <div className="navbar-brand"> Dashboard </div>
+          
+          <button id="sidebarCollapse" className="d-inline-block d-lg-none ml-auto more-button" onClick={toggleNav}>
+            {/* <MaterialIcon>more_vert</MaterialIcon> */}
+            <span className="material-icons"><HiOutlineDotsVertical /></span>
+          </button>
+          
+          <div className="collapse navbar-collapse d-lg-block d-xl-block d-sm-none d-md-none d-none">
+            {/* Add navbar content */}
+            <ul class="nav navbar-nav ml-auto">   
+                            <li class="dropdown nav-item active">
+                                <div className="nav-link" data-toggle="dropdown">
+                                    <span class="material-icons">notifications</span>
+								                    <span class="notification">4</span>
+                               </div>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="#">You have 5 new messages</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">You're now friend with Mike</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Wish Mary on her birthday!</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">5 warnings in Server Console</a>
+                                    </li>
+                                  
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <div className="nav-link" >
+                                  <span class="material-icons">person</span>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                              <div class="nav-link">
+                                <span class="material-icons">settings</span>
+                              </div>
+                            </li>
+                        </ul>
+          </div>
         </div>
-    </nav>
-    
-  )
-}
+      </nav>
+    </div>
+  );
+};
 
-export default Nav
+export default Nav;
