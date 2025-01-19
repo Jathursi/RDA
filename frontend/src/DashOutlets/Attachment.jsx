@@ -265,103 +265,131 @@ const Attachment = () => {
   };
 
   return (
-    <div className="template d-flex align-items-center w-100">
-      <div className="w-100 p-2 mx-1">
-        <form onSubmit={handleSubmit}>
-          <h2 className="formTitle pb-2">Attachments</h2>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <div className="mb-3 row">
-            <label className="col-sm-2 col-form-label">Custom Name:</label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                value={customName}
-                onChange={handleNameChange}
-              />
-            </div>
-          </div>
-          <div className="mb-3 row">
-            <label className="col-sm-2 col-form-label">Files:</label>
-            <div className="col-sm-10">
-              <input
-                type="file"
-                className="form-control"
-                multiple
-                onChange={handleFileChange}
-              />
-            </div>
-          </div>
-          <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
-              Upload
-            </button>
-          </div>
-        </form>
-        <div className="resourcesList mt-4 d-flex flex-wrap gap-3">
-          {resources.map((resource) => (
-            <div key={resource.id} className="resourceItem">
-              <div
-                className="thumbnail"
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  cursor: 'pointer',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  border: '1px solid #ddd',
-                  borderRadius: '5px',
-                }}
-                onClick={() =>
-                  resource.fileType.startsWith('image/')
-                    ? openModal(resource.fileData, resource.fileType)
-                    : window.open(
-                        `data:${resource.fileType};base64,${resource.fileData}`,
-                        '_blank'
-                      )
-                }
-              >
-                {resource.fileType.startsWith('image/') ? (
-                  <img
-                    src={`data:${resource.fileType};base64,${resource.fileData}`}
-                    alt={resource.fileName}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : resource.fileType === 'application/pdf' ? (
-                  <img
-                    src={img} // Replace this with the actual path to your PDF logo
-                    alt="PDF"
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  />
-                ) : (
-                  <p>Unsupported</p>
-                )}
+    // <div className="template d-flex align-items-center w-100">
+    //   <div className="w-100 p-2 mx-1">
+    //     <form onSubmit={handleSubmit}>
+    //       <h2 className="formTitle pb-2">Attachments</h2>
+    //       {error && <div className="alert alert-danger">{error}</div>}
+          
+    //       <div className="mb-3 row">
+    //         <label className="col-sm-2 col-form-label">Files:</label>
+    //         <div className="col-sm-10">
+    //           <input
+    //             type="file"
+    //             className="form-control"
+    //             multiple
+    //             onChange={handleFileChange}
+    //           />
+    //         </div>
+    //       </div>
+    //       <div className="d-grid">
+    //         <button type="submit" className="btn btn-primary">
+    //           Upload
+    //         </button>
+    //       </div>
+    //     </form>
+    //     <div className="resourcesList mt-4 d-flex flex-wrap gap-3">
+    //       {resources.map((resource) => (
+    //         <div key={resource.id} className="resourceItem">
+    //           <div
+    //             className="thumbnail"
+    //             style={{
+    //               width: '100px',
+    //               height: '100px',
+    //               cursor: 'pointer',
+    //               overflow: 'hidden',
+    //               position: 'relative',
+    //               border: '1px solid #ddd',
+    //               borderRadius: '5px',
+    //             }}
+    //             onClick={() =>
+    //               resource.fileType.startsWith('image/')
+    //                 ? openModal(resource.fileData, resource.fileType)
+    //                 : window.open(
+    //                     `data:${resource.fileType};base64,${resource.fileData}`,
+    //                     '_blank'
+    //                   )
+    //             }
+    //           >
+    //             {resource.fileType.startsWith('image/') ? (
+    //               <img
+    //                 src={`data:${resource.fileType};base64,${resource.fileData}`}
+    //                 alt={resource.fileName}
+    //                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    //               />
+    //             ) : resource.fileType === 'application/pdf' ? (
+    //               <img
+    //                 src={img} // Replace this with the actual path to your PDF logo
+    //                 alt="PDF"
+    //                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+    //               />
+    //             ) : (
+    //               <p>Unsupported</p>
+    //             )}
+    //           </div>
+    //           <p className="text-center mt-1">{resource.fileName}</p>
+    //           <button
+    //             className="btn btn-danger btn-sm mt-1"
+    //             onClick={() => handleDelete(resource.id)}
+    //           >
+    //             Delete
+    //           </button>
+    //         </div>
+    //       ))}
+    //     </div>
+    //     {/* Modal for image preview */}
+    //     {showModal && modalImage && (
+    //       <div className="modal" onClick={closeModal}>
+    //         <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+    //           <button className="closeButton" onClick={closeModal}>
+    //             &times;
+    //           </button>
+    //           <img
+    //             src={`data:${modalImage.fileType};base64,${modalImage.fileData}`}
+    //             alt="Preview"
+    //             className="modalImage"
+    //           />
+    //         </div>
+    //       </div>
+    //     )}
+    //   </div>
+    // </div>
+    <div className="row">
+      <div className="col-md-12">
+          <div className="table-wrapper">
+              <div className="table-title">
+                  <div className="col-sm-6 p-0 d-flex justify-content-lg-start ">
+                      <h2 className="hid ml-lg-2 items-center">Attachments</h2>
+                  </div>
               </div>
-              <p className="text-center mt-1">{resource.fileName}</p>
-              <button
-                className="btn btn-danger btn-sm mt-1"
-                onClick={() => handleDelete(resource.id)}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
-        </div>
-        {/* Modal for image preview */}
-        {showModal && modalImage && (
-          <div className="modal" onClick={closeModal}>
-            <div className="modalContent" onClick={(e) => e.stopPropagation()}>
-              <button className="closeButton" onClick={closeModal}>
-                &times;
-              </button>
-              <img
-                src={`data:${modalImage.fileType};base64,${modalImage.fileData}`}
-                alt="Preview"
-                className="modalImage"
-              />
-            </div>
+              <div className='table-responsive mt-4 overflow-x-hidden'>
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-3 row">
+                      <label className="col-sm-2 col-form-label">Custom Name:</label>
+                      <div className="col-sm-10">
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={customName}
+                          onChange={handleNameChange}
+                        />
+                      </div>
+                    </div>
+                    <div className='mb-3 row'>
+                      <label className='col-sm-2 col-form-label'>Images:</label>
+                        <div className='col-sm-10'>
+                            <input className='form-control' type='file' multiple onChange={handleFileChange} />
+                        </div>
+                    </div>
+                    <div className='d-grid'>
+                      <button type='submit' className='btn btn-primary'>
+                          {/* {isInitialSubmission ? 'Submit' : 'Update'} */}
+                          submit
+                      </button>
+                  </div>
+                  </form>
+              </div>
           </div>
-        )}
       </div>
     </div>
   );

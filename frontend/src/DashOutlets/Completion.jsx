@@ -118,16 +118,44 @@ const handleSelectChange = (selectedOption, actionMeta) => {
     };
 
     return (
-        <div className="template d-flex align-items-center 100-w sm:w-100">
-            <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
-                <form onSubmit={handleUpdate}>
-                    <h3>Completion</h3>
-                    <div className='mb-3  mt-5 row'>
+        // <div className="template d-flex align-items-center 100-w sm:w-100">
+        //     <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+        //         <form onSubmit={handleUpdate}>
+        //             <h3>Completion</h3>
+                    
+        //         </form>
+        //         <div className="mt-4">
+        //             {/* <h3>Uploaded Images</h3> */}
+        //             <div className="row">
+        //                 {/* {images.map((image, index) => (
+        //                     <div key={index} className="col-sm-4 mb-3">
+        //                         <img
+        //                             src={`data:${image.fileType};base64,${image.fileData}`}
+        //                             alt={`Completion ${index + 1}`}
+        //                             className="img-fluid"
+        //                         />
+        //                     </div>
+        //                 ))} */}
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
+        <div className="row pb-5">
+            <div className="col-md-12">
+                <div className="table-wrapper">
+                    <div className="table-title">
+                        <div className="col-sm-6 p-0 d-flex justify-content-lg-start ">
+                            <h2 className="hid ml-lg-2 items-center">Completion</h2>
+                        </div>
+                    </div>
+                    <div className='table-responsive overflow-x-hidden'>
+                        <form onSubmit={handleUpdate}>
+                            <div className='mb-3  mt-2 row'>
                         <label className='col-sm-2 col-form-label'>Supervised by:</label>
                         <div className='col-sm-10'>
                             <CreatableSelect
                                 type='text'
-                                className='form-control'
+                                // className='form-control'
                                 name='supervised'
                                 value={options.find(option => option.value === values.supervised)}
                                 // value={values.supervised}
@@ -141,7 +169,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                         <div className='col-sm-10'>
                             <CreatableSelect
                                 type='text'
-                                className='form-control'
+                                // className='form-control'
                                 name='initiated'
                                 options={options}
                                 // value={values.initiated}
@@ -155,7 +183,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                         <div className='col-sm-10'>
                             <CreatableSelect
                                 type='text'
-                                className='form-control'
+                                // className='form-control'
                                 name='closed'
                                 // value={values.closed}
                                 options={options}
@@ -181,7 +209,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                         <div className='col-sm-10'>
                             <CreatableSelect
                                 type='text'
-                                className='form-control'
+                                // className='form-control'
                                 name='approved'
                                 options={options}
                                 // value={values.approved}
@@ -208,7 +236,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                             <textarea
                                 type='text'
                                 rows={4}
-                                className='form-control'
+                                className='form-control-area'
                                 name='aditional_fault'
                                 value={values.aditional_fault}
                                 onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })}
@@ -226,19 +254,7 @@ const handleSelectChange = (selectedOption, actionMeta) => {
                             {isUpdate ? 'Update' : 'Submit'}
                         </button>
                     </div>
-                </form>
-                <div className="mt-4">
-                    {/* <h3>Uploaded Images</h3> */}
-                    <div className="row">
-                        {/* {images.map((image, index) => (
-                            <div key={index} className="col-sm-4 mb-3">
-                                <img
-                                    src={`data:${image.fileType};base64,${image.fileData}`}
-                                    alt={`Completion ${index + 1}`}
-                                    className="img-fluid"
-                                />
-                            </div>
-                        ))} */}
+                        </form>
                     </div>
                 </div>
             </div>

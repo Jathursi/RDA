@@ -217,7 +217,7 @@ function Dashright() {
     ];
 
     return (
-        <div className='sticky-top min-vh-100 overflow-auto'>
+        <div className='sticky-top min-vh-100 overflow-auto sticky-top'>
             <div className=''>
                 <h4 className='d-flex m-3 justify-content-center'>Views</h4>
                 <div className='mt-4'>
@@ -347,12 +347,12 @@ function Dashright() {
                             </div>
                         ))}
                     {/* </div> */}
-                        {imageArray.length === 0 && <p>No estimation images available.</p>}
+                        {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
                     </div>
                 </div>
                 <div className="mt-3">
                     <h5>Suppliment</h5>
-                    <h6>Vehicle Condition</h6>
+                    {/* <h6>Vehicle Condition</h6> */}
                     <div className="d-flex flex-wrap gap-3">
                         {imageArray3.map((image, index) => (
                             <div key={index} className="image-preview">
@@ -361,8 +361,8 @@ function Dashright() {
                                     className="thumbnail"
                                     style={{
                                         cursor: 'pointer',
-                                        width: '100px',
-                                        height: '100px',
+                                        width: '80px',
+                                        height: '80px',
                                         overflow: 'hidden',
                                         border: '1px solid #ddd',
                                         borderRadius: '5px'
@@ -382,9 +382,9 @@ function Dashright() {
                                 </button>
                             </div>
                         ))}
-                        {imageArray.length === 0 && <p>No estimation images available.</p>}
+                        {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
                     </div>
-                    <h6>Quotation image</h6>
+                    {/* <h6>Quotation image</h6> */}
                     <div className="d-flex flex-wrap gap-3">
                         {imageArray2.map((image, index) => (
                             <div key={index} className="image-preview">
@@ -393,8 +393,8 @@ function Dashright() {
                                     className="thumbnail"
                                     style={{
                                         cursor: 'pointer',
-                                        width: '100px',
-                                        height: '100px',
+                                        width: '80px',
+                                        height: '80px',
                                         overflow: 'hidden',
                                         border: '1px solid #ddd',
                                         borderRadius: '5px'
@@ -414,7 +414,7 @@ function Dashright() {
                                 </button>
                             </div>
                         ))}
-                        {imageArray.length === 0 && <p>No estimation images available.</p>}
+                        {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
                     </div>
                 </div>
                 <div className='mt-3'>
@@ -447,7 +447,7 @@ function Dashright() {
                 </button>
                 </div>
                 ))}
-                {impImages.length === 0 && <p>No implementation images available.</p>}
+                {/* {impImages.length === 0 && <p>No implementation images available.</p>} */}
                 </div>
                 </div>
                 <div className='mt-3'>

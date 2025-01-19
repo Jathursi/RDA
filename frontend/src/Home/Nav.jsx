@@ -1,7 +1,9 @@
 import React from 'react';
 // import { MaterialIcon } from './MaterialIcon';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+// import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import {FaBars} from 'react-icons/fa'
+
 const Nav = ({ toggleSidebar, toggleNav }) => {
   return (
     <div className="top-navbar">
@@ -9,7 +11,7 @@ const Nav = ({ toggleSidebar, toggleNav }) => {
         <div className="container-fluid">
           <button type="button" onClick={toggleSidebar} id="sidebarCollapse" className="d-xl-block d-lg-block d-md-mone d-none">
             {/* <MaterialIcon>arrow_back_ios</MaterialIcon> */}
-            <span className="material-icons"><ArrowBackIosIcon /></span>
+            <span className="material-icons"><FaBars /></span>
           </button>
           
           <div className="navbar-brand"> Dashboard </div>

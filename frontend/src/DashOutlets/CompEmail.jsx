@@ -239,11 +239,25 @@ const CompEmail = () => {
     };
 
     return (
-        <div className="template d-flex align-items-center w-100 sm:w-100">
-            <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
-                <form onSubmit={handleSubmit}>
-                    <h3>Authority Email</h3>
-                    <div className="mb-3">
+        // <div className="template d-flex align-items-center w-100 sm:w-100">
+        //     <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
+        //         <form onSubmit={handleSubmit}>
+        //             <h3>Authority Email</h3>
+                    
+        //         </form>
+        //     </div>
+        // </div>
+        <div className="row">
+            <div className="col-md-12">
+                <div className="table-wrapper">
+                    <div className="table-title">
+                        <div className="col-sm-6 p-0 d-flex justify-content-lg-start ">
+                            <h2 className="hid ml-lg-2 items-center">Email</h2>
+                        </div>
+                    </div>
+                    <div className='table-responsive mt-4 overflow-x-hidden'>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-3">
                         <div className="email-input-container" style={{ border: '1px solid #ced4da', padding: '5px', borderRadius: '4px' }}>
                             {emails.map((email, index) => (
                                 <span key={index} className="email-tag" style={{ margin: '2px', padding: '5px', backgroundColor: '#f1f1f1', borderRadius: '3px', display: 'inline-flex', alignItems: 'center' }}>
@@ -292,11 +306,11 @@ const CompEmail = () => {
                         <textarea
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
-                            className="form-control"
+                            className="form-control-area"
                             placeholder="Enter your message"
                             rows="4"
                             required
-                        />
+                        ></textarea>
                     </div>
                     <div className="mb-3">
                         <label>Select Documents (optional):</label>
@@ -331,7 +345,9 @@ const CompEmail = () => {
                     <button type="submit" className="btn btn-primary">
                         Send Email
                     </button>
-                </form>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     );

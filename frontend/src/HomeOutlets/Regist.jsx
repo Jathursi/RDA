@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
-import './Outlethome.css';
+// import './Outlethome.css';
 
-function Regist() {
+function Regist({ onClose }) {
     const [userID, setUserID] = useState('');
     const navigate = useNavigate();
+    const [isFormChanged, setIsFormChanged] = useState(false);
 
     const [values, setValues] = useState({
         Vehicle_num: '',
@@ -84,6 +85,7 @@ function Regist() {
             ...prevState,
             [name]: value
         }));
+        setIsFormChanged(true);
     };
 
     const handleSelectChange = (selectedOption, actionMeta) => {
@@ -92,15 +94,29 @@ function Regist() {
             ...prevState,
             [name]: selectedOption ? selectedOption.value : ''
         }));
+        setIsFormChanged(true);
     };
 
     const handleFileChange = (e, setFiles) => {
         const files = Array.from(e.target.files);
         setFiles(files);
+        setIsFormChanged(true);
     };
 
     const handleRadioChange = (e) => {
         setValues({ ...values, Response: e.target.value });
+        setIsFormChanged(true);
+    };
+
+    const handleClose = () => {
+        if (isFormChanged) {
+            const confirmLeave = window.confirm('You have unsaved changes. Do you really want to leave?');
+            if (confirmLeave) {
+                onClose();
+            }
+        } else {
+            onClose();
+        }
     };
 
     return (
@@ -108,10 +124,9 @@ function Regist() {
             <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
                 <form onSubmit={handleSubmit}>
                     <h2 className="formTitle pb-2 sm:pb-5">Register the vehicle</h2>
-
                     <div className="mb-3 row">
-                        <label htmlFor="Vehicle_num" className="col-sm-2 col-form-label">Vehicle Number</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Vehicle_num" className="col-sm-4 col-form-label">Vehicle Number</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Vehicle_num"
@@ -125,8 +140,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-2 row">
-                        <label htmlFor="Vehicle_type" className="col-sm-2 col-form-label">Vehicle Type</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Vehicle_type" className="col-sm-4 col-form-label">Vehicle Type</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Vehicle_type"
@@ -140,8 +155,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Year" className="col-sm-2 col-form-label">Manufacture Year</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Year" className="col-sm-4 col-form-label">Manufacture Year</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Year"
@@ -155,8 +170,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Response" className="col-sm-2 col-form-label">TR/CheckList</label>
-                        <div className="col-sm-10 d-flex align-items-center">
+                        <label htmlFor="Response" className="col-sm-4 col-form-label">TR/CheckList</label>
+                        <div className="col-sm-8 d-flex align-items-center">
                             <div className="form-check form-check-inline">
                                 <input
                                     className="form-check-input"
@@ -183,8 +198,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="checklistImage" className="col-sm-2 col-form-label">Checklist Image</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="checklistImage" className="col-sm-4 col-form-label">Checklist Image</label>
+                        <div className="col-sm-8">
                             <input
                                 className="form-control"
                                 type="file"
@@ -196,8 +211,8 @@ function Regist() {
                         </div>
                     </div>
                     <div className="mb-2 row">
-                        <label htmlFor="Reference" className="col-sm-2 col-form-label">Reference</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Reference" className="col-sm-4 col-form-label">Reference</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Reference"
@@ -211,8 +226,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Fault" className="col-sm-2 col-form-label">Fault</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Fault" className="col-sm-4 col-form-label">Fault</label>
+                        <div className="col-sm-8">
                             <textarea
                                 name="Fault"
                                 value={values.Fault}
@@ -226,8 +241,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Inspected" className="col-sm-2 col-form-label">Inspected By</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Inspected" className="col-sm-4 col-form-label">Inspected By</label>
+                        <div className="col-sm-8">
                             <CreatableSelect
                                 name="Inspected"
                                 value={options.find(option => option.value === values.Inspected)}
@@ -241,8 +256,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Meter" className="col-sm-2 col-form-label">Meter Reading</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Meter" className="col-sm-4 col-form-label">Meter Reading</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Meter"
@@ -256,8 +271,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="Location" className="col-sm-2 col-form-label">Division</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="Location" className="col-sm-4 col-form-label">Division</label>
+                        <div className="col-sm-8">
                             <input
                                 type="text"
                                 name="Location"
@@ -271,8 +286,8 @@ function Regist() {
                     </div>
 
                     <div className="mb-3 row">
-                        <label htmlFor="CrossCheckby" className="col-sm-2 col-form-label">CrossCheck By</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="CrossCheckby" className="col-sm-4 col-form-label">CrossCheck By</label>
+                        <div className="col-sm-8">
                             <CreatableSelect
                                 name="CrossCheckby"
                                 value={options.find(option => option.value === values.CrossCheckby)}
@@ -285,8 +300,8 @@ function Regist() {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="crosscheckImage" className="col-sm-2 col-form-label">CrossCheck Image</label>
-                        <div className="col-sm-10">
+                        <label htmlFor="crosscheckImage" className="col-sm-4 col-form-label">CrossCheck Image</label>
+                        <div className="col-sm-8">
                             <input
                                 className="form-control"
                                 type="file"
@@ -297,8 +312,11 @@ function Regist() {
                             />
                         </div>
                     </div>
-                    <div className="d-grid">
-                        <button type="submit" className="btn btn-primary">
+                    <div className="row">
+                        <button type="button" className="btn btn-secondary col-6" onClick={handleClose}>
+                            cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary col-6">
                             Register
                         </button>
                     </div>

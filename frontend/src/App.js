@@ -37,24 +37,7 @@
 //           <Route path='/signup' element={<Signup />} />
 //           <Route path='/forgotpassword' element={<Forgotpassword />} />
 //           <Route path='/' element={<Logins />} />
-//           <Route path='/dash/:id' element={<Dash />}>
-//             <Route index element={<Navigate to='estimation' />} />
-//             <Route path='image' element={<Image />} />
-//             <Route path='implement' element={<Implement />} />
-//             <Route path='other' element={<Other />} />
-//             <Route path='estimation' element={<Estimation />} />
-//             <Route path='supliment' element={<Supliment />} />
-//             <Route path='attachment' element={<Attachment />} />
-//             <Route path='outsource' element={<Outsource />} />
-//             <Route path='compemail' element={<CompEmail />} />
-//             <Route path='comprint' element={<Comprint />} />
-//             <Route path='completion' element={<Completion />} />
-//             <Route path='estprint' element={<EstPrint />} />
-//             <Route path='estemail' element={<Estemail />} />
-//             <Route path='userinfo' element={<UserInfo />} />
-//             <Route path='compemail' element={<CompEmail />} />
-//             <Route path='comprint' element={<Comprint />} />
-//           </Route>
+          
 //           {/* <Route path='/home' element={<Navigate to={'main'} />} /> */}
 //           <Route path='/home' element={<Home />}>
 //             <Route index element={<Navigate to='main' />} /> 
@@ -156,8 +139,26 @@ function App() {
             <Route path='feedback' element={<Feedback />} />
             <Route path='regist' element={<Regist />} />
             <Route path='entroll' element={<Entroll />} />
-            <Route path='details/:id' element={<Details />} />
+            <Route path='/home/main/details/:id' element={<Details />} />
             <Route path='profile' element={<Profile />} />
+          </Route>
+          <Route path='/dash/:id' element={<Dash />}>
+            <Route index element={<Navigate to='estimation' />} />
+            <Route path='image' element={<Image />} />
+            <Route path='implement' element={<Implement />} />
+            <Route path='other' element={<Other />} />
+            <Route path='estimation' element={<Estimation />} />
+            <Route path='supliment' element={<Supliment />} />
+            <Route path='attachment' element={<Attachment />} />
+            <Route path='outsource' element={<Outsource />} />
+            <Route path='compemail' element={<CompEmail />} />
+            <Route path='comprint' element={<Comprint />} />
+            <Route path='completion' element={<Completion />} />
+            <Route path='estprint' element={<EstPrint />} />
+            <Route path='estemail' element={<Estemail />} />
+            <Route path='userinfo' element={<UserInfo />} />
+            <Route path='compemail' element={<CompEmail />} />
+            <Route path='comprint' element={<Comprint />} />
           </Route>
           <Route path='/user' element={<UserHome/>} >
             <Route index element={<Navigate to='userdet' />} /> 

@@ -129,6 +129,7 @@ router.get('/Outview/:logbookId', async (req, res) => {
             sundriesEntries,
             image1: formattedImages1, // Include the formatted images
         });
+        console.log(outsourceEntries)
     } catch (error) {
         console.error('Error fetching outsource entries:', error);
         res.status(500).json({ error: 'An error occurred while fetching the outsource entries.' });

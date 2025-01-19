@@ -1,39 +1,38 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { HiOutlineDotsVertical } from "react-icons/hi";
 import {FaBars} from 'react-icons/fa'
-function DashTopnav({Toggle}) {
+function DashTopnav({ toggleSidebar, toggleNav }) {
     const navigate = useNavigate();
   return (
-    <nav
-        className="navbar px-3 navbar-expand-sm m-2"
-    >
-        {/* <i className="navbar-brand" onClick={Toggle}>Navbar</i> */}
-        <FaBars className='navbar-brand fs-4' onClick={Toggle} />
-        <button className="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId"
-            aria-controls="collapsibleNavId"  aria-expanded="false" aria-label="Toggle navigation"
-        ></button>
-        {/* <form className="d-flex my-2 my-lg-0">
-                <input
-                    className="form-control me-sm-2"
-                    type="text"
-                    placeholder="Search"
-                />
-                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
-                    Search
-                </button>
-            </form> */}
-        
-        <div className="collapse navbar-collapse" id="collapsibleNavId">
-            <ul className="navbar-nav ms-auto mt-2 mt-lg-0">
-                <li className="nav-item">
-                <div className='nav-link d-flex align-items-center fs-6 me-3' onClick={() => navigate('/home')}>
-                    {/* <span className="brand-name fs-5">Home</span> */}
-                    Home
-                </div>
-                </li>
-            </ul>
+    <div className="top-navbar sticky-top">
+          <nav className="navbar navbar-expand-lg">
+            <div className="container-fluid">
+              <button type="button" onClick={toggleSidebar} id="sidebarCollapse" className="d-xl-block d-lg-block d-md-mone d-none">
+                {/* <MaterialIcon>arrow_back_ios</MaterialIcon> */}
+                <span className="material-icons"><FaBars /></span>
+              </button>
+              
+              <div className="navbar-brand"> Dashboard </div>
+              
+              <button id="sidebarCollapse" className="d-inline-block d-lg-none ml-auto more-button" onClick={toggleNav}>
+                {/* <MaterialIcon>more_vert</MaterialIcon> */}
+                <span className="material-icons"><HiOutlineDotsVertical /></span>
+              </button>
+              
+              <div className="collapse navbar-collapse d-lg-block d-xl-block d-sm-none d-md-none d-none">
+                {/* Add navbar content */}
+                <ul className="nav navbar-nav ml-auto"> 
+                    <li className="nav-item">
+                        <div className="nav-link" >
+                          <span className="material-icons" onClick={() => navigate('/home')}>Home</span>
+                        </div>
+                    </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
         </div>
-    </nav>
     
   )
 }

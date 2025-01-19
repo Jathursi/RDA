@@ -6,6 +6,7 @@ import Implement from './Impliment.js';
 import Completion from './Completion.js';
 import Supplier from './Supplier.js';
 import EstMat from './EstMat.js';
+import QutationImg from './QutationImg.js';
 // import ImpImage from './ImpImage.js';
 // import Implement from './Impliment.js';
 
@@ -15,6 +16,7 @@ Estimate.hasMany(Supplier, { foreignKey: 'EstID' });
 Implement.hasMany(ImpImage, { foreignKey: 'ImpID' });
 Completion.hasMany(CompImage, { foreignKey: 'CompID' });
 Supplier.hasMany(EstMat, { foreignKey: 'supID' });
+Supplier.hasMany(QutationImg, { foreignKey: 'supID' });
 // Implement.hasMany(ImpImage, { foreignKey: 'ImpID' });
 
 EstMat.belongsTo(Supplier, { foreignKey: 'supID' });
@@ -22,4 +24,5 @@ EstImage.belongsTo(Estimate, { foreignKey: 'EstID' });
 ImpImage.belongsTo(Implement, { foreignKey: 'ImpID' });
 Supplier.belongsTo(Estimate, { foreignKey: 'EstID' });
 CompImage.belongsTo(Completion, { foreignKey: 'CompID' });
+QutationImg.belongsTo(Supplier, { foreignKey: 'supID' });
 // ImpImage.belongsTo(Implement, { foreignKey: 'ImpID' });
