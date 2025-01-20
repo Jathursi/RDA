@@ -354,7 +354,8 @@ const PrintButton = () => {
   });
 useEffect(() => {
         axios
-            .get(`http://localhost:8081/api/logbook/log/${id}`, { withCredentials: true })
+            .get(`http://localhost:8081/api/logbook/logprint/${id}`, { withCredentials: true })
+            
             .then((response) => {
               if (response.data && response.data.length > 0) {
                 const values = response.data[0]

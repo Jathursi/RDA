@@ -174,11 +174,17 @@ router.get('/images/:id', async (req, res) => {
 
     try {
         const images = await ImpImage.findAll({ where: { impID } });
-        res.status(200).json(images);
+        // If fileData is stored as binary, ensure proper encoding
+        const formattedImages = images.map(image => ({
+            fileType: image.fileType,
+            fileData: image.fileData.toString('base64'), // Convert binary to Base64 if needed
+        }));
+        res.status(200).json(formattedImages);
     } catch (error) {
         console.error('Error fetching images:', error);
         res.status(500).json({ error: 'Failed to fetch images' });
     }
 });
+
 // export default router;
 export default router;

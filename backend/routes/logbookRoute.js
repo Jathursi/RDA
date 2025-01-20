@@ -109,6 +109,25 @@ router.get('/log/:id', async (req, res) => {
   }
 });
 
+router.get('/logprint/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const logbookEntry = await Logbook.findOne({
+      where: { id: id },
+    });
+    if (!logbookEntry) {
+      return res.status(404).json({ error: 'Logbook entry not found' });
+    }
+
+    res.status(200).json({ logbookEntry});
+    console.log('Logbook Entry Response:', { logbookEntry });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the logbook entry' });
+  }
+});
+
+
 // delete route for crosscheck and checklist image
 router.delete('/delete/:id', async (req, res) => {
   const { id } = req.params;

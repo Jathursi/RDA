@@ -97,9 +97,10 @@ useEffect(() => {
                 }
 
                 const fetchedImages = response.data.map((image, index) => ({
-                    src: `data:${image.fileType};base64,${btoa(String.fromCharCode(...new Uint8Array(image.fileData.data)))}`,
-                    label: `Implement${index + 1}`,
+                    src: `data:${image.fileType};base64,${image.fileData.data}`, // Use if already Base64
+                    label: `Implement ${index + 1}`,
                 }));
+
 
                 setImages(fetchedImages);
             } catch (error) {
