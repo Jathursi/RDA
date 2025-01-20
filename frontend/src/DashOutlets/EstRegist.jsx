@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import CreatableSelect from 'react-select/creatable';
 
-function EstRegist({ onClose }) {
+function EstRegist({ onClose, estimate }) {
     const { id: logbookID } = useParams();
     const navigate = useNavigate();
     const [values, setValues] = useState({ Date: '', Estimated: '', EstID: '' });
@@ -23,6 +23,16 @@ function EstRegist({ onClose }) {
             });
     }, []);
 
+    useEffect(() => {
+        if (estimate) {
+            setValues({
+                Date: estimate.Date.split('T')[0],
+                Estimated: estimate.Estimated,
+                EstID: estimate.id
+            });
+        }
+    }, [estimate]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -33,7 +43,9 @@ function EstRegist({ onClose }) {
         selectedFiles.forEach((file) => formData.append('images', file));
 
         const token = localStorage.getItem('token');
-        const url = `http://localhost:8081/api/est/Estinsert/${logbookID}`;
+        const url = estimate
+            ? `http://localhost:8081/api/est/Estupdate/${estimate.id}`
+            : `http://localhost:8081/api/est/Estinsert/${logbookID}`;
 
         try {
             await axios.post(url, formData, {
@@ -42,7 +54,7 @@ function EstRegist({ onClose }) {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            alert('Estimate created successfully');
+            alert(`Estimate ${estimate ? 'updated' : 'created'} successfully`);
             navigate('/home');
         } catch (err) {
             console.error('Error submitting estimation:', err.response?.data || err.message);
@@ -65,6 +77,7 @@ function EstRegist({ onClose }) {
             ...prevState,
             [name]: selectedOption ? selectedOption.value : ''
         }));
+        setIsFormChanged(true);
     };
 
     const handleFileChange = (e) => {
@@ -77,6 +90,7 @@ function EstRegist({ onClose }) {
         }
         setSelectedFiles(validFiles);
     };
+
     const handleClose = () => {
         if (isFormChanged) {
             const confirmLeave = window.confirm('You have unsaved changes. Do you really want to leave?');
@@ -128,10 +142,10 @@ function EstRegist({ onClose }) {
                     </div>
                     <div className="row">
                         <button type="button" className="btn btn-secondary col-6" onClick={handleClose}>
-                            cancel
+                            Cancel
                         </button>
                         <button type="submit" className="btn btn-primary col-6">
-                            Register
+                            {estimate ? 'Update' : 'Register'}
                         </button>
                     </div>
                 </form>

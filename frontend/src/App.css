@@ -96,6 +96,19 @@
     padding-right: 0;
     transition: all 0.3s;
 }
+.content1{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.content2 {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -30%;
+}
 .content.active {
     width: 100%;
     margin-left: 0;
@@ -311,12 +324,12 @@ table.table tr td {
     font-size: 18px;
     vertical-align: middle;
 }
-table.table tr th:first-child {
+/* table.table tr th:first-child {
     width: 60px;
 }
 table.table tr th:last-child {
     width: 100px;
-}
+} */
 table.table-striped.table-hover tbody tr:hover {
     background: #f5f5f5;
 }

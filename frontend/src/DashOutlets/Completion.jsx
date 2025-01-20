@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
+import { IoMdAdd } from "react-icons/io";
+import CompRegist from './CompRegist';
+
 
 function Completion() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false); // Track if data already exists
+    const [showRegist, setShowRegist] = useState(false);
+    
     const [values, setValues] = useState({
         ID: id,
         supervised: '',
@@ -118,146 +123,69 @@ const handleSelectChange = (selectedOption, actionMeta) => {
     };
 
     return (
-        // <div className="template d-flex align-items-center 100-w sm:w-100">
-        //     <div className="w-100 p-2 mx-1 sm:px-5 mx-5">
-        //         <form onSubmit={handleUpdate}>
-        //             <h3>Completion</h3>
-                    
-        //         </form>
-        //         <div className="mt-4">
-        //             {/* <h3>Uploaded Images</h3> */}
-        //             <div className="row">
-        //                 {/* {images.map((image, index) => (
-        //                     <div key={index} className="col-sm-4 mb-3">
-        //                         <img
-        //                             src={`data:${image.fileType};base64,${image.fileData}`}
-        //                             alt={`Completion ${index + 1}`}
-        //                             className="img-fluid"
-        //                         />
-        //                     </div>
-        //                 ))} */}
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
-        <div className="row pb-5">
-            <div className="col-md-12">
-                <div className="table-wrapper">
-                    <div className="table-title">
-                        <div className="col-sm-6 p-0 d-flex justify-content-lg-start ">
-                            <h2 className="hid ml-lg-2 items-center">Completion</h2>
-                        </div>
-                    </div>
-                    <div className='table-responsive overflow-x-hidden'>
-                        <form onSubmit={handleUpdate}>
-                            <div className='mb-3  mt-2 row'>
-                        <label className='col-sm-2 col-form-label'>Supervised by:</label>
-                        <div className='col-sm-10'>
-                            <CreatableSelect
-                                type='text'
-                                // className='form-control'
-                                name='supervised'
-                                value={options.find(option => option.value === values.supervised)}
-                                // value={values.supervised}
-                                options={options}
-                                onChange={handleSelectChange}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Initiated by:</label>
-                        <div className='col-sm-10'>
-                            <CreatableSelect
-                                type='text'
-                                // className='form-control'
-                                name='initiated'
-                                options={options}
-                                // value={values.initiated}
-                                value={options.find(option => option.value === values.initiated)}
-                                onChange={handleSelectChange}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Closed by:</label>
-                        <div className='col-sm-10'>
-                            <CreatableSelect
-                                type='text'
-                                // className='form-control'
-                                name='closed'
-                                // value={values.closed}
-                                options={options}
-                                value={options.find(option => option.value === values.closed)}
-                                onChange={handleSelectChange}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Closed Date:</label>
-                        <div className='col-sm-10'>
-                            <input
-                                type='date'
-                                className='form-control'
-                                name='close_date'
-                                value={values.close_date}
-                                onChange={(e) => setValues({...values, close_date: e.target.value})}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Approved by:</label>
-                        <div className='col-sm-10'>
-                            <CreatableSelect
-                                type='text'
-                                // className='form-control'
-                                name='approved'
-                                options={options}
-                                // value={values.approved}
-                                value={options.find(option => option.value === values.approved)}
-                                onChange={handleSelectChange}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Voucher:</label>
-                        <div className='col-sm-10'>
-                            <input
-                                type='text'
-                                className='form-control'
-                                name='Voucher'
-                                value={values.Voucher}
-                                onChange={(e) => setValues({ ...values, Voucher: e.target.value })}
-                            />
-                        </div>
-                    </div>
-                    <div className='mb-3 row'>
-                        <label className='col-sm-2 col-form-label'>Aditional Fault:</label>
-                        <div className='col-sm-10'>
-                            <textarea
-                                type='text'
-                                rows={4}
-                                className='form-control-area'
-                                name='aditional_fault'
-                                value={values.aditional_fault}
-                                onChange={(e) => setValues({ ...values, aditional_fault: e.target.value })}
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">Image</label>
-                        <div className="col-sm-10">
-                            <input className="form-control" type="file" multiple onChange={handleFileChange} />
-                        </div>
-                    </div>
-                    <div className='d-grid'>
-                        <button type='submit' className='btn btn-primary'>
-                            {isUpdate ? 'Update' : 'Submit'}
-                        </button>
-                    </div>
-                        </form>
-                    </div>
+      <div className="row">
+                      <div className="col-md-12">
+                        <div className="table-wrapper">
+                          <div className="table-title">
+                            <div className="row title-row">
+                              <div className="col-sm-6 p-0 d-flex justify-content-lg-start ">
+                                <h2 className="hid ml-lg-2 items-center">Completion</h2>
+                              </div>
+                              <div className="col-sm-6 p-0 d-flex justify-content-lg-end">
+                                <button
+                                    className={`btn ${isUpdate ? 'btn btn-warning' : 'btn btn-success'} flex items-center gap-3`}
+                                    onClick={() => setShowRegist(true)}
+                                >
+                                    <IoMdAdd size={20} />
+                                    {isUpdate ? 'Edit' : 'Add'}
+                                </button>
+                              </div>
+                            </div>
                 </div>
-            </div>
+                <div className=''>
+                    <table className='table table-striped table-hover'>
+                        <tbody>
+                            <tr>
+                                <td>Supervised</td>
+                                <td>{values.supervised}</td>
+                            </tr>
+                            <tr>
+                                <td>Initiated By</td>
+                                <td>{values.initiated}</td>
+                            </tr>
+                            <tr>
+                                <td>Closed By</td>
+                                <td>{values.close_date}</td>
+                            </tr>
+                            <tr>
+                                <td>Closed Date</td>
+                                <td>{values.close_date}</td>
+                            </tr>
+                            <tr>
+                                <td>Approved By</td>
+                                <td>{values.approved}</td>
+                            </tr>
+                            <tr>
+                                <td>Voucher</td>
+                                <td>{values.Voucher}</td>
+                            </tr>
+                            <tr>
+                                <td>Additional Fault</td>
+                                <td>{values.aditional_fault}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                </div>
+            {showRegist && (
+                <div className="modal-overlay">
+                <div className="modal-container">
+                    <button className="close-button" onClick={() => setShowRegist(false)}>X</button>
+                    <CompRegist onClose={() => setShowRegist(false)} />
+                </div>
+                </div>
+            )}
         </div>
     );
 }

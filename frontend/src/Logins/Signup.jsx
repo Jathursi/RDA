@@ -263,7 +263,7 @@ const Signup = () => {
                     <div className="bg-cover d-flex align-items-center justify-content-center vh-100 ml-n3" >
                         {/* <img src="assets/img/login-bg.jpg" alt="Login" className="img-fluid" /> */}
                         <div className="position-absolute login-signup-content">
-                            <div className="content position-relative text-white col-md-12 col-lg7">
+                            <div className="content2 position-relative text-white col-md-12 col-lg7">
                                 <h1 className="text-white">
                                     Welcome to <span className="font-weight-bolder">BACK.</span>
                                 </h1>

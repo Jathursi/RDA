@@ -155,18 +155,18 @@ function Dashright() {
     // setShowModal(true);
     };
 
-    useEffect(() => {
-    const fetchSupImages = async () => {
-    try {
-    const response = await axios.get(`http://localhost:8081/api/sup/images/${id}`);
-    setsupImages(response.data);
-    } catch (error) {
-    console.error('Error fetching images:', error);
-    // setError('Failed to fetch images.');
-    }
-    };
-    fetchSupImages();
-    }, [id]);
+    // useEffect(() => {
+    // const fetchSupImages = async () => {
+    // try {
+    // const response = await axios.get(`http://localhost:8081/api/sup/images/${id}`);
+    // setsupImages(response.data);
+    // } catch (error) {
+    // console.error('Error fetching images:', error);
+    // // setError('Failed to fetch images.');
+    // }
+    // };
+    // fetchSupImages();
+    // }, [id]);
 
 // Ensure `data` is not null before destructuring
     const checklistImages = data?.checklistImages || [];
@@ -201,20 +201,20 @@ function Dashright() {
     src: `data:${image.fileType};base64,${image.fileData}`,
     label: `OutSource ${index + 1}`,
     }));
-    const { quotationImages1 = [], estimateImages1 = [] } = supImages;
+    // const { quotationImages1 = [], estimateImages1 = [] } = supImages;
 
-    const imageArray2 = [
-    ...quotationImages1.map((image) => ({
-    src: `data:${image.fileType};base64,${image.fileData}`,
-    label: 'Quotation',
-    })),
-    ];
-    const imageArray3 = [
-        ...estimateImages1.map((image) => ({
-    src: `data:${image.fileType};base64,${image.fileData}`,
-    label: 'Estimation',
-    })),
-    ];
+    // const imageArray2 = [
+    // ...quotationImages1.map((image) => ({
+    // src: `data:${image.fileType};base64,${image.fileData}`,
+    // label: 'Quotation',
+    // })),
+    // ];
+    // const imageArray3 = [
+    //     ...estimateImages1.map((image) => ({
+    // src: `data:${image.fileType};base64,${image.fileData}`,
+    // label: 'Estimation',
+    // })),
+    // ];
 
     return (
         <div className='sticky-top min-vh-100 overflow-auto sticky-top'>
@@ -222,16 +222,15 @@ function Dashright() {
                 <h4 className='d-flex m-3 justify-content-center'>Views</h4>
                 <div className='mt-4'>
                     <h5>Registration</h5>
-                    <h6>CheckList</h6>
-                    <div className="d-flex flex-row gap-2">
+                    <div className="d-flex flex-wrap ">
                         {images.map((image, index) => (
                             <div
                                 key={index}
                                 className="thumbnail"
                                 style={{
                                 cursor: 'pointer',
-                                width: '100px',
-                                height: '100px',
+                                width: '70px',
+                                height: '70px',
                                 overflow: 'hidden',
                                 border: '1px solid #ddd',
                                 borderRadius: '5px'
@@ -250,16 +249,15 @@ function Dashright() {
                             </div>
                         ))}
                     </div>
-                    <h6>CrossCheckby</h6>
-                    <div className="d-flex flex-row gap-2">
+                    <div className="d-flex flex-wrap">
                         {images1.map((image, index) => (
                             <div
                                 key={index}
                                 className="thumbnail"
                                 style={{
                                 cursor: 'pointer',
-                                width: '100px',
-                                height: '100px',
+                                width: '70px',
+                                height: '70px',
                                 overflow: 'hidden',
                                 border: '1px solid #ddd',
                                 borderRadius: '5px'
@@ -282,7 +280,7 @@ function Dashright() {
                 <div className="mt-3">
                     <h5>Estimation</h5>
                     <h6>vechilce condition</h6>
-                    <div className="d-flex flex-wrap gap-3">
+                    <div className="d-flex flex-wrap">
                         {imageEstArray.map((image, index) => (
                             <div key={index} className="image-preview">
                                 <button
@@ -290,8 +288,8 @@ function Dashright() {
                                     className="thumbnail"
                                     style={{
                                         cursor: 'pointer',
-                                        width: '100px',
-                                        height: '100px',
+                                        width: '70px',
+                                        height: '70px',
                                         overflow: 'hidden',
                                         border: '1px solid #ddd',
                                         borderRadius: '5px'
@@ -316,7 +314,7 @@ function Dashright() {
                         {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
                     </div>
                     <h6>quotationImg</h6>
-                    <div className="d-flex flex-wrap gap-3">
+                    <div className="d-flex flex-wrap">
                         {imageArray.map((image, index) => (
                             <div key={index} className="image-preview">
                                 <button
@@ -324,8 +322,8 @@ function Dashright() {
                                     className="thumbnail"
                                     style={{
                                         cursor: 'pointer',
-                                        width: '100px',
-                                        height: '100px',
+                                        width: '70px',
+                                        height: '70px',
                                         overflow: 'hidden',
                                         border: '1px solid #ddd',
                                         borderRadius: '5px'
@@ -350,84 +348,17 @@ function Dashright() {
                         {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
                     </div>
                 </div>
-                <div className="mt-3">
-                    <h5>Suppliment</h5>
-                    {/* <h6>Vehicle Condition</h6> */}
-                    <div className="d-flex flex-wrap gap-3">
-                        {imageArray3.map((image, index) => (
-                            <div key={index} className="image-preview">
-                                <button
-                                    key={index}
-                                    className="thumbnail"
-                                    style={{
-                                        cursor: 'pointer',
-                                        width: '80px',
-                                        height: '80px',
-                                        overflow: 'hidden',
-                                        border: '1px solid #ddd',
-                                        borderRadius: '5px'
-                                    }}
-                                    onClick={() => handleImageClick(image)}
-                                >
-                                {/* {image.label} {index + 1} */}
-                                    <img
-                                        src={image.src}
-                                        alt={image.label}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                </button>
-                            </div>
-                        ))}
-                        {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
-                    </div>
-                    {/* <h6>Quotation image</h6> */}
-                    <div className="d-flex flex-wrap gap-3">
-                        {imageArray2.map((image, index) => (
-                            <div key={index} className="image-preview">
-                                <button
-                                    key={index}
-                                    className="thumbnail"
-                                    style={{
-                                        cursor: 'pointer',
-                                        width: '80px',
-                                        height: '80px',
-                                        overflow: 'hidden',
-                                        border: '1px solid #ddd',
-                                        borderRadius: '5px'
-                                    }}
-                                    onClick={() => handleImageClick(image)}
-                                >
-                                {/* {image.label} {index + 1} */}
-                                    <img
-                                        src={image.src}
-                                        alt={image.label}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                </button>
-                            </div>
-                        ))}
-                        {/* {imageArray.length === 0 && <p>No estimation images available.</p>} */}
-                    </div>
-                </div>
                 <div className='mt-3'>
                 <h5>Implement</h5>
-                <div className="d-flex flex-wrap gap-3">
+                <div className="d-flex flex-wrap">
                 {(impImages || []).map((image, index) => (
                 <div key={index} className="image-preview">
                 <button
                 className="thumbnail"
                 style={{
                 cursor: 'pointer',
-                width: '100px',
-                height: '100px',
+                width: '70px',
+                height: '70px',
                 overflow: 'hidden',
                 border: '1px solid #ddd',
                 borderRadius: '5px'
@@ -452,15 +383,15 @@ function Dashright() {
                 </div>
                 <div className='mt-3'>
                 <h5>Completion</h5>
-                <div className="d-flex flex-wrap gap-3">
+                <div className="d-flex flex-wrap">
                 {compImages.map((image, index) => (
                 <div key={index} className="image-preview">
                 <button
                 className="thumbnail"
                 style={{
                 cursor: 'pointer',
-                width: '100px',
-                height: '100px',
+                width: '70px',
+                height: '70px',
                 overflow: 'hidden',
                 border: '1px solid #ddd',
                 borderRadius: '5px'
@@ -484,17 +415,15 @@ function Dashright() {
                 </div>
                 <div className='mt-3'>
                 <h5>Attachments</h5>
-                <div className="d-flex flex-wrap gap-3">
-                <table>
-                <tbody>
+                <div className="d-flex flex-wrap">
                 {resources.map((resource) => (
-                <tr key={resource.id} className="resourceItem">
+                <div key={resource.id} className="resourceItem">
                 {resource.fileType.startsWith('image/') ? (
-                <td className="thumbnail"
+                <div className="thumbnail"
                 style={{
                 cursor: 'pointer',
-                width: '100px',
-                height: '100px',
+                width: '70px',
+                height: '70px',
                 overflow: 'hidden',
                 border: '1px solid #ddd',
                 borderRadius: '5px'
@@ -506,9 +435,9 @@ function Dashright() {
                 alt={resource.fileName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                </td>
+                </div>
                 ) : resource.fileType === 'application/pdf' ? (
-                <td 
+                <div 
                     className="thumbnail"
                     onClick={() => handleImageClickres(resource)}
                 >
@@ -517,28 +446,25 @@ function Dashright() {
                     alt={resource.fileName}
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
-                </td>
+                </div>
                 ) : (
                 <p>Unsupported file type</p>
                 )}
-                </tr>
+                </div>
                 ))}
-                </tbody>
-                </table>
                 </div>
                 </div>
                 <div className='mt-3'>
                 <h5>Out Source</h5>
-                <h5>Images</h5>
-                <div className="d-flex flex-wrap gap-2">
+                <div className="d-flex flex-wrap">
                 {imageArray1.map((image, index) => (
                 <div key={index}>
                 <button
                 className="thumbnail"
                 style={{
                 cursor: 'pointer',
-                width: '100px',
-                height: '100px',
+                width: '70px',
+                height: '70px',
                 overflow: 'hidden',
                 border: '1px solid #ddd',
                 borderRadius: '5px'

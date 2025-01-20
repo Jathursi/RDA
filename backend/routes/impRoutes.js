@@ -137,6 +137,7 @@ router.patch('/implementmat/:id', async (req, res) => {
         await item.save();
 
         res.status(200).json(item);
+        console.log(item)
     } catch (error) {
         console.error('Error updating item:', error);
         res.status(500).json({ error: 'Failed to update item' });
