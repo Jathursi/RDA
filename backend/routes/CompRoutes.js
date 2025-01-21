@@ -82,11 +82,11 @@ router.put('/comp/:id', upload.array('images'), async (req, res) => {
         res.status(500).json({ error: 'An error occurred while updating the completion entry.' });
     }
 });
-router.get('/comp/:id', async (req, res) => {
-    const { id } = req.params;
+router.get('/comp/:logbookID', async (req, res) => {
+    const { logbookID } = req.params;
 
     try {
-        const completion = await Completion.findOne({ where: { id } });
+        const completion = await Completion.findOne({ where: { logbookID } });
 
         if (!completion) {
             return res.status(404).json({ error: 'No completion entry found for the given book ID.' });
@@ -98,20 +98,27 @@ router.get('/comp/:id', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching the completion entry.' });
     }
 });
+import db from '../config/sequelize.js';
 
 // Route to fetch images for a specific completion entry
 router.get('/images/:id', async (req, res) => {
-    const { id: CompID } = req.params;
+    const { id: logbookID } = req.params;
 
     try {
-        const images = await CompImage.findAll({ where: { CompID } });
+        const images = `
+        SELECT * FROM compimage
+        JOIN completion ON compimage.CompID = completion.id
+        WHERE completion.logbookID = ?`;
 
         // Convert fileData to base64
-        const formattedImages = images.map(image => ({
-            ...image.dataValues,
-            fileData: image.fileData.toString('base64') // Base64 encoding
+        const results = await db.query(images, {
+            replacements: [logbookID],
+            type: db.QueryTypes.SELECT,
+        });
+        const formattedImages = results.map(image => ({
+            fileType: image.fileType,
+            fileData: image.fileData.toString('base64'), // Convert binary to Base64 if needed
         }));
-
         res.status(200).json(formattedImages);
     } catch (error) {
         console.error('Error fetching images:', error);

@@ -102,7 +102,8 @@ const handleSelectChange = (selectedOption, actionMeta) => {
             .then(res => {
                 console.log(isUpdate ? "Completion details updated successfully" : "Completion details added successfully");
                 setIsUpdate(true); // After initial post, switch to update mode
-                navigate('/Home');
+                // navigate('/Home');
+                window.location.reload();
             })
             .catch(err => {
                 console.error(`Error ${isUpdate ? 'updating' : 'adding'} completion details:`, err);

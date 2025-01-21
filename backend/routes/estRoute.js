@@ -312,91 +312,9 @@
 // const upload = multer({ storage: storage });
 
 // // Route to create a new estimate
-// router.post('/Estinsert/:logbookId', upload.array('images'), async (req, res) => {
-//     const { Date, Estimated } = req.body;
-//     const { logbookId } = req.params;
-
-//     if (!Date || !Estimated) {
-//         return res.status(400).json({ error: 'Date and Estimated fields are required.' });
-//     }
-
-//     try {
-//         // const existingEstimate = await Estimate.findOne({ where: { logbookID: logbookId } });
-
-//         // if (existingEstimate) {
-//         //     return res.status(400).json({ error: 'Estimate already exists for this logbook ID.' });
-//         // }
-
-//         const estimate = await Estimate.create({
-//             Date,
-//             Estimated,
-//             logbookID: logbookId, // Ensure correct field name
-//         });
-
-//         if (req.files && req.files.length > 0) {
-//             const images = await EstImage.bulkCreate(
-//                 req.files.map((file) => ({
-//                     fileType: file.mimetype,
-//                     fileSize: file.size,
-//                     fileData: file.buffer,
-//                     EstID: estimate.id,
-//                 }))
-//             );
-
-//             return res.status(201).json({
-//                 message: 'Estimate and images created successfully',
-//                 estimate,
-//                 images,
-//             });
-//         }
-
-//         res.status(201).json({
-//             message: 'Estimate created successfully (no images uploaded)',
-//             estimate,
-//         });
-//     } catch (error) {
-//         console.error('Error creating estimate:', error);
-//         res.status(500).json({ error: 'An error occurred while creating the estimate.' });
-//     }
-// });
 
 
 // // Route to update an existing estimate and add additional images
-// router.put('/Estupdate/:logbookId', upload.array('images'), async (req, res) => {
-//     const { Date, Estimated } = req.body;
-//     const { logbookId } = req.params;
-
-//     if (!Date || !Estimated) {
-//         return res.status(400).json({ error: 'Date and Estimated fields are required.' });
-//     }
-
-//     try {
-//         const estimate = await Estimate.findOne({ where: { LogbookID: logbookId } });
-
-//         if (!estimate) {
-//             return res.status(404).json({ error: 'No estimate found to update for the given logbook ID.' });
-//         }
-
-//         await estimate.update({ Date, Estimated });
-
-//         // Check and process uploaded images
-//         if (req.files && req.files.length > 0) {
-//             const images = await EstImage.bulkCreate(
-//                 req.files.map((file) => ({
-//                     fileType: file.mimetype,
-//                     fileSize: file.size,
-//                     fileData: file.buffer, // Save binary data to the database
-//                     EstID: estimate.id,   // Associate images with the updated estimate
-//                 }))
-//             );
-//         }
-
-//         res.status(200).json({ message: 'Estimate updated successfully' });
-//     } catch (error) {
-//         console.error('Error updating estimate:', error);
-//         res.status(500).json({ error: 'An error occurred while updating the estimate.' });
-//     }
-// });
 
 // // router.get('/Estselect', async (req, res) => {
 // //     // const { logbookId } = req.params;
@@ -663,89 +581,137 @@ const upload = multer({
     }
 });
 
-router.post('/Estinsert/:book_id', upload.array('images', 10), async (req, res) => {
-    const { book_id } = req.params;
+router.post('/Estinsert/:logbookId', upload.array('images'), async (req, res) => {
     const { Date, Estimated } = req.body;
+    const { logbookId } = req.params;
+
+    if (!Date || !Estimated) {
+        return res.status(400).json({ error: 'Date and Estimated fields are required.' });
+    }
 
     try {
+        // const existingEstimate = await Estimate.findOne({ where: { logbookID: logbookId } });
+
+        // if (existingEstimate) {
+        //     return res.status(400).json({ error: 'Estimate already exists for this logbook ID.' });
+        // }
+
         const estimate = await Estimate.create({
-            book_id,
             Date,
-            Estimated
+            Estimated,
+            logbookID: logbookId, // Ensure correct field name
         });
 
-        const EstimateId = estimate.id;
-
-        const parseDetails = (details) => {
-            return typeof details === 'string' ? JSON.parse(details) : details;
-        };
-
-        // const parsedLabDetails = parseDetails(LabDetails);
-        // const parsedMatDetails = parseDetails(matDetails);
-        // const parsedMacDetails = parseDetails(macDetails);
-        // const parsedWelDetails = parseDetails(welDetails);
-        // const parsedSunDetails = parseDetails(sunDetails);
-        // const parsedTransDetails = parseDetails(transDetails);
-        // const parsedStockDetails = parseDetails(stockDetails);
-        // const parsedOtherDetails = parseDetails(otherDetails);
-
-        // const labourPromises = parsedLabDetails.map((labour) => {
-        //     const { Labour, Lab_cost, LabQ } = labour;
-        //     return EstLab.create({ EstimateId, Labour, Lab_cost, LabQ });
-        // });
-
-        // const materialPromises = parsedMatDetails.map((material) => {
-        //     const { Material, Mat_cost, MatQ } = material;
-        //     return EstMat.create({ EstimateId, Material, Mat_cost, MatQ });
-        // });
-
-        // const machinePromises = parsedMacDetails.map((machine) => {
-        //     const { Machining, Mac_cost, MacQ } = machine;
-        //     return EstMac.create({ EstimateId, Machining, Mac_cost, MacQ });
-        // });
-
-        // const sunPromises = parsedSunDetails.map((sun) => {
-        //     const { Sundries, Sun_cost, SunQ } = sun;
-        //     return EstSun.create({ EstimateId, Sundries, Sun_cost, SunQ });
-        // });
-
-        // const transPromises = parsedTransDetails.map((trans) => {
-        //     const { Transport, Trans_cost, TransQ } = trans;
-        //     return EstTrans.create({ EstimateId, Transport, Trans_cost, TransQ });
-        // });
-
-        // const welPromises = parsedWelDetails.map((wel) => {
-        //     const { Welding, Wel_cost, WelQ } = wel;
-        //     return EstWel.create({ EstimateId, Welding, Wel_cost, WelQ });
-        // });
-
-        // const stockPromises = parsedStockDetails.map((stock) => {
-        //     const { Stock, Stock_cost, StockQ } = stock;
-        //     return EstStock.create({ EstimateId, Stock, Stock_cost, StockQ });
-        // });
-
-        // await Promise.all([...labourPromises, ...materialPromises, ...machinePromises, ...sunPromises, ...transPromises, ...welPromises, ...stockPromises]);
-
-        // Handle file uploads
-        const files = req.files;
-        if (files && files.length > 0) {
-            const imagePromises = files.map((file) => {
-                return EstImage.create({
+        if (req.files && req.files.length > 0) {
+            const images = await EstImage.bulkCreate(
+                req.files.map((file) => ({
                     fileType: file.mimetype,
                     fileSize: file.size,
                     fileData: file.buffer,
-                    EstimateId
-                });
+                    EstID: estimate.id,
+                }))
+            );
+
+            return res.status(201).json({
+                message: 'Estimate and images created successfully',
+                estimate,
+                images,
             });
-            await Promise.all(imagePromises);
         }
 
-        res.status(201).json({ message: 'Estimation data inserted successfully' });
+        res.status(201).json({
+            message: 'Estimate created successfully (no images uploaded)',
+            estimate,
+        });
     } catch (error) {
-        console.error('Error inserting estimation data:', error);
-        res.status(500).json({ error: 'An error occurred while inserting estimation data', details: error.message });
+        console.error('Error creating estimate:', error);
+        res.status(500).json({ error: 'An error occurred while creating the estimate.' });
     }
 });
+
+// router.post('/Estinsert/:book_id', upload.array('images', 10), async (req, res) => {
+//     const { book_id } = req.params;
+//     const { Date, Estimated } = req.body;
+
+//     try {
+//         const estimate = await Estimate.create({
+//             book_id,
+//             Date,
+//             Estimated
+//         });
+
+//         const EstimateId = estimate.id;
+
+//         const parseDetails = (details) => {
+//             return typeof details === 'string' ? JSON.parse(details) : details;
+//         };
+
+//         // const parsedLabDetails = parseDetails(LabDetails);
+//         // const parsedMatDetails = parseDetails(matDetails);
+//         // const parsedMacDetails = parseDetails(macDetails);
+//         // const parsedWelDetails = parseDetails(welDetails);
+//         // const parsedSunDetails = parseDetails(sunDetails);
+//         // const parsedTransDetails = parseDetails(transDetails);
+//         // const parsedStockDetails = parseDetails(stockDetails);
+//         // const parsedOtherDetails = parseDetails(otherDetails);
+
+//         // const labourPromises = parsedLabDetails.map((labour) => {
+//         //     const { Labour, Lab_cost, LabQ } = labour;
+//         //     return EstLab.create({ EstimateId, Labour, Lab_cost, LabQ });
+//         // });
+
+//         // const materialPromises = parsedMatDetails.map((material) => {
+//         //     const { Material, Mat_cost, MatQ } = material;
+//         //     return EstMat.create({ EstimateId, Material, Mat_cost, MatQ });
+//         // });
+
+//         // const machinePromises = parsedMacDetails.map((machine) => {
+//         //     const { Machining, Mac_cost, MacQ } = machine;
+//         //     return EstMac.create({ EstimateId, Machining, Mac_cost, MacQ });
+//         // });
+
+//         // const sunPromises = parsedSunDetails.map((sun) => {
+//         //     const { Sundries, Sun_cost, SunQ } = sun;
+//         //     return EstSun.create({ EstimateId, Sundries, Sun_cost, SunQ });
+//         // });
+
+//         // const transPromises = parsedTransDetails.map((trans) => {
+//         //     const { Transport, Trans_cost, TransQ } = trans;
+//         //     return EstTrans.create({ EstimateId, Transport, Trans_cost, TransQ });
+//         // });
+
+//         // const welPromises = parsedWelDetails.map((wel) => {
+//         //     const { Welding, Wel_cost, WelQ } = wel;
+//         //     return EstWel.create({ EstimateId, Welding, Wel_cost, WelQ });
+//         // });
+
+//         // const stockPromises = parsedStockDetails.map((stock) => {
+//         //     const { Stock, Stock_cost, StockQ } = stock;
+//         //     return EstStock.create({ EstimateId, Stock, Stock_cost, StockQ });
+//         // });
+
+//         // await Promise.all([...labourPromises, ...materialPromises, ...machinePromises, ...sunPromises, ...transPromises, ...welPromises, ...stockPromises]);
+
+//         // Handle file uploads
+//         const files = req.files;
+//         if (files && files.length > 0) {
+//             const imagePromises = files.map((file) => {
+//                 return EstImage.create({
+//                     fileType: file.mimetype,
+//                     fileSize: file.size,
+//                     fileData: file.buffer,
+//                     EstimateId
+//                 });
+//             });
+//             await Promise.all(imagePromises);
+//         }
+
+//         res.status(201).json({ message: 'Estimation data inserted successfully' });
+//     } catch (error) {
+//         console.error('Error inserting estimation data:', error);
+//         res.status(500).json({ error: 'An error occurred while inserting estimation data', details: error.message });
+//     }
+// });
 router.get('/Estview/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -809,165 +775,77 @@ router.get('/OtherSun/:id', createGetRoute('est_sun', 'Sun', ['Sundries', 'Sun_c
 router.get('/EstviewLab/:id', createGetRoute('est_lab', 'Lab', ['Labour', 'Lab_cost', 'LabQ']));
 router.get('/EstviewMat/:id', createGetRoute('est_mat', 'Mat', ['Material', 'Mat_cost', 'MatQ']));
 
-router.put('/Estupdate/:book_id', async (req, res) => {
-    const { book_id } = req.params;
-    const { Date, Estimated, otherDetails = [], stockDetails = [], macDetails = [], matDetails = [], welDetails = [], sunDetails = [], LabDetails = [], transDetails = [] } = req.body;
+// router.put('/Estupdate/:id', upload.array('images'), async (req, res) => {
+//     const { Date, Estimated } = req.body;
+//     const { id } = req.params;
+
+//     if (!Date || !Estimated) {
+//         return res.status(400).json({ error: 'Date and Estimated fields are required.' });
+//     }
+
+//     try {
+//         const query = `UPDATE estimate SET Date = ?, Estimated = ? WHERE id = ?`;
+//         const result = await db.query(query, {
+//             replacements: [Date, Estimated, id],
+//             type: db.QueryTypes.UPDATE,
+//         });
+
+//         if (result[0] === 0) {
+//             return res.status(404).json({ error: 'No estimate found for the given ID.' });
+//         }
+
+//         // Process uploaded images
+//         if (req.files && req.files.length > 0) {
+//             await EstImage.bulkCreate(
+//                 req.files.map((file) => ({
+//                     fileType: file.mimetype,
+//                     fileSize: file.size,
+//                     fileData: file.buffer,
+//                     EstID: id,
+//                 }))
+//             );
+//         }
+
+//         res.status(200).json({ message: 'Estimate updated successfully.' });
+//     } catch (error) {
+//         console.error('Error updating estimate:', error);
+//         res.status(500).json({ error: 'An error occurred while updating the estimate.' });
+//     }
+// });
+
+router.put('/Estupdate/:id', upload.array('images'), async (req, res) => {
+    const { Date, Estimated } = req.body;
+    const { id } = req.params;
+
+    if (!Date || !Estimated) {
+        return res.status(400).json({ error: 'Date and Estimated fields are required.' });
+    }
 
     try {
-        const estimate = await Estimate.update(
-            {
-                Date,
-                Estimated
-            },
-            { where: { book_id } }
-        );
+        const estimate = await Estimate.findOne({ where: { id } });
 
-        const existingEstimate = await Estimate.findOne({ where: { book_id } });
-        const EstimateId = existingEstimate.id;
+        if (!estimate) {
+            return res.status(404).json({ error: 'No estimate found to update for the given ID.' });
+        }
 
-        const labourPromises = LabDetails.map((labour) => {
-            const { id, Labour: labourName, Lab_cost, LabQ } = labour;
-            if (id) {
-                return EstLab.update(
-                    { Labour: labourName, Lab_cost, LabQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstLab.create({
-                    Labour: labourName,
-                    Lab_cost,
-                    LabQ,
-                    EstimateId
-                });
-            }
-        });
+        await estimate.update({ Date, Estimated });
 
-        const materialPromises = matDetails.map((material) => {
-            const { id, Material: materialName, Mat_cost, MatQ, issued } = material;
-            if (id) {
-                return EstMat.update(
-                    { Material: materialName, Mat_cost, MatQ, issued, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstMat.create({
-                    Material: materialName,
-                    Mat_cost,
-                    MatQ,
-                    issued,
-                    EstimateId
-                });
-            }
-        });
+        // Check and process uploaded images
+        if (req.files && req.files.length > 0) {
+            await EstImage.bulkCreate(
+                req.files.map((file) => ({
+                    fileType: file.mimetype,
+                    fileSize: file.size,
+                    fileData: file.buffer, // Save binary data to the database
+                    EstID: estimate.id,   // Associate images with the updated estimate
+                }))
+            );
+        }
 
-        const machinePromises = macDetails.map((machine) => {
-            const { id, Machining: machineName, Mac_cost, MacQ } = machine;
-            if (id) {
-                return EstMac.update(
-                    { Machining: machineName, Mac_cost, MacQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstMac.create({
-                    Machining: machineName,
-                    Mac_cost,
-                    MacQ,
-                    EstimateId
-                });
-            }
-        });
-
-        const otherPromises = otherDetails.map((other) => {
-            const { id, other: otherName, other_cost, otherQ } = other;
-            if (id) {
-                return EstOther.update(
-                    { other: otherName, other_cost, otherQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstOther.create({
-                    other: otherName,
-                    other_cost,
-                    otherQ,
-                    EstimateId
-                });
-            }
-        });
-
-        const sunPromises = sunDetails.map((sun) => {
-            const { id, Sundries: sunName, Sun_cost, SunQ } = sun;
-            if (id) {
-                return EstSun.update(
-                    { Sundries: sunName, Sun_cost, SunQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstSun.create({
-                    Sundries: sunName,
-                    Sun_cost,
-                    SunQ,
-                    EstimateId
-                });
-            }
-        });
-
-        const transPromises = transDetails.map((trans) => {
-            const { id, Transport: transName, Trans_cost, TransQ } = trans;
-            if (id) {
-                return EstTrans.update(
-                    { Transport: transName, Trans_cost, TransQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstTrans.create({
-                    Transport: transName,
-                    Trans_cost,
-                    TransQ,
-                    EstimateId
-                });
-            }
-        });
-
-        const welPromises = welDetails.map((wel) => {
-            const { id, Welding: welName, Wel_cost, WelQ } = wel;
-            if (id) {
-                return EstWel.update(
-                    { Welding: welName, Wel_cost, WelQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstWel.create({
-                    Welding: welName,
-                    Wel_cost,
-                    WelQ,
-                    EstimateId
-                });
-            }
-        });
-
-        const stockPromises = stockDetails.map((stock) => {
-            const { id, Stock: stockName, Stock_cost, StockQ } = stock;
-            if (id) {
-                return EstStock.update(
-                    { Stock: stockName, Stock_cost, StockQ, EstimateId },
-                    { where: { id } }
-                );
-            } else {
-                return EstStock.create({
-                    Stock: stockName,
-                    Stock_cost,
-                    StockQ,
-                    EstimateId
-                });
-            }
-        });
-
-        await Promise.all([...labourPromises, ...materialPromises, ...machinePromises, ...otherPromises, ...sunPromises, ...transPromises, ...welPromises, ...stockPromises]);
-
-        res.status(200).json({ message: 'Data updated successfully' });
+        res.status(200).json({ message: 'Estimate updated successfully' });
     } catch (error) {
-        console.error('Error updating data:', error);
-        res.status(500).json({ error: 'An error occurred while updating data', details: error.message });
+        console.error('Error updating estimate:', error);
+        res.status(500).json({ error: 'An error occurred while updating the estimate.' });
     }
 });
 
@@ -1051,60 +929,15 @@ router.get('/fetchAllCategories/:LogbookId', async (req, res) => {
     }
 });
 
-const submitCategory = async (req, res, categoryModel) => {
-    const { EstID } = req.params;
-    const { details, Suppliers, QuotationNo } = req.body;
-
-    // Check for required fields, skip Suppliers and QuotationNo validation for Estsun
-    if (categoryModel !== Estsun && (!details || !Suppliers || !QuotationNo)) {
-        return res.status(400).json({ error: 'Details, Suppliers, and QuotationNo fields are required.' });
-    }
-
-    try {
-        let supplier = null;
-
-        // For models other than Estsun, handle supplier logic
-        if (categoryModel !== Estsun) {
-            supplier = await Supplier.create({ Suppliers, QuotationNo, EstID });
-            if (!supplier) {
-                return res.status(400).json({ error: 'Invalid supplier details. Supplier does not exist.' });
-            }
-
-            // Handle image uploads (if any)
-            const images = req.files.map((file) => ({
-                fileType: file.mimetype,
-                fileSize: file.size,
-                fileData: file.buffer, // Store file data
-                supID: supplier.id, // Associate with supplier
-            }));
-            await QutationImg.bulkCreate(images);
-        }
-
-        // Save category details
-        const categoryDetails = JSON.parse(details).map((item) => ({
-            ...item,
-            supID: supplier ? supplier.id : null, // Only include supID if supplier exists
-            EstID, // Always include EstID
-        }));
-
-        console.log('Category details:', categoryDetails);
-        await categoryModel.bulkCreate(categoryDetails);
-
-        res.status(200).json({ message: `${categoryModel.name} details saved successfully.` });
-    } catch (error) {
-        console.error(`Error saving ${categoryModel.name} details:`, error);
-        res.status(500).json({ error: `Failed to save ${categoryModel.name} details.` });
-    }
-};
 
 
-router.post('/submitCategory/material/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, EstMat));
-router.post('/submitCategory/labour/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estlab));
-router.post('/submitCategory/machining/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estmac));
-router.post('/submitCategory/welding/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estwel));
-router.post('/submitCategory/transport/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, EstTrans));
-router.post('/submitCategory/sundries/:EstID', upload.none(), (req, res) => submitCategory(req, res, Estsun));
-// router.post('/submitCategory/material/:EstID', upload.array('Quotationimg', 10), submitMaterialCategory);
+
+// router.post('/submitCategory/material/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, EstMat));
+// router.post('/submitCategory/labour/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estlab));
+// router.post('/submitCategory/machining/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estmac));
+// router.post('/submitCategory/welding/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, Estwel));
+// router.post('/submitCategory/transport/:EstID', upload.array('Quotationimg', 10), (req, res) => submitCategory(req, res, EstTrans));
+// // router.post('/submitCategory/material/:EstID', upload.array('Quotationimg', 10), submitMaterialCategory);
 
 // import db from '../config/sequelize.js';
 router.post('/implementmat/:logbookID', async (req, res) => {
@@ -1137,6 +970,82 @@ router.post('/implementmat/:logbookID', async (req, res) => {
         res.status(500).json({ error: 'Failed to add implementmat' });
     }
 });
+const submitAllCategories = async (req, res) => {
+    const { EstID } = req.params;
+    const { Suppliers, QuotationNo, matDetails, labDetails, macDetails, tranDetails, welDetails, sunDetails } = req.body;
+
+    if (!Suppliers || !QuotationNo) {
+        return res.status(400).json({ error: 'Suppliers and QuotationNo fields are required.' });
+    }
+
+    try {
+        // Create supplier
+        const supplier = await Supplier.create({ Suppliers, QuotationNo, EstID });
+        if (!supplier) {
+            return res.status(400).json({ error: 'Invalid supplier details. Supplier does not exist.' });
+        }
+
+        // Handle image uploads (if any)
+        const images = req.files.map((file) => ({
+            fileType: file.mimetype,
+            fileSize: file.size,
+            fileData: file.buffer, // Store file data
+            supID: supplier.id, // Associate with supplier
+        }));
+        await QutationImg.bulkCreate(images);
+
+        // Save category details
+        const saveCategoryDetails = async (details, categoryModel) => {
+            const categoryDetails = JSON.parse(details).map((item) => ({
+                ...item,
+                supID: supplier.id, // Ensure supID is included
+                EstID, // Always include EstID
+            }));
+            await categoryModel.bulkCreate(categoryDetails);
+        };
+
+        await Promise.all([
+            saveCategoryDetails(matDetails, EstMat),
+            saveCategoryDetails(labDetails, Estlab),
+            saveCategoryDetails(macDetails, Estmac),
+            saveCategoryDetails(tranDetails, EstTrans),
+            saveCategoryDetails(welDetails, Estwel),
+            saveCategoryDetails(sunDetails, Estsun),
+        ]);
+
+        res.status(200).json({ message: 'All category details saved successfully.' });
+    } catch (error) {
+        console.error('Error saving category details:', error);
+        res.status(500).json({ error: 'Failed to save category details.' });
+    }
+};
+
+router.post('/submitCategory/all/:EstID', upload.array('Quotationimg', 10), submitAllCategories);
+
+const submitCategory = async (req, res, categoryModel) => {
+    const { EstID } = req.params;
+    const { details } = req.body;
+
+    if (!details) {
+        return res.status(400).json({ error: 'Details field is required.' });
+    }
+
+    try {
+        // Save category details
+        const categoryDetails = JSON.parse(details).map((item) => ({
+            ...item,
+            EstID,
+        }));
+        await categoryModel.bulkCreate(categoryDetails);
+
+        res.status(200).json({ message: `${categoryModel.name} details saved successfully.` });
+    } catch (error) {
+        console.error(`Error saving ${categoryModel.name} details:`, error);
+        res.status(500).json({ error: `Failed to save ${categoryModel.name} details.` });
+    }
+};
+
+router.post('/submitCategory/sundries/:EstID', upload.none(), (req, res) => submitCategory(req, res, Estsun));
 
 router.get('/images/:logbookID', async (req, res) => {
     const { logbookID: logbookID} = req.params; 

@@ -167,7 +167,8 @@ function UserRegist({ onClose, form, setForm, isEdit, setIsEdit, fetchUserInfo }
             })
                 .then(response => {
                     console.log('Update Response:', response.data);
-                    alert('User information updated successfully');
+                    // alert('User information updated successfully');
+                    window.location.reload();
                     setIsEdit(false);
                     setForm({ id: null, title: '', content: '' });
                     fetchUserInfo();
@@ -184,7 +185,8 @@ function UserRegist({ onClose, form, setForm, isEdit, setIsEdit, fetchUserInfo }
             })
                 .then(response => {
                     console.log('Submission Response:', response.data);
-                    alert('User information submitted successfully');
+                    // alert('User information submitted successfully');
+                    window.location.reload();
                     setForm({ id: null, title: '', content: '' });
                     fetchUserInfo();
                     onClose();

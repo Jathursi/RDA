@@ -747,7 +747,7 @@ function Dashright() {
     }));
 
     return (
-        <div className='sticky-top min-vh-100 overflow-auto sticky-top'>
+        <div className='sticky-top min-vh-100 mb-5 overflow-auto sticky-top'>
             <div className=''>
                 <h4 className='d-flex m-3 justify-content-center'>Views</h4>
                 <div className='mt-4'>
@@ -902,6 +902,37 @@ function Dashright() {
                     </div>
                 </div>
                 <div className='mt-3'>
+                    <h5>Out Source</h5>
+                    <div className="d-flex flex-wrap">
+                        {imageArray1.map((image, index) => (
+                            <div key={index}>
+                                <button
+                                    className="thumbnail"
+                                    style={{
+                                        cursor: 'pointer',
+                                        width: '70px',
+                                        height: '70px',
+                                        overflow: 'hidden',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '5px'
+                                    }}
+                                    onClick={() => handleImageClickout(image.src)}
+                                >
+                                    <img
+                                        src={image.src}
+                                        alt={image.label}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className='mt-3'>
                     <h5>Completion</h5>
                     <div className="d-flex flex-wrap">
                         {compImages.map((image, index) => (
@@ -932,7 +963,7 @@ function Dashright() {
                         ))}
                     </div>
                 </div>
-                <div className='mt-3'>
+                <div className='mt-3 mb-5'>
                     <h5>Attachments</h5>
                     <div className="d-flex flex-wrap">
                         {resources.map((resource) => (
@@ -968,37 +999,6 @@ function Dashright() {
                                 ) : (
                                     <p>Unsupported file type</p>
                                 )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className='mt-3'>
-                    <h5>Out Source</h5>
-                    <div className="d-flex flex-wrap">
-                        {imageArray1.map((image, index) => (
-                            <div key={index}>
-                                <button
-                                    className="thumbnail"
-                                    style={{
-                                        cursor: 'pointer',
-                                        width: '70px',
-                                        height: '70px',
-                                        overflow: 'hidden',
-                                        border: '1px solid #ddd',
-                                        borderRadius: '5px'
-                                    }}
-                                    onClick={() => handleImageClickout(image.src)}
-                                >
-                                    <img
-                                        src={image.src}
-                                        alt={image.label}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                </button>
                             </div>
                         ))}
                     </div>

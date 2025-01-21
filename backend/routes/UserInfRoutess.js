@@ -74,7 +74,7 @@ router.post('/insert/:id', async (req, res) => {
 });
 
 router.put('/update/:id', async (req, res) => {
-  const { id: book_id } = req.params;
+  const { id } = req.params;
   const { title, content } = req.body;
 
   if (!title || !content) {
@@ -84,24 +84,24 @@ router.put('/update/:id', async (req, res) => {
   try {
     const [updated] = await Userinf.update(
       { title, content },
-      { where: { book_id } }
+      { where: { id } }
     );
 
 
       // Get the user's email
-      const user = await db.query(`
-        SELECT logins.email 
-        FROM logins
-        LEFT JOIN logbook ON logins.vehicleNumber = logbook.vehicle_num
-        WHERE logbook.id = :book_id
-      `, {
-        replacements: { book_id },
-        type: Sequelize.QueryTypes.SELECT
-      });
+      // const user = await db.query(`
+      //   SELECT logins.email 
+      //   FROM logins
+      //   LEFT JOIN logbook ON logins.vehicleNumber = logbook.vehicle_num
+      //   WHERE logbook.id = :book_id
+      // `, {
+      //   replacements: { book_id },
+      //   type: Sequelize.QueryTypes.SELECT
+      // });
 
-      if (user.length > 0) {
-        await sendAcknowledgmentEmail(user[0].email, title, content);
-      }
+      // if (user.length > 0) {
+      //   await sendAcknowledgmentEmail(user[0].email, title, content);
+      // }
 
       return res.status(200).json(updated);
 

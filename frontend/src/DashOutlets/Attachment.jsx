@@ -234,7 +234,8 @@ const Attachment = () => {
 
     try {
       await axios.post(`http://localhost:8081/api/attachment/upload/${id}`, formData);
-      alert('Files uploaded successfully');
+      // alert('Files uploaded successfully');
+      window.location.reload();
       setUpdateTrigger(!updateTrigger); // Toggle the update trigger to re-fetch resources
       setCustomName(''); // Reset custom name
       setFiles([]); // Reset file input

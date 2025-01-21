@@ -169,17 +169,26 @@ router.put('/updateIssued/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update issued value' });
     }
 });
+import db from '../config/sequelize.js';
 router.get('/images/:id', async (req, res) => {
-    const { id: impID } = req.params;
+    const { id: logbookID } = req.params;
 
     try {
-        const images = await ImpImage.findAll({ where: { impID } });
+        const images = `
+        SELECT * FROM impimage
+        JOIN implement ON impimage.ImpID = implement.id
+        WHERE implement.logbookID = ?`;
         // If fileData is stored as binary, ensure proper encoding
-        const formattedImages = images.map(image => ({
+        const results = await db.query(images, {
+            replacements: [logbookID],
+            type: db.QueryTypes.SELECT,
+        });
+        const formattedImages = results.map(image => ({
             fileType: image.fileType,
             fileData: image.fileData.toString('base64'), // Convert binary to Base64 if needed
         }));
         res.status(200).json(formattedImages);
+        console.log(formattedImages)
     } catch (error) {
         console.error('Error fetching images:', error);
         res.status(500).json({ error: 'Failed to fetch images' });

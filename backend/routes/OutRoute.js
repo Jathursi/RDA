@@ -76,20 +76,37 @@ router.post('/Outinsert/:logbookId', upload.array('images'), async (req, res) =>
 });
 
 // Route to update an existing outsource entry
-router.put('/Outupdate/:logbookId', upload.array('images'), async (req, res) => {
-    const { logbookId } = req.params;
-    const { values, sundries } = JSON.parse(req.body.values);
-
+router.put('/Outupdate/:id', upload.array('images'), async (req, res) => {
+    const { id } = req.params;
+    // const { values } = JSON.parse(req.body.values);
+    let values, sundries;
+    try {
+        values = JSON.parse(req.body.values);
+        sundries = JSON.parse(req.body.sundries);
+    } catch (error) {
+        return res.status(400).json({ error: 'Invalid JSON format for values or sundries' });
+    }
     try {
         // Update the outsource entries
-        for (const value of values) {
-            await OutSource.update(value, { where: { id: value.id } });
+        const outsourceEntry = await OutSource.findOne({ where: { id } });
+
+        if (!outsourceEntry) {
+            return res.status(404).json({ error: 'No outsource entry found to update for the given ID.' });
         }
 
+        await outsourceEntry.update(values);
+
         // Update the sundries entries
-        for (const sundry of sundries) {
-            await OutSundries.update(sundry, { where: { id: sundry.id } });
-        }
+        // for (const sundry of sundries) {
+        //     await OutSundries.update(sundry, { where: { id: sundry.id } });
+        // }
+        const sundriesEntries = await OutSundries.bulkCreate(
+            sundries.map((sundry) => ({
+                Sundries: sundry.Sundries,
+                Sun_cost: sundry.Sun_cost,
+                OutID: outsourceEntry.id, // Assuming this is the associated OutSource entry
+            }))
+        );
 
         // Check and process uploaded images
         if (req.files && req.files.length > 0) {
@@ -98,7 +115,7 @@ router.put('/Outupdate/:logbookId', upload.array('images'), async (req, res) => 
                     fileType: file.mimetype,
                     fileSize: file.size,
                     fileData: file.buffer, // Save binary data to the database
-                    OutID: values[0].id // Associate images with the first outsource entry
+                    OutID: outsourceEntry.id // Associate images with the first outsource entry
                 }))
             );
         }

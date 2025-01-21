@@ -2,8 +2,10 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import {FaBars} from 'react-icons/fa'
+import AddHomeIcon from '@mui/icons-material/AddHome';
 function DashTopnav({ toggleSidebar, toggleNav }) {
     const navigate = useNavigate();
+
   return (
     <div className="top-navbar sticky-top">
           <nav className="navbar navbar-expand-lg">
@@ -12,9 +14,7 @@ function DashTopnav({ toggleSidebar, toggleNav }) {
                 {/* <MaterialIcon>arrow_back_ios</MaterialIcon> */}
                 <span className="material-icons"><FaBars /></span>
               </button>
-              
-              <div className="navbar-brand"> Dashboard </div>
-              
+                          
               <button id="sidebarCollapse" className="d-inline-block d-lg-none ml-auto more-button" onClick={toggleNav}>
                 {/* <MaterialIcon>more_vert</MaterialIcon> */}
                 <span className="material-icons"><HiOutlineDotsVertical /></span>
@@ -25,7 +25,7 @@ function DashTopnav({ toggleSidebar, toggleNav }) {
                 <ul className="nav navbar-nav ml-auto"> 
                     <li className="nav-item">
                         <div className="nav-link" >
-                          <span className="material-icons" onClick={() => navigate('/home')}>Home</span>
+                          <span className="material-icons" onClick={() => navigate('/home')}><AddHomeIcon/></span>
                         </div>
                     </li>
                 </ul>

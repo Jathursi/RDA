@@ -79,8 +79,9 @@ function ImpRegist({ onClose }) {
                 );
                 setIsInitialSubmission(false);
                 fetchImplementMatData(); // Fetch the updated implementmat data
-                navigate('/home');
-                alert('Implement data submitted successfully');
+                // navigate('/home');
+                // alert('Implement data submitted successfully');
+                window.location.reload();
             })
             .catch((err) => {
                 console.error('Error with logbook entry:', err.message);

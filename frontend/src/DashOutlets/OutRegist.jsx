@@ -232,12 +232,14 @@ function OutRegist({ onClose, form, setForm, isEdit, setIsEdit, fetchOutsourceDa
                 await axios.put(`http://localhost:8081/api/out/Outupdate/${form.id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                alert('Outsource entry updated successfully');
+                // alert('Outsource entry updated successfully');
+                window.location.reload();
             } else {
                 await axios.post(`http://localhost:8081/api/out/Outinsert/${id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                alert('Outsource entry created successfully');
+                // alert('Outsource entry created successfully');
+                window.location.reload();
             }
             fetchOutsourceData();
             onClose();
@@ -368,6 +370,9 @@ function OutRegist({ onClose, form, setForm, isEdit, setIsEdit, fetchOutsourceDa
                     </div>
                 </div>
                 <div className="d-grid">
+                    <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                        Cancel
+                    </button>
                     <button type="submit" className="btn btn-primary">
                         {isEdit ? 'Update' : 'Submit'}
                     </button>
